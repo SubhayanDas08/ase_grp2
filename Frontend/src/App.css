@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: rgb(34, 46, 112);
+}
+
+.sidebarContainer {
+  height: 100%;
+  width: 100%;
+  background-color: rgb(44, 62, 165);
+}
+
+.sidebarItems {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  color: rgb(96, 197, 216);
+}
+
+.sidebarItems:hover {
+  color: rgb(245, 195, 82);
+  cursor: pointer;
+}
+
+.sidebarIcons {
+  height: 50%;
+  width: 50%;
+}
+
 .navbarButton {
   height: fit-content;
   width: fit-content;

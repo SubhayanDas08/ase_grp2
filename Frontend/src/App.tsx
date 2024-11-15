@@ -1,19 +1,29 @@
-import { useState } from "react";
-import Navbar from "./components/navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home.tsx";
+import Map from "./pages/Map.tsx";
+import Server from "./pages/Server.tsx";
+import Settings from "./pages/Settings.tsx";
+
+import Sidebar from "./components/sidebar.tsx";
 import "./App.css";
 
 export default function App() {
-  const [navbarMenu, setNavbarMenu] = useState(false);
-
-  const openNavbarMenu = () => {
-    setNavbarMenu(!navbarMenu);
-  }
-
   return (
-    <div className="relative ms-5 me-5 h-screen bg-gray-300">
-      <div className="relative h-12 w-full">
-        <Navbar openNavbarMenu={openNavbarMenu}/>
+    <Router>
+      <div className="flex h-screen">
+          <div className="flex h-full w-24">
+              <Sidebar />
+          </div>
+          <div className="h-full w-full p-5">
+              <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/map" element={<Map />} />
+                  <Route path="/server" element={<Server />} />
+                  <Route path="/settings" element={<Settings />} />
+              </Routes>
+          </div>
       </div>
-    </div>
+  </Router>
   )
 }
