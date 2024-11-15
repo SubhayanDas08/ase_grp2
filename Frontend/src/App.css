@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.navbarButton {
+  height: fit-content;
+  width: fit-content;
+  padding: 8px 8px 8px 8px;
+  border-radius: 5px;
+  border-color: black;
+  border-width: 2px;
+}
+
+.navbarButton:hover {
+  background-color: rgb(0, 0, 0, 0.3);
+  border-color: rgb(0, 0, 0, 0);
+  color: white;
+}
