@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 body {
+  overflow: hidden;
+  overscroll-behavior: none;
   font-family: "Roboto", sans-serif;
   background-color: rgb(34, 46, 112);
 }
 
 .sidebarContainer {
   height: 100%;
-  width: 100%;
   background-color: rgb(44, 62, 165);
 }
 
