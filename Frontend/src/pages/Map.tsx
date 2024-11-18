@@ -1,6 +1,6 @@
 export default function Map() {
     return(
-        <div className="h-full bg-red-500">
+        <div className="bg-red-500 h-96">
             Map
         </div>
     )
