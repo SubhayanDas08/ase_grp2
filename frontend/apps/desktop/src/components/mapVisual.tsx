@@ -2,11 +2,14 @@ import { useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-geosearch/dist/geosearch.css';
 
 const SearchFunctionality = ({ provider }: any) => {
     // Create the search control using the provider
     const searchControl = GeoSearchControl({
         provider,
+        style: 'bar',
+        notFoundMessage: 'Sorry, that address could not be found.'
     });
 
     // Leaflet map instance
