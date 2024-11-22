@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const app = express();
 const port = 3000;
+const host = "0.0.0.0";
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -40,8 +41,8 @@ pool
   .then(() => console.log("Connected to PostgreSQL"))
   .catch((err) => console.error("PostgreSQL connection error:", err));
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Example app listening at http://${host}:${port}`);
 });
 
 // Route to create a new event
