@@ -119,3 +119,15 @@ app.get("/event/:id", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+app.get("/events", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, start_date, end_date FROM public.events ORDER BY start_date"
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).send(error.message);
+  }
+});
