@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const app = express();
 const port = 3000;
+const host = "0.0.0.0";
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -40,8 +41,8 @@ pool
   .then(() => console.log("Connected to PostgreSQL"))
   .catch((err) => console.error("PostgreSQL connection error:", err));
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Example app listening at http://${host}:${port}`);
 });
 
 // Route to create a new event
@@ -116,6 +117,18 @@ app.get("/event/:id", async (req, res) => {
 
     return res.json(event);
   } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.get("/events", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, start_date, end_date FROM public.events ORDER BY start_date"
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).send(error.message);
   }
 });
