@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+postgres_data/*
+postgres_logs/*
+redis_data/*
+redis_logs/*
