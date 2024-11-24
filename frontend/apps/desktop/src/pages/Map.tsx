@@ -13,6 +13,7 @@ export default function Map() {
     useEffect(() => {
         console.log("Location 2: ", location2);
     }, [location2]);
+
     return (
         <div className="h-full relative">
             <MapVisual setLocation1={setLocation1} setLocation2={setLocation2}/>

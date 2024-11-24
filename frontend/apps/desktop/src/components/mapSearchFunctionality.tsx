@@ -4,13 +4,14 @@ import { GeoSearchControl } from "leaflet-geosearch";
 import "leaflet/dist/leaflet.css";
 import "leaflet-geosearch/dist/geosearch.css";
 
+// Type for the props of MapSearchFunctionality
 interface MapSearchFunctionalityProps {
     provider: any;
     searchLabel: string;
-    setLocation: any;
+    setLocation: (location: any) => void;
 }
 
-export default function MapSearchFunctionality({provider, searchLabel, setLocation}: MapSearchFunctionalityProps) {
+export default function MapSearchFunctionality({ provider, searchLabel, setLocation }: MapSearchFunctionalityProps) {
     const map = useMap();
 
     useEffect(() => {
@@ -20,9 +21,6 @@ export default function MapSearchFunctionality({provider, searchLabel, setLocati
             style: "bar",
             notFoundMessage: "Sorry, that address could not be found.",
             searchLabel: searchLabel,
-            resultFormat: ({ result }: any) => {
-                return result.label
-            }
         });
 
         map.addControl(searchControl);
@@ -31,7 +29,7 @@ export default function MapSearchFunctionality({provider, searchLabel, setLocati
         return () => {
             map.removeControl(searchControl);
         };
-    }, [map, provider]);
+    }, [map, provider, searchLabel]);
 
     return null;
-};
+}
