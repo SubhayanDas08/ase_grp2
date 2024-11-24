@@ -1,33 +1,17 @@
-import { useEffect } from "react";
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
-import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-geosearch/dist/geosearch.css';
+import { MapContainer, TileLayer } from "react-leaflet";
+import { OpenStreetMapProvider, GoogleProvider } from "leaflet-geosearch";
+import "leaflet/dist/leaflet.css";
+import "leaflet-geosearch/dist/geosearch.css";
 
-const SearchFunctionality = ({ provider }: any) => {
-    // Create the search control using the provider
-    const searchControl = GeoSearchControl({
-        provider,
-        style: 'bar',
-        notFoundMessage: 'Sorry, that address could not be found.'
-    });
+import SearchFunctionality from "./mapSearchFunctionality";
 
-    // Leaflet map instance
-    const map = useMap();
+interface MapVisualProps {
+    setLocation1: any;
+    setLocation2: any;
+}
 
-    useEffect(() => {
-        map.addControl(searchControl);
 
-        // Remove the control when the component is unmounted
-        return () => {
-            map.removeControl(searchControl);
-        };
-    }, [map, searchControl]);
-
-    return null;
-};
-
-export default function MapVisual() {
+export default function MapVisual({ setLocation1, setLocation2 }: MapVisualProps) {
     const position: [number, number] = [53.3498, -6.2603];
 
     return (
@@ -40,7 +24,18 @@ export default function MapVisual() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            <SearchFunctionality provider={new OpenStreetMapProvider()} />
+
+            <SearchFunctionality
+                provider={new OpenStreetMapProvider()}
+                searchLabel="Orginal location"
+                setLocation={setLocation1}
+            />
+
+            <SearchFunctionality
+                provider={new OpenStreetMapProvider()}
+                searchLabel="Destination location"
+                setLocation={setLocation2}
+            />
         </MapContainer>
     );
 }
