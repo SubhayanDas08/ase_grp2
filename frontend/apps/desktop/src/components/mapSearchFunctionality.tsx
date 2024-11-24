@@ -25,6 +25,11 @@ export default function MapSearchFunctionality({ provider, searchLabel, setLocat
 
         map.addControl(searchControl);
 
+        map.on('geosearch/showlocation', (event: any) => {
+            // Find out how to set it to one location only (maybe make it an object instead of separate states (location1 and location2))
+            console.log("Location: ", event.location);
+        });
+
         // Cleanup: Remove control on unmount
         return () => {
             map.removeControl(searchControl);
