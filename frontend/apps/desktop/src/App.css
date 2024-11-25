@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --main-colour: rgb(34, 46, 112);
-  --secondary-color: rgb(48, 67, 176);
-  --tertiary-color: rgb(96, 197, 216);
-  --highlights: rgb(245, 195, 82);
+  --main-colour: #243642;
+  --secondary-color: #387478;
+  --tertiary-color: #629584;
+  --textLight: #e2f1e7;
+  --textDark: #243642;
 }
 
 body {
@@ -16,8 +17,29 @@ body {
   background-color: var(--main-colour);
 }
 
-.secondaryColour {
+.mainBGColour {
+  background-color: var(--main-colour);
+}
+
+.secondaryBGColour {
   background-color: var(--secondary-color);
+}
+
+.tertiaryBGColour {
+  background-color: var(--tertiary-color);
+}
+
+.textColourDark {
+  color: var(--textDark);
+}
+
+.textColourLight {
+  color: var(--textLight);
+}
+
+.contentContainer {
+  background-color: var(--tertiary-color);
+  border-radius: 12px;
 }
 
 .sidebarContainer {
@@ -33,11 +55,11 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
-  color: var(--tertiary-color);
+  color: var(--textDark);
 }
 
 .sidebarItems:hover {
-  color: var(--highlights);
+  color: var(--textLight);
   cursor: pointer;
 }
 
