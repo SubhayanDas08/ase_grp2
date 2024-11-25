@@ -106,7 +106,7 @@ export default function Settings(): JSX.Element {
               type="text"
               placeholder={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full rounded-md shadow-sm secondaryBGColour textColourLight"
+              className="w-full rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
             />
           </div>
           <div>
@@ -115,7 +115,7 @@ export default function Settings(): JSX.Element {
               type="text"
               placeholder={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full rounded-md shadow-sm secondaryBGColour"
+              className="w-full rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
             />
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function Settings(): JSX.Element {
             type="email"
             placeholder={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border-gray-300 rounded-md shadow-sm secondaryBGColour"
+            className="w-full border-gray-300 rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
           />
         </div>
 
@@ -139,7 +139,7 @@ export default function Settings(): JSX.Element {
               type="password"
               placeholder={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm secondaryBGColour"
+              className="w-full border-gray-300 rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
             />
           </div>
           <br />
