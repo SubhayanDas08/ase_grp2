@@ -2,16 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --main-colour: rgb(34, 46, 112);
+  --secondary-color: rgb(48, 67, 176);
+  --tertiary-color: rgb(96, 197, 216);
+  --highlights: rgb(245, 195, 82);
+}
+
 body {
   overflow: hidden;
   overscroll-behavior: none;
   font-family: "Roboto", sans-serif;
-  background-color: rgb(34, 46, 112);
+  background-color: var(--main-colour);
+}
+
+.secondaryColour {
+  background-color: var(--secondary-color);
 }
 
 .sidebarContainer {
   height: 100%;
-  background-color: rgb(44, 62, 162);
+  background-color: var(--secondary-color);
 }
 
 .sidebarItems {
@@ -22,11 +33,11 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
-  color: rgb(96, 197, 216);
+  color: var(--tertiary-color);
 }
 
 .sidebarItems:hover {
-  color: rgb(245, 195, 82);
+  color: var(--highlights);
   cursor: pointer;
 }
 
