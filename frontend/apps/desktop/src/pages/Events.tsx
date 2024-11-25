@@ -29,7 +29,7 @@ export default function Events() {
       });
 
     return(
-        <div className="relative secondaryColour rounded-lg ps-10">
+        <div className="relative contentContainer ps-10 textColourDark">
             <table className='w-full'>
                 <thead className='text-xl'>
                     {table.getHeaderGroups().map((headerGroup) => (
