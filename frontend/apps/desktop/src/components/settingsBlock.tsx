@@ -1,17 +1,24 @@
 import React, { useState } from "react";
 
-export default function SettingsBlock() {
-  const [email, setEmail] = useState("sample.email@gmail.com");
-  const [firstName, setFirstName] = useState("Adrija");
-  const [lastName, setLastName] = useState("Bhowmick");
-  const [currentPassword, setCurrentPassword] = useState("password");
+interface Device {
+  id: string;
+  name: string;
+  lastActive: string;
+  status: string;
+}
+
+export default function SettingsBlock(): JSX.Element {
+  const [email, setEmail] = useState<string>("sample.email@gmail.com");
+  const [firstName, setFirstName] = useState<string>("Adrija");
+  const [lastName, setLastName] = useState<string>("Bhowmick");
+  const [currentPassword, setCurrentPassword] = useState<string>("password");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState<string>(
     "https://via.placeholder.com/80"
   ); // Default placeholder image
 
-  const devices = [
+  const devices: Device[] = [
     {
       id: "001",
       name: "My Laptop",
@@ -20,17 +27,18 @@ export default function SettingsBlock() {
     },
   ];
 
-  const [isSocialMediaEnabled, setIsSocialMediaEnabled] = useState(true);
+  const [isUpdatesEnabled, setIsUpdatesEnabled] =
+    useState<boolean>(true);
 
-  const toggleSocialMedia = () => {
-    setIsSocialMediaEnabled(!isSocialMediaEnabled);
+  const toggleSocialMedia = (): void => {
+    setIsUpdatesEnabled(!isUpdatesEnabled);
   };
 
-  const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = (): void => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
 
@@ -148,13 +156,13 @@ export default function SettingsBlock() {
             <span className="text-gray-700">Updates</span>
             <button
               className={`relative inline-flex items-center h-6 rounded-full w-11 ${
-                isSocialMediaEnabled ? "bg-blue-500" : "bg-gray-300"
+                isUpdatesEnabled ? "bg-blue-500" : "bg-gray-300"
               }`}
               onClick={toggleSocialMedia}
             >
               <span
                 className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${
-                  isSocialMediaEnabled ? "translate-x-5" : "translate-x-1"
+                    isUpdatesEnabled ? "translate-x-5" : "translate-x-1"
                 }`}
               ></span>
             </button>
