@@ -71,10 +71,9 @@ body {
 
 .boxContainerWrapper {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  max-width: 650px;
-  margin: 0 auto; 
+  margin: 0 auto;
 }
 
 .boxContainer {
@@ -83,7 +82,7 @@ body {
   border: 1px solid #ffffff;
   padding: 16px;
   border-radius: 8px;
-  background-color: #4b5fa1;
+  background-color: var(--secondary-color);
   margin: 20px auto;
   display: flex;
   flex-direction: column;

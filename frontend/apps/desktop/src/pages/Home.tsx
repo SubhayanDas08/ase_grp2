@@ -36,8 +36,8 @@ export default function Home() {
       if (searchInput.toLowerCase() == 'map'){
         nav('/map');
       }
-      if (searchInput.toLowerCase() == 'server'){
-        nav('/server');
+      if (searchInput.toLowerCase() == 'events'){
+        nav('/events');
       }
       if (searchInput.toLowerCase() == 'settings'){
         nav('/settings');
@@ -46,13 +46,13 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-red-500 p-6">
-      <div className="w-1/2 mx-auto">
+    <div className="contentContainer textColourDark p-6">
+      <div className="mx-auto">
         <TextField
           id="outlined-basic"
           variant="outlined"
           fullWidth
-          label="Search"
+          label="Go to page..."
           value={searchInput}
           onChange={handleSearchChange}
           onKeyDown={pressEnter} 
