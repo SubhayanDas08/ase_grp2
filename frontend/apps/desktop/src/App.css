@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +15,7 @@
 body {
   overflow: hidden;
   overscroll-behavior: none;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: var(--main-colour);
 }
 
@@ -82,7 +84,7 @@ body {
   border: 1px solid #ffffff;
   padding: 16px;
   border-radius: 8px;
-  background-color: var(--secondary-color);
+  background-color: var(--main-colour);
   margin: 20px auto;
   display: flex;
   flex-direction: column;
