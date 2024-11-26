@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import {Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, } from 'chart.js';
+import {
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Legend, 
+  ArcElement
+} from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 export default function Home() {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchValue, setSearchValue] = useState('');
+  const [searchInput, setSearchInput] = useState<string>('');
   const nav = useNavigate();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +27,7 @@ export default function Home() {
     return Array.from({ length: 5 }, () => Math.floor(Math.random() * 100) + 10);
   };
 
-  const data = {
+  const data = useMemo(() => ({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
     datasets: [
       {
@@ -28,11 +36,10 @@ export default function Home() {
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
       },
     ],
-  };
+  }), []); // [] ensures the data is generated only once
 
   const pressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key == 'Enter') {
-      setSearchValue(searchInput);
       if (searchInput.toLowerCase() == 'map'){
         nav('/map');
       }
@@ -64,18 +71,33 @@ export default function Home() {
 
       <div className="boxContainerWrapper">   
         <div className='boxContainer'>
-            <h2>Events</h2>
-            <p> list of events / favorite events? </p>
+            <h2 style={{ textAlign: 'center' }}>Cool Bar Chart</h2>
+            <Bar data={data} />
         </div>
 
         <div className='boxContainer'>
-            <h2 style={{ textAlign: 'center' }}>Random chart</h2>
+            <h2 style={{ textAlign: 'center' }}>Even Cooler Pie Chart</h2>
             <Doughnut data={data} />
         </div>
 
         <div className='boxContainer'>
-            <h2 style = {{ textAlign:'center' }}>Other random chart</h2>
+            <h2 style={{ textAlign: 'center' }}>Cool Bar Chart</h2>
             <Bar data={data} />
+        </div>
+
+        <div className='boxContainer'>
+            <h2 style={{ textAlign: 'center' }}>Even Cooler Pie Chart</h2>
+            <Doughnut data={data} />
+        </div>
+
+        <div className='boxContainer'>
+            <h2 style={{ textAlign: 'center' }}>Cool Bar Chart</h2>
+            <Bar data={data} />
+        </div>
+        
+        <div className='boxContainer'>
+            <h2 style={{ textAlign: 'center' }}>Even Cooler Pie Chart</h2>
+            <Doughnut data={data} />
         </div>
       </div>
     </div>
