@@ -6,13 +6,15 @@ import "leaflet-geosearch/dist/geosearch.css";
 import MapSearchFunctionality from "./mapSearchFunctionality";
 
 interface MapVisualProps {
-    setLocation1: (location: any) => void;
-    setLocation2: (location: any) => void;
+    defaultLocation: {
+        latitude: number;
+        longitude: number;
+    };
+    setLocation: (location: any) => void;
 }
 
-
-export default function MapVisual({ setLocation1, setLocation2 }: MapVisualProps) {
-    const position: [number, number] = [53.3498, -6.2603];
+export default function MapVisual({ defaultLocation, setLocation }: MapVisualProps) {
+    const position: [number, number] = [defaultLocation.latitude, defaultLocation.longitude];
 
     return (
         <MapContainer
@@ -27,14 +29,8 @@ export default function MapVisual({ setLocation1, setLocation2 }: MapVisualProps
 
             <MapSearchFunctionality
                 provider={new OpenStreetMapProvider()}
-                searchLabel="Orginal location"
-                setLocation={setLocation1}
-            />
-
-            <MapSearchFunctionality
-                provider={new OpenStreetMapProvider()}
-                searchLabel="Destination location"
-                setLocation={setLocation2}
+                searchLabel="Search for a location"
+                setLocation={setLocation}
             />
         </MapContainer>
     );
