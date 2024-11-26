@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --main-colour: #243642;
-  --secondary-color: #387478;
-  --tertiary-color: #629584;
-  --textLight: #e2f1e7;
-  --textDark: #243642;
+  --main-colour: #b3c8cf;
+  --secondary-color: #89a8b2;
+  --tertiary-color: #e5e1da;
+  --textLight: #f1f0e8;
+  --textDark: black;
 }
 
 body {
@@ -40,6 +40,7 @@ body {
 .contentContainer {
   background-color: var(--tertiary-color);
   border-radius: 12px;
+  @apply shadow-xl;
 }
 
 .sidebarContainer {

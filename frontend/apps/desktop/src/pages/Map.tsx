@@ -15,7 +15,7 @@ export default function Map() {
     }, [location2]);
 
     return (
-        <div className="h-full relative">
+        <div className="h-full relative shadow-xl">
             <MapVisual setLocation1={setLocation1} setLocation2={setLocation2}/>
         </div>
     );

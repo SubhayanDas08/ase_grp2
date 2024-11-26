@@ -106,7 +106,7 @@ export default function Settings(): JSX.Element {
               type="text"
               placeholder={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
+              className="w-full rounded-md shadow-sm mainBGColour ps-1 pe-1"
             />
           </div>
           <div>
@@ -115,7 +115,7 @@ export default function Settings(): JSX.Element {
               type="text"
               placeholder={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
+              className="w-full rounded-md shadow-sm mainBGColour ps-1 pe-1"
             />
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function Settings(): JSX.Element {
             type="email"
             placeholder={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border-gray-300 rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
+            className="w-full border-gray-300 rounded-md shadow-sm mainBGColour ps-1 pe-1"
           />
         </div>
 
@@ -139,11 +139,11 @@ export default function Settings(): JSX.Element {
               type="password"
               placeholder={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm secondaryBGColour textColourLight ps-1 pe-1"
+              className="w-full border-gray-300 rounded-md shadow-sm mainBGColour ps-1 pe-1"
             />
           </div>
           <br />
-          <button className="px-4 py-2 bg-blue-600 textColourLight rounded hover:bg-blue-700">
+          <button className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 textColourLight">
             Change Password
           </button>
         </div>
@@ -152,7 +152,7 @@ export default function Settings(): JSX.Element {
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-4 tertiaryColour">Notification Preferences</h2>
           <div className="flex items-center justify-between">
-            <span className="text-xl textColourLight">Updates</span>
+            <span className="text-xl">Updates</span>
             <button
               className={`relative inline-flex items-center h-6 rounded-full w-11 ${
                 isUpdatesEnabled ? "bg-blue-500" : "bg-gray-300"
@@ -194,15 +194,15 @@ export default function Settings(): JSX.Element {
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col space-y-4 mt-4">
-          <button className="w-40 px-4 py-2 bg-blue-600 textColourLight rounded hover:bg-blue-700">
+        <div className="flex flex-col space-y-4 mt-4 textColourLight">
+          <button className="w-40 px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">
             Save Changes
           </button>
           <div className="flex space-x-4 mt-4">
-            <button className="w-40 px-4 py-2 bg-red-600 textColourLight rounded hover:bg-red-700">
+            <button className="w-40 px-4 py-2 bg-red-600 rounded hover:bg-red-700">
               Logout
             </button>
-            <button className="w-40 px-4 py-2 bg-red-600 textColourLight rounded hover:bg-red-700">
+            <button className="w-40 px-4 py-2 bg-red-600 rounded hover:bg-red-700">
               Delete Account
             </button>
           </div>
