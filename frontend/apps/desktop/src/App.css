@@ -11,7 +11,7 @@ body {
 
 .sidebarContainer {
   height: 100%;
-  background-color: rgb(44, 62, 162);
+  background-color: rgb(44, 62, 165);
 }
 
 .sidebarItems {
@@ -33,4 +33,26 @@ body {
 .sidebarIcons {
   height: 50%;
   width: 50%;
+}
+
+.boxContainerWrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 20px;
+  max-width: 650px;
+  margin: 0 auto; 
+}
+
+.boxContainer {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #4b5fa1;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
