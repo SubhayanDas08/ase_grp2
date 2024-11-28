@@ -1,9 +1,13 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useReactTable, ColumnDef, getCoreRowModel, flexRender} from '@tanstack/react-table';
+import { FiPlus, FiRotateCw } from "react-icons/fi";
 
-import { sampleData, Data } from '../data/eventsSampleData';
+import { sampleData, Data } from '../data/DataFormat';
 
 export default function Events() {
+    const [data, setData] = useState<Data[]>([]);
+    const [refreshKey, setRefreshKey] = useState(false);  // Can be any datatype, just used to trigger a refresh
+
     const columns: ColumnDef<Data>[] = [
       {
         accessorKey: 'id',
@@ -24,26 +28,33 @@ export default function Events() {
     ];
     
     const table = useReactTable({
-      data: sampleData,
+      data: data,
       columns,
       getCoreRowModel: getCoreRowModel(),
     });
 
-    ///* CORS issues with the backend API (using sample API to test for now)
     useEffect(() => {
       const fetchData = async () => {
-          fetch('https://catfact.ninja/fact')
+          fetch('http://57.153.210.131:3000/events')
           .then(response => response.json())
-          .then(data => console.log(data))
+          .then(data => setData(data))
+          .then(() => console.log("Data refresh"))
           .catch(error => console.error("Error: ", error));
       };
 
       fetchData();
-    }, []);
-    //*/
+    }, [refreshKey]);
+
+    const addEvent = () => {
+      console.log("Add event");
+    };
+
+    const refreshTable = () => {
+      setRefreshKey(!refreshKey);
+    };
 
     return(
-      <div className="relative contentContainer ps-10 textColourDark">
+      <div className="relative contentContainer ps-10 textColourDark flex flex-col bg-green-500">
           <table className='w-full'>
               <thead className='text-xl'>
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -68,6 +79,14 @@ export default function Events() {
                   ))}
               </tbody>
           </table>
+          <div className='w-full h-10 flex justify-center gap-10 mt-5 overflow-hidden'>
+              <button className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 textColourLight' onClick={addEvent}>
+                <FiPlus />
+              </button>
+              <button className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 textColourLight' onClick={refreshTable}>
+                <FiRotateCw />
+              </button>
+          </div>
       </div>
     )
 }

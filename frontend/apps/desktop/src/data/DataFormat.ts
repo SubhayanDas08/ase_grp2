@@ -5,6 +5,7 @@ export type Data = {
     end_date: string
 }
 
+// Sample data
 export const sampleData: Data[] = [
     {
         id: 1,
