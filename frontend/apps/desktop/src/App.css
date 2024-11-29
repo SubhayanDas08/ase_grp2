@@ -1,17 +1,53 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --main-colour: #b3c8cf;
+  --secondary-color: #89a8b2;
+  --tertiary-color: #e5e1da;
+  --textLight: #f1f0e8;
+  --textDark: black;
+}
+
 body {
   overflow: hidden;
   overscroll-behavior: none;
-  font-family: "Roboto", sans-serif;
-  background-color: rgb(34, 46, 112);
+  font-family: "Poppins", sans-serif;
+  background-color: var(--main-colour);
+}
+
+.mainBGColour {
+  background-color: var(--main-colour);
+}
+
+.secondaryBGColour {
+  background-color: var(--secondary-color);
+}
+
+.tertiaryBGColour {
+  background-color: var(--tertiary-color);
+}
+
+.textColourDark {
+  color: var(--textDark);
+}
+
+.textColourLight {
+  color: var(--textLight);
+}
+
+.contentContainer {
+  background-color: var(--tertiary-color);
+  border-radius: 12px;
+  @apply shadow-xl;
 }
 
 .sidebarContainer {
   height: 100%;
-  background-color: rgb(44, 62, 165);
+  background-color: var(--secondary-color);
 }
 
 .sidebarItems {
@@ -22,15 +58,41 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
-  color: rgb(96, 197, 216);
+  color: var(--textDark);
 }
 
 .sidebarItems:hover {
-  color: rgb(245, 195, 82);
+  color: var(--textLight);
   cursor: pointer;
 }
 
 .sidebarIcons {
   height: 50%;
   width: 50%;
+}
+
+.boxContainerWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  overflow: auto;
+}
+
+.boxContainer {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--main-colour);
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.boxContainer:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
 }
