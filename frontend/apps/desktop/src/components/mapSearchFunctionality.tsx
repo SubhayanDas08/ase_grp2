@@ -33,7 +33,7 @@ export default function MapSearchFunctionality({ provider, searchLabel, setLocat
             });
         });
 
-        // Cleanup: Remove control on unmount
+        // Remove control on unmount
         return () => {
             map.removeControl(searchControl);
         };
