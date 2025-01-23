@@ -18,9 +18,9 @@ export default function Sidebar() {
                     <FiMapPin className="sidebarIcons" />
                     <div className="sidebarText">Map</div>
                 </Link>
-                <Link to="/server" className="sidebarItems">
+                <Link to="/events" className="sidebarItems">
                     <FiServer className="sidebarIcons" />
-                    <div className="sidebarText">Server</div>
+                    <div className="sidebarText">Events</div>
                 </Link>
                 <Link to="/settings" className="sidebarItems">
                     <FiSettings className="sidebarIcons" />
