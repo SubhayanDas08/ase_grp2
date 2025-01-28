@@ -53,6 +53,11 @@ const Signup = () => {
         <Text style={styles.googlesignuptext}>Sign Up with Google</Text>
       </TouchableOpacity>
       <Text style={styles.already}>Already have an account? <Text style={styles.logintxt}>Log In</Text></Text>
+  
+   <Text>hey</Text>
+   <Text>hey</Text>
+  
+
     </View>
   );
 };
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8FF",
     borderRadius: 15,
     borderStyle: "solid",
-    borderWidth: 2,
+    borderWidth: 1,
     width: 100,
     height: 39,
   },
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginLeft: 70,
     borderStyle: "solid",
-    borderWidth: 2,
+    borderWidth: 1,
     width: 100,
     height: 39,
   },
@@ -104,7 +109,7 @@ const styles = StyleSheet.create({
     marginLeft: 60,
     borderStyle: "solid",
     borderRadius: 15,
-    borderWidth: 2,
+    borderWidth: 1,
     width: 280,
     height: 39,
     marginTop: 10,
@@ -113,7 +118,7 @@ const styles = StyleSheet.create({
     marginLeft: 60,
     borderStyle: "solid",
     borderRadius: 15,
-    borderWidth: 2,
+    borderWidth: 1,
     width: 280,
     height: 39,
     marginTop: 10,
@@ -124,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8FF",
     borderRadius: 15,
     borderStyle: "solid",
-    borderWidth: 2,
+    borderWidth: 1,
     paddingHorizontal: 10,
   },
   passwordContainer: {
@@ -164,7 +169,7 @@ const styles = StyleSheet.create({
     marginLeft: 60,
     marginTop: 24,
     borderStyle: "solid",
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 15,
     height: 40,
   },
@@ -176,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   already: {
-    marginTop: 100,
+    marginTop: 20,
     marginLeft: 90,
     fontSize:16
   },
