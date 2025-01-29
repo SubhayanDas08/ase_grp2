@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Signup from './Components/Signup';
+import Login from './Components/Login';
 
 export default function App() {
  
@@ -11,13 +12,20 @@ export default function App() {
   return (
     <View style={styles.container}>
      
-     <NavigationContainer initialRouteName="signup">
+     <NavigationContainer initialRouteName="Login">
        <Stack.Navigator>
        <Stack.Screen
           name="Signup"
           component={Signup}
           options={{
-            headerShown: true, // Hide the header for Signup
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+         <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{
+            headerShown: false, // Hide the header for Signup
           }}
         />
        </Stack.Navigator>

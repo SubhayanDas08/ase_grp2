@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons"; // For Eye icon
 
-const Signup = () => {
+const Signup = ({navigation}) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
@@ -17,7 +17,7 @@ const Signup = () => {
 
       <Text style={styles.text1}>Create an Account</Text>
       <Text style={styles.text2}>Welcome!</Text>
-      <Text style={styles.text3}>Please login or signup to our page!</Text>
+      <Text style={styles.text3}>Please login or signup to our page</Text>
       <View style={styles.nameform}>
         <TextInput style={styles.fname} placeholder="firstname" />
         <TextInput style={styles.lname} placeholder="lastname" />
@@ -52,10 +52,7 @@ const Signup = () => {
         />
         <Text style={styles.googlesignuptext}>Sign Up with Google</Text>
       </TouchableOpacity>
-      <Text style={styles.already}>Already have an account? <Text style={styles.logintxt}>Log In</Text></Text>
-  
-   <Text>hey</Text>
-   <Text>hey</Text>
+      <Text style={styles.already}>Already have an account?<TouchableOpacity style={styles.btnlog} onPress={()=>navigation.navigate("Login")}><Text style={styles.logintxt}>Log In</Text></TouchableOpacity></Text>
   
 
     </View>
@@ -181,12 +178,16 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   already: {
-    marginTop: 20,
+    marginTop: 13,
     marginLeft: 90,
     fontSize:16
   },
   logintxt:{
-    color:"#009688"
+    color:"#009688",
+  },
+  btnlog:{
+marginTop:8,
+marginLeft:10
   }
 });
 
