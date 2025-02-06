@@ -7,9 +7,6 @@ const waqiApiToken = import.meta.env.VITE_WAQI_API_TOKEN;
 
 const city="Dublin";
 
-const [aqi, setAqi] = useState(null);
-
-
 interface Location {
   latitude: number;
   longitude: number;
@@ -23,9 +20,10 @@ export default function Map() {
     label: "Dublin, Ireland",
   });
 
-  const [waqiData, setWaqiData] = useState([]);
+  const [waqiData, setWaqiData] = useState({});
 
   useEffect(() => {
+
     info('running useEffect' + waqiApiToken);
     let url = `https://api.waqi.info/feed/@13402/?token=` + waqiApiToken;
     // fetch(url)
@@ -48,6 +46,7 @@ export default function Map() {
   }, [location]);
 
   useEffect(()=>{
+    const [aqi, setAqi] = useState(null);
     const fetchAQICity=async()=>{
       try {
         const response=await fetch(`https://api.waqi.info/feed/${city}/?token=554caaa45869a6f123fb8fa1e0dd48a854f0889a`);

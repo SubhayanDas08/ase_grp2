@@ -30,3 +30,6 @@ export default defineConfig(async () => ({
     },
   },
 }));
+
+console.log(host);
+
