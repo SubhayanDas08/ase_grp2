@@ -5,6 +5,11 @@ import MapVisual from "../components/mapVisual";
 
 const waqiApiToken = import.meta.env.VITE_WAQI_API_TOKEN;
 
+const city="Dublin";
+
+const [aqi, setAqi] = useState(null);
+
+
 interface Location {
   latitude: number;
   longitude: number;
@@ -42,6 +47,29 @@ export default function Map() {
     console.log(location);
   }, [location]);
 
+  useEffect(()=>{
+    const fetchAQICity=async()=>{
+      try {
+        const response=await fetch(`https://api.waqi.info/feed/${city}/?token=554caaa45869a6f123fb8fa1e0dd48a854f0889a`);
+        if(!response.ok){
+          throw new Error(`Failed to fetch AQI data of ${city}`);
+        }
+        const aqiData=await response.json();
+
+        if(aqiData.status==="ok"){
+          setAqi(aqiData.data.aqi);
+        }
+        else{
+          throw new Error("Bad response from AQI API");
+        }
+      } catch (error) {
+        return error;
+      }
+    }
+    fetchAQICity();
+  },[]);
+
+  
   return (
     <div className="h-full relative shadow-xl">
       <MapVisual defaultLocation={location} setLocation={setLocation} />
