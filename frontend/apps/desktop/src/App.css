@@ -10,6 +10,48 @@
   --tertiary-color: #e5e1da;
   --textLight: #f1f0e8;
   --textDark: black;
+
+  --textLight: white;
+  --textDark: black; 
+  --cornerRadius: 30px;
+  --primaryColor1: #029AA5;
+  --primaryColor2: #04B9C6; 
+  --secondaryColor: #70706F;
+  --background: white;
+  --formText: #70706F50;
+  --margin: 24px; 
+  --gradient1: #E9E9E9; 
+  --gradient2: #D4D4D4;
+  --error: #C60452;
+  --warning: #FCFC18; 
+  --success: #12DE31;
+  --route1: red; 
+  --route2: blue;
+  --route3: black; 
+}
+
+.loginRegistrationForm {
+  height: 46px;
+  width: 70%;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 3px 4px 5px #70706F50;
+}
+
+.loginRegistrationButton {
+  height: 46px;
+  width: 70%;
+  background-color: #029AA5;
+  border-radius: 20px;
+  box-shadow: 3px 4px 5px #70706F50;
+}
+
+.loginGoogleRegistrationButton {
+  height: 46px;
+  width: 60%;
+  background-color: #ffffff;
+  border-radius: 20px;
+  /*border: 2px solid #70706F50;*/
 }
 
 body {
