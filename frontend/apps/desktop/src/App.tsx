@@ -4,6 +4,7 @@ import Home from "./pages/Home.tsx";
 import Map from "./pages/Map.tsx";
 import Events from "./pages/Events.tsx";
 import Settings from "./pages/Settings.tsx";
+import Login from "./pages/Login.tsx";
 
 import Sidebar from "./components/sidebar.tsx";
 import "./App.css";
@@ -11,7 +12,8 @@ import "./App.css";
 export default function App() {
     return (
         <Router>
-            <div className="flex h-screen">
+            <div className="flex h-screen"> 
+                {/*}
                 <div className="h-full w-24 fixed">
                     <Sidebar />
                 </div>
@@ -23,6 +25,13 @@ export default function App() {
                         <Route path="/settings" element={<Settings />} />
                     </Routes>
                 </div>
+                */}
+                <div className="h-full w-full">  
+                    <Routes> 
+                        <Route path="/" element={<Login />} />
+                    </Routes> 
+                </div>
+
             </div>
         </Router>
     );
