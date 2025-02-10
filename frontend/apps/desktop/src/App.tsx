@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import "leaflet/dist/leaflet.css";
 import Home from "./pages/Home.tsx";
-import Map from "./pages/Map.tsx";
+import Map from "./pages/WeatherMap2.tsx";
 import Events from "./pages/Events.tsx";
 import Settings from "./pages/Settings.tsx";
 import Login from "./pages/Login.tsx";
