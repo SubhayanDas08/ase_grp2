@@ -5,9 +5,9 @@ import L, { LatLngTuple } from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-import { getStations } from '../api_handler/get-stations.tsx';
-import { getStationAqi } from '../api_handler/station-aqi.tsx';
-import { getWeatherDetails } from '../api_handler/coordinate-weather-data.tsx';
+import { getStations } from '../api_handler/getStations.tsx';
+import { getStationAqi } from '../api_handler/getStationAqi.tsx';
+import { getWeatherDetails } from '../api_handler/getWeatherDetails.tsx';
 
 const getColorByAqi = (aqi: number) => {
     if (aqi <= 25) return "darkgreen";

@@ -4,6 +4,8 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "skipLibCheck": true,
 
     /* Bundler mode */
