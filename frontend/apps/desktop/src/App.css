@@ -117,6 +117,16 @@ body {
   padding-left: 20px;
 }
 
+.nameFormInput {
+  height: 46px;
+  width: 34.5%;
+  background-color: var(--background);
+  border-radius: var(--cornerRadius);
+  box-shadow: 3px 4px 5px var(--formText);
+  color: var(--secondaryColor);
+  padding-left: 20px;
+}
+
 .loginRegistrationButton {
   height: 46px;
   width: 70%;
@@ -129,6 +139,18 @@ body {
   scale: 1.015;
 }
 
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #0087ca;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
 .loginGoogleRegistrationButton {
   height: 46px;
   width: 60%;

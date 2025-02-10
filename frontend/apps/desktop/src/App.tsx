@@ -5,6 +5,7 @@ import Map from "./pages/Map.tsx";
 import Events from "./pages/Events.tsx";
 import Settings from "./pages/Settings.tsx";
 import Login from "./pages/Login.tsx";
+import CreateAccount from "./pages/CreateAccount.tsx";
 
 import Sidebar from "./components/sidebar.tsx";
 import "./App.css";
@@ -29,6 +30,7 @@ export default function App() {
                 <div className="h-full w-full">  
                     <Routes> 
                         <Route path="/" element={<Login />} />
+                        <Route path="/create_account" element={<CreateAccount />} />
                     </Routes> 
                 </div>
 

@@ -1,5 +1,6 @@
 import Logo from "../assets/Logo.svg";
 import GoogleLogo from "../assets/GoogleLogo.svg";
+import { Link } from "react-router-dom";
 
 export default function Login() {
     return (
@@ -47,9 +48,9 @@ export default function Login() {
                             <span className="secondaryColor">
                                 Don't have an account? 
                             </span>
-                            <span className="primaryColor1 ml-1">
+                            <Link to="/create_account" className="primaryColor1 ml-1 hover:underline">
                                 Sign up
-                            </span>
+                            </Link>
                         </div>
                     </div>
                 </div>
