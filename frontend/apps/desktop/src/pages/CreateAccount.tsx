@@ -1,5 +1,6 @@
 import Logo from "../assets/Logo.svg";
 import GoogleLogo from "../assets/GoogleLogo.svg";
+import FullLogo from "../assets/FullLogo.svg";
 import { useState, ChangeEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -33,8 +34,11 @@ export default function CreateAccount() {
 
     return (
         <div className="flex h-full w-full">
-            <div className="flex justify-center h-full w-1/2">
-                <div  className="flex flex-col justify-center h-full w-2/3">
+            <div className="flex flex-col justify-center h-full lg:w-1/2 w-full">
+                <div  className="flex flex-col justify-center h-full w-full">
+                    <div className="flex justify-end h-16 w-full">
+                        <img src={FullLogo} alt="FullLogo" className="lg:h-0 lg:w-0 h-full w-full" />
+                    </div>
                     <div className="h-3/4">
                         <div className="text-center h-1/5">
                             <div className="titleText primaryColor1">
@@ -46,7 +50,7 @@ export default function CreateAccount() {
                         </div>
                         <div className="text-center h-1/2"> 
                             <div className="flex justify-center items-center h-1/5">
-                                <div className="flex justify-center gap-2"> 
+                                <div className="flex justify-between gap-4" style={{width: "70%"}}> 
                                     <input type="text" name="firstName" placeholder="First Name" className="nameFormInput" onChange={handleFormData}/>
                                     <input type="text" name="lastName" placeholder="Last Name" className="nameFormInput" value={formData.lastName} onChange={handleFormData}/>
                                 </div>
@@ -95,8 +99,8 @@ export default function CreateAccount() {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col h-full w-1/2">
-                <div className="flex justify-end h-2/3 w-full">
+            <div className="flex flex-col h-full lg:w-1/2 w-0">
+                <div className="flex justify-end w-full">
                     <img src={Logo} alt="Logo" />
                 </div>
             </div>

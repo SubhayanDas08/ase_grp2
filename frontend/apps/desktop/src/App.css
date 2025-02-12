@@ -45,6 +45,7 @@ body {
   font-family: "Inter", sans-serif;
   background-color: var(--main-colour);
   font-size: var(--regularTextSize);
+  min-width: 300px;
 }
 
 /* Root variable classes */
@@ -119,7 +120,7 @@ body {
 
 .nameFormInput {
   height: 46px;
-  width: 34.5%;
+  width: 50%;
   background-color: var(--background);
   border-radius: var(--cornerRadius);
   box-shadow: 3px 4px 5px var(--formText);
