@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node build/server.js",
-    "dev": "ts-node-dev src/server.ts",
+    "dev": "ts-node-dev server.ts",
     "build": "tsc",
     "lint": "eslint ."
   },
@@ -17,13 +17,17 @@
     "axios": "^1.7.8",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
+    "ioredis": "^5.4.2",
     "pg": "^8.13.1",
     "redis": "^4.7.0"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
+    "@types/cors": "^2.8.17",
+    "@types/crypto-js": "^4.2.2",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "@types/pg": "^8.11.10",
@@ -33,6 +37,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2"
   }
 }
