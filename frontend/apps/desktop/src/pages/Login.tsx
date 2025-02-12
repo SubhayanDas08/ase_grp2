@@ -1,8 +1,29 @@
 import Logo from "../assets/Logo.svg";
 import GoogleLogo from "../assets/GoogleLogo.svg";
+import { useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+
+interface FormDataInterface {
+    email: string,
+    password: string
+}
 
 export default function Login() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState<FormDataInterface>({
+        email: "",
+        password: "",
+    });
+
+    const handleFormData = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevState) => ({
+          ...prevState,
+          [name]: value,
+        }));
+    };
+
     return (
         <div className="flex h-full w-full">
             <div className="flex justify-center h-full w-1/2">
@@ -18,13 +39,16 @@ export default function Login() {
                         </div>
                         <div className="text-center h-1/2">
                             <div className="flex justify-center items-center h-1/3">
-                                <input placeholder="Email" className="flex items-center loginRegistrationFormInput"/>
+                                <input type="text" name="email" placeholder="Email" className="flex items-center loginRegistrationFormInput" value={formData.email} onChange={handleFormData}/>
                             </div>
                             <div className="flex justify-center items-center h-1/3">
-                                <input placeholder="Password" className="flex items-center loginRegistrationFormInput"/>
+                                <input name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="loginRegistrationFormInput ms-6" value={formData.password} onChange={handleFormData}/>
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="-translate-x-10">
+                                    {showPassword ? (<EyeOff className="w-6 h-6 secondaryColor" /> ) : (<Eye className="w-6 h-6 secondaryColor" />)}
+                                </button>
                             </div>
                             <div className="flex justify-center items-center h-1/3 ">
-                                <button className="loginRegistrationButton">
+                                <button className="loginRegistrationButton"  onClick={() => console.log(formData)}>
                                     Log In
                                 </button>
                             </div> 
