@@ -33,12 +33,10 @@ export default function CreateAccount() {
                                 <input placeholder="Phone Number" className="flex items-center loginRegistrationFormInput"/>
                             </div>
                             <div className="flex justify-center items-center h-1/5">
-                                <div className="relative w-full flex justify-center">
-                                    <input type={showPassword ? "text" : "password"} placeholder="Password" className="loginRegistrationFormInput pr-10" />
-                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-10 top-1/2 transform -translate-y-1/2">
-                                        {showPassword ? (<EyeOff className="w-6 h-6 secondaryColor" /> ) : (<Eye className="w-6 h-6 secondaryColor" />)}
-                                    </button>
-                                </div>
+                                <input type={showPassword ? "text" : "password"} placeholder="Password" className="loginRegistrationFormInput ms-6"/>
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="-translate-x-10">
+                                    {showPassword ? (<EyeOff className="w-6 h-6 secondaryColor" /> ) : (<Eye className="w-6 h-6 secondaryColor" />)}
+                                </button>
                             </div>
                             <div className="flex justify-center items-center h-1/5">
                                 <button className="loginRegistrationButton">
