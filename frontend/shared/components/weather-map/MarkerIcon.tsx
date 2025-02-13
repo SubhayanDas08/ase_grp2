@@ -11,7 +11,7 @@ export default function MarkerIcon({station, weatherDatatype}:MarkerIconProps){
   const weatherData = station.weatherData || null;
           
   if (!weatherData) {
-      console.warn(`⚠️ No weather data found for station: ${station.id}`);
+      console.warn(`No weather data found for station: ${station.id}`);
   }
 
   const value = weatherDatatype === "aqi" ? station.aqi : station.weatherData?.temp_c || "N/A";
