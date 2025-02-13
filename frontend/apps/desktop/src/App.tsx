@@ -34,6 +34,7 @@ export default function App() {
                                 <Route path="/map" element={<Map />} />
                                 <Route path="/events" element={<Events />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
+                                
                             </Routes>
                         </div>
                     </>
