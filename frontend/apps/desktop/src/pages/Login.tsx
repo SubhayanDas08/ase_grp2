@@ -5,12 +5,16 @@ import { useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
+interface LoginProps {
+    setUserAuthenticated: (userAuthenticated: any) => void;
+}
+
 interface FormDataInterface {
     email: string,
     password: string
 }
 
-export default function Login() {
+export default function Login({ setUserAuthenticated }: LoginProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState<FormDataInterface>({
         email: "",
@@ -30,6 +34,7 @@ export default function Login() {
             if(value === "") console.log(key + " is empty")
             else console.log(`${key}: ${value}`);
         }
+        setUserAuthenticated(true);
     }
 
     return (
