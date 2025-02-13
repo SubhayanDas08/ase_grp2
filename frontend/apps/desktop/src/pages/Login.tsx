@@ -25,6 +25,13 @@ export default function Login() {
         }));
     };
 
+    const checkRequiredFormFields = () => {
+        for (const [key, value] of Object.entries(formData)) {
+            if(value === "") console.log(key + " is empty")
+            else console.log(`${key}: ${value}`);
+        }
+    }
+
     return (
         <div className="flex h-full w-full overflow-y-auto">
             <div className="flex flex-col justify-center h-full lg:w-1/2 w-full" style={{minHeight: "800px"}}>
@@ -51,7 +58,7 @@ export default function Login() {
                             </button>
                         </div>
                         <div className="flex justify-center items-center h-1/3 ">
-                            <button className="loginRegistrationButton"  onClick={() => console.log(formData)}>
+                            <button className="loginRegistrationButton"  onClick={() => checkRequiredFormFields()}>
                                 Log In
                             </button>
                         </div> 
