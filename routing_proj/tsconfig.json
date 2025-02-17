@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "strict": true,
+      "module": "ESNext",
+      "target": "ES6",
+      "jsx": "react-jsx",
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true
+    }
+  }

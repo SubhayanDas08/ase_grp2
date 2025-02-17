@@ -31,7 +31,7 @@ export const pool = new Pool({
   port: Number(process.env.PG_PORT) || 5432,
   database: process.env.PG_DATABASE || 'postgres',
   user: process.env.PG_USER || 'postgres',
-  password: process.env.PG_PASSWORD || 'postgres',
+  password: process.env.PG_PASSWORD || 'preetish02',
   // idleTimeoutMillis: 30000, // Closes idle clients after 30 sec
   // connectionTimeoutMillis: 5000, // Timeout for new connections (5 sec)
 });
