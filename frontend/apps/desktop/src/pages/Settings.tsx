@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+interface SettingsProps {
+  setUserAuthenticated: (userAuthenticated: any) => void;
+}
 
 interface Device {
   id: string;
@@ -7,7 +12,7 @@ interface Device {
   status: string;
 }
 
-export default function Settings(): JSX.Element {
+export default function Settings({ setUserAuthenticated }: SettingsProps): JSX.Element {
   const [email, setEmail] = useState<string>("sample.email@gmail.com");
   const [firstName, setFirstName] = useState<string>("Enter your firstname");
   const [lastName, setLastName] = useState<string>("Enter your lastname");
@@ -52,6 +57,13 @@ export default function Settings(): JSX.Element {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setUserAuthenticated(false);
+    navigate("/");
   };
 
   return (
@@ -199,7 +211,7 @@ export default function Settings(): JSX.Element {
             Save Changes
           </button>
           <div className="flex space-x-4 mt-4">
-            <button className="w-40 px-4 py-2 bg-red-600 rounded hover:bg-red-700">
+            <button className="w-40 px-4 py-2 bg-red-600 rounded hover:bg-red-700" onClick={() => handleLogout()}>
               Logout
             </button>
             <button className="w-40 px-4 py-2 bg-red-600 rounded hover:bg-red-700">

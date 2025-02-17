@@ -1,23 +1,26 @@
 import Logo from "../assets/Logo.svg";
-import FullLogo from "../assets/FullLogo.svg";
 import GoogleLogo from "../assets/GoogleLogo.svg";
+import FullLogo from "../assets/FullLogo.svg";
 import { useState, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-
-interface LoginProps {
-    setUserAuthenticated: (userAuthenticated: any) => void;
-}
+import { Link } from "react-router-dom";
 
 interface FormDataInterface {
+    firstName: string,
+    lastName: string,
     email: string,
+    phoneNb: string,
     password: string
 }
 
-export default function Login({ setUserAuthenticated }: LoginProps) {
+export default function CreateAccount() {
     const [showPassword, setShowPassword] = useState(false);
+
     const [formData, setFormData] = useState<FormDataInterface>({
+        firstName: "",
+        lastName: "",
         email: "",
+        phoneNb: "",
         password: "",
     });
 
@@ -34,7 +37,6 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
             if(value === "") console.log(key + " is empty")
             else console.log(`${key}: ${value}`);
         }
-        setUserAuthenticated(true);
     }
 
     return (
@@ -43,36 +45,45 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
                 <div className="flex justify-end h-16 w-full">
                     <img src={FullLogo} alt="FullLogo" className="lg:h-0 lg:w-0 h-full w-full" />
                 </div>
-                <div className="h-2/3">
+                <div className="h-3/4">
                     <div className="text-center h-1/5">
                         <div className="titleText primaryColor1">
-                            Log In to your account
+                            Create an Account
                         </div>
                         <div className= "miniText secondaryColor">
-                            Welcome back! Please enter your details.
+                            Welcome! Please login or sign up to our page
                         </div>
                     </div>
-                    <div className="text-center h-1/2">
-                        <div className="flex justify-center items-center h-1/3">
+                    <div className="text-center h-1/2"> 
+                        <div className="flex justify-center items-center h-1/5">
+                            <div className="flex justify-between gap-4" style={{width: "70%"}}> 
+                                <input type="text" name="firstName" placeholder="First Name" className="nameFormInput" onChange={handleFormData}/>
+                                <input type="text" name="lastName" placeholder="Last Name" className="nameFormInput" value={formData.lastName} onChange={handleFormData}/>
+                            </div>
+                        </div>
+                        <div className="flex justify-center items-center h-1/5">
                             <input type="text" name="email" placeholder="Email" className="flex items-center loginRegistrationFormInput" value={formData.email} onChange={handleFormData}/>
                         </div>
-                        <div className="flex justify-center items-center h-1/3">
+                        <div className="flex justify-center items-center h-1/5">
+                            <input type="text" name="phoneNb" placeholder="Phone Number" className="flex items-center loginRegistrationFormInput " value={formData.phoneNb} onChange={handleFormData}/>
+                        </div>
+                        <div className="flex justify-center items-center h-1/5">
                             <input name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="loginRegistrationFormInput ms-6" value={formData.password} onChange={handleFormData}/>
                             <button type="button" onClick={() => setShowPassword(!showPassword)} className="-translate-x-10">
                                 {showPassword ? (<EyeOff className="w-6 h-6 secondaryColor" /> ) : (<Eye className="w-6 h-6 secondaryColor" />)}
                             </button>
                         </div>
-                        <div className="flex justify-center items-center h-1/3 ">
-                            <button className="loginRegistrationButton"  onClick={() => checkRequiredFormFields()}>
-                                Log In
+                        <div className="flex justify-center items-center h-1/5">
+                            <button className="loginRegistrationButton" onClick={() => checkRequiredFormFields()}>
+                                Sign up
                             </button>
                         </div> 
                     </div>
-                        <div className="text-center h-1/4">
-                        <div className="h-1/3 flex justify-center items-center secondaryColor">
+                    <div className="text-center h-1/4">
+                        <div className="h-2/5 flex justify-center items-center secondaryColor">
                             Or
                         </div>
-                        <div className="h-2/3 flex justify-center items-center">
+                        <div className="h-3/5 flex justify-center items-center">
                             <button className="loginGoogleRegistrationButton flex flex-row justify-center items-center">
                                 <div>
                                     <img src={GoogleLogo} alt="GoogleLogo" />
@@ -85,10 +96,10 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
                     </div>
                     <div className="text-center h-1/6 miniText">
                         <span className="secondaryColor">
-                            Don't have an account? 
+                            Already have an account? 
                         </span>
-                        <Link to="/create_account" className="primaryColor1 ml-1 hover:underline">
-                            Sign up
+                        <Link to="/" className="primaryColor1 ml-1 hover:underline">
+                            Log In
                         </Link>
                     </div>
                 </div>
