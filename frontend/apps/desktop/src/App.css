@@ -163,6 +163,37 @@ body {
   scale: 1.015;
 }
 
+.f-border{
+  border:none ; 
+  background-color: white;
+  border-radius: 50%;
+  height:32px; 
+  width:32px;
+  padding-left: 7px;
+  padding-top: 7px;
+}
+
+.sidebarIcons{
+  color: var(--primaryColor2);
+}
+
+.sidebarItems{
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebarText{
+  font-size:14px;
+}
+
+#sidebarID{
+  width:150px;
+}
+
+#sideBarMod{
+  margin-left: 20px;
+}
+
 /* Old classes */
 /*
 .mainBGColour {
