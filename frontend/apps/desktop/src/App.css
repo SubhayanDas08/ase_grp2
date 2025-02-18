@@ -186,12 +186,8 @@ body {
   font-size:14px;
 }
 
-#sidebarID{
-  width:150px;
-}
-
-#sideBarMod{
-  margin-left: 20px;
+.sidebarContainer{
+  border-bottom: 1px solid white;
 }
 
 /* Old classes */
