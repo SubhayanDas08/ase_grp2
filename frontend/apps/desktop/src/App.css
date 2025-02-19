@@ -163,6 +163,15 @@ body {
   scale: 1.015;
 }
 
+.editHomeButton {
+  height: 46px;
+  width: 30%;
+  background-color: var(--primaryColor1);
+  border-radius: var(--cornerRadius);
+  box-shadow: 3px 4px 5px var(--formText);
+  color: var(--textLight);
+}
+
 /* Old classes */
 /*
 .mainBGColour {
