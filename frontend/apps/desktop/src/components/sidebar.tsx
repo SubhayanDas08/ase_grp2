@@ -5,41 +5,41 @@ import { RiTrafficLightFill } from "react-icons/ri";
 
 export default function Sidebar() {
     return(
-        <div className="sidebarContainer primaryColor2BG textLight h-full w-full ">
+        <div className="sidebarContainer primaryColor1BG textLight h-full w-full ">
             <div className="h-24 flex justify-center items-center border-b border-white">
                 <img src={sidebarLogo} alt="Logo" className="h-1/2"/>
                 <div className="sidebarText ml-2">CityManager</div>
             </div>
             <div className="h-full flex flex-col items-start gap-10 pt-5 pl-9">
-                <Link to="/" className="sidebarItems flex items-center">
+                <Link to="/"  id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><FiHome className="sidebarIcons " /></div>
                     <div className="sidebarText ml-2">Home</div>
                 </Link>
-                <Link to="/routes" className="sidebarItems flex items-center">
+                <Link to="/routing" id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><FiMap className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Routes</div>
                 </Link>
-                <Link to="/events" className="sidebarItems flex items-center">
+                <Link to="/events" id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><FiList className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Events</div>
                 </Link>
-                <Link to="/traffic" className="sidebarItems flex items-center">
+                <Link to="/traffic" id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><RiTrafficLightFill className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Traffic</div>
                 </Link>
-                <Link to="/waste" className="sidebarItems flex items-center">
+                <Link to="/waste" id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><FiTrash2 className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Waste</div>
                 </Link>
-                <Link to="/weather" className="sidebarItems flex items-center">
+                <Link to="/weather" id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><FiCloudDrizzle className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Weather</div>
                 </Link>
-                <Link to="/fleetsize" className="sidebarItems flex items-center">
+                <Link to="/fleetsize" id = "one" className="sidebarItems flex items-center">
                     <div className = "f-border"><FiTruck className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Fleet Size</div>
                 </Link>
-                <Link to="/settings" className="sidebarItems flex items-center pt-5">
+                <Link to="/settings" id = "one" className="sidebarItems flex items-center mt-5">
                     <div className = "f-border"><FiSettings className="sidebarIcons" /></div>
                     <div className="sidebarText ml-2">Settings</div>
                 </Link>

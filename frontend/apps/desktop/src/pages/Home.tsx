@@ -53,7 +53,7 @@ export default function Home() {
   };
 
   return (
-    <div className="contentContainer textColourDark p-6">
+    <div className="contentContainer textColourDark p-6 ml-20">
       <div className="mx-auto">
         <TextField
           id="outlined-basic"

@@ -6,6 +6,7 @@ import Events from "./pages/Events.tsx";
 import Settings from "./pages/Settings.tsx";
 import Login from "./pages/Login.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
+import Routing from "./pages/Routing.tsx";
 
 import Sidebar from "./components/sidebar.tsx";
 import "./App.css";
@@ -33,6 +34,7 @@ export default function App() {
                                 <Route path="/" element={<Home />} />
                                 <Route path="/map" element={<Map />} />
                                 <Route path="/events" element={<Events />} />
+                                <Route path="/routing" element={<Routing />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
                                 
                             </Routes>

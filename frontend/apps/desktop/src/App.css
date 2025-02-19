@@ -166,15 +166,16 @@ body {
 .f-border{
   border:none ; 
   background-color: white;
+  font-size: 20px;
   border-radius: 50%;
-  height:32px; 
-  width:32px;
-  padding-left: 7px;
-  padding-top: 7px;
+  height:35px; 
+  width:35px;
+  padding-left: 8px;
+  padding-top: 8px;
 }
 
 .sidebarIcons{
-  color: var(--primaryColor2);
+  color: var(--primaryColor1);
 }
 
 .sidebarItems{
@@ -188,6 +189,13 @@ body {
 
 .sidebarContainer{
   border-bottom: 1px solid white;
+}
+
+#one:hover{
+  border:none;
+  border-radius: 25px;
+  width: 120px;
+  background-color: var(--primaryColor2);
 }
 
 /* Old classes */
