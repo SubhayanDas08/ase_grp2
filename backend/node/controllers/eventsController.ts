@@ -1,20 +1,25 @@
 import { Request, Response } from 'express'
 import redisClient from '../utils/redis'
 import {pool} from '../server'
+import { error } from 'console';
 
 // Create a new event
 export const createEvent = async (req: Request, res: Response): Promise<void> => {
-  const { name, start_date, end_date } = req.body
+  const { event_name, event_desc, start_date, start_time, event_location, end_date } = req.body;
+
+  if(!event_name || !event_desc || !start_date || !event_location){
+    res.status(400).json({error:"Event time or event description or start date or event location is missing"});
+  }
 
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     const insertEventQuery = `
-      INSERT INTO public.events (name, start_date, end_date)
-      VALUES ($1, $2, $3)
-      RETURNING id, name, start_date, end_date
+      INSERT INTO public.events (event_name, event_desc, start_date, start_time, event_location, end_date)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING * ;
     `
-    const result = await client.query(insertEventQuery, [name, start_date, end_date])
+    const result = await client.query(insertEventQuery, [event_name, event_desc, start_date, start_time, event_location, end_date])
     const newEvent = result.rows[0]
 
     // Cache the new event in Redis
