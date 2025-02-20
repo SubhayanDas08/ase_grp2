@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { saveLocationToDatabase, getLocationData } from '../services/databaseService';
 import { sendToFlask, fetchFromFlask } from '../services/flaskService';
-import { aesEncrypt, aesDecrypt } from '../Interceptors/aesEncryption'; // Check correct import path
+import { aesEncrypt, aesDecrypt } from '../interceptors/aesEncryption'; // Check correct import path
 
 // Receive encrypted location data from frontend
 export const receiveLocationData = async (req: Request, res: Response): Promise<any> => {
