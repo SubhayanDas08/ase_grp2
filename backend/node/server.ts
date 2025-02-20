@@ -4,12 +4,13 @@ import { Pool } from 'pg';
 import locationRoutes from './routes/locationRoutes';
 import eventsRoutes from './routes/eventRoutes';
 import userRoutes from './routes/userRoutes';
+import weatherRoutes from "./routes/weatherRoutes";
 import dotenv from 'dotenv';
 import path from 'path';
 
 // Load environment variables
 const envPath = path.resolve(__dirname, '.env');
-console.log("Loading .env from:", envPath);
+// console.log("Loading .env from:", envPath);
 
 dotenv.config({ path: envPath });
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use('/locations', locationRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
+app.use('/weather', weatherRoutes);
 
 // PostgreSQL connection pool
 export const pool = new Pool({
