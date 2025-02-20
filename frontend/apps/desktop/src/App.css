@@ -274,9 +274,19 @@ margin-left:10px;
   transition: transform 0.2s ease-in-out;
 }
 
-.minus-button:hover {
+.minus-button {
   transform: scale(1.2);
-  background-color: red;
+  background-color: grey;
+}
+
+.circlecontainer{
+  background-color: var(--gradient2);
+  color:black;
+  border-radius:50%;
+  font-size:30px;
+}
+.map_container{
+  
 }
 
 
