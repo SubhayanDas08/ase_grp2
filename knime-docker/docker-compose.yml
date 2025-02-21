@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  knime:
+    image: openkbs/knime-docker
+    container_name: knime-analytics
+    ports:
+      - "5901:5901"  # VNC Server Port (for GUI access)
+      - "6901:6901"  # HTTP access to VNC
+    environment:
+      - USER=developer
+      - PASSWORD=knime
+      - VNC_PW=knime
+    volumes:
+      - knime-data:/home/developer/knime-workspace
+
+volumes:
+  knime-data:
+
