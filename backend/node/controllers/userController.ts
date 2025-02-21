@@ -3,18 +3,16 @@ import { saveRegistrationData, verifyUserCredentials, saveLocationToDatabase, ge
 import { aesEncrypt, aesDecrypt } from '../Interceptors/aesEncryption';
 
 
+
 export const FEregistrationData = async (req: Request, res: Response): Promise<any> => {
     try {
-        // Log the request body
         console.log("Received Request Body:", req.body);
 
-        // Validate that encryptedData exists
         if (!req.body.encryptedData) {
             console.error("Error: Missing encryptedData in request body");
             return res.status(400).json({ error: "Missing encryptedData" });
         }
 
-        // Try decrypting the request
         let decryptedString;
         try {
             decryptedString = aesDecrypt(req.body.encryptedData);
@@ -23,9 +21,6 @@ export const FEregistrationData = async (req: Request, res: Response): Promise<a
             return res.status(400).json({ error: "Invalid encryptedData" });
         }
 
-        console.log("Decrypted String:", decryptedString);
-
-        // Parse JSON from decrypted string
         let decryptedData;
         try {
             decryptedData = JSON.parse(decryptedString);
@@ -34,19 +29,20 @@ export const FEregistrationData = async (req: Request, res: Response): Promise<a
             return res.status(400).json({ error: "Invalid JSON format" });
         }
 
-        console.log("Parsed Decrypted Data:", decryptedData);
         const { first_name, last_name, email, password, phone_number } = decryptedData;
 
-        // Log extracted data
         console.log("Registering User:", { first_name, last_name, email, password, phone_number });
 
-        // Save user data
-        const Data = await saveRegistrationData(first_name, last_name, email, password, phone_number);
+        // Save user data with role assignment
+        const savedUser = await saveRegistrationData(first_name, last_name, email, password, phone_number);
 
-        // Encrypt and send response
-        const encryptedResponse = aesEncrypt(JSON.stringify({ message: "Data saved successfully",data: Data }));
-        console.log("Sending Response:", encryptedResponse);
-        
+        // Encrypt and send response with role
+        const encryptedResponse = aesEncrypt(JSON.stringify({ 
+            message: "User registered successfully", 
+            role: savedUser.role, 
+            data: savedUser 
+        }));
+
         res.status(200).json({ encryptedData: encryptedResponse });
     } catch (error) {
         console.error("Internal Server Error:", error);
@@ -54,6 +50,7 @@ export const FEregistrationData = async (req: Request, res: Response): Promise<a
         res.status(500).json({ encryptedData: encryptedError });
     }
 };
+
 
 export const FElogin = async (req: Request, res: Response): Promise<any> => {
     try {
