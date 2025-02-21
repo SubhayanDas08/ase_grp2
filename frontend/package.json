@@ -16,10 +16,13 @@
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@headlessui/react": "^2.2.0",
     "@mui/material": "^6.1.8",
+    "@rollup/rollup-linux-x64-gnu": "^4.34.8",
     "@tailwindcss/vite": "^4.0.7",
     "@tanstack/react-table": "^8.20.5",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/cli-linux-x64-gnu": "^2.2.7",
     "@tauri-apps/plugin-notification": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2",
     "chart.js": "^4.4.6",
