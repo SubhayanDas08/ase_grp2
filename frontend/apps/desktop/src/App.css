@@ -179,7 +179,8 @@ margin-left:10px;
   font-size:30px;
 }
 #add_btn{
-  margin-left:1290px;
+  /*margin-left:1200px;*/
+
   height: 40px;
   width: 100px;
   margin-top:20px;
@@ -194,6 +195,7 @@ margin-left:10px;
   z-index: 1000;
   width:500px;
   margin-bottom: 40px;
+  border-radius: var(--cornerRadius);
 }
 .widget-options{
   flex-direction: column;
@@ -201,6 +203,7 @@ margin-left:10px;
 .widget-option{
   height:130px;
   background-color: var(--primaryColor1);
+  border-radius: var(--cornerRadius);
 }
 
 .f-border{
@@ -231,9 +234,35 @@ margin-left:10px;
   border-bottom: 1px solid white;
 }
 
+
 #one:hover{
   border:none;
   border-radius: 25px;
   width: 120px;
   background-color: var(--primaryColor2);
+}
+.btn_add{
+  display: flex;
+  justify-content:end;
+}
+
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px); /* Adjust blur intensity */
+  background: rgba(0, 0, 0, 0.1); /* Slight dim effect */
+  z-index: 999; /* Ensure it’s above other content */
+}
+.close_button{
+  background-color: var(--gradient2);
+  width:28px;
+  height:28px;
+  padding-top:1px;
+  padding-left:3px;
+  border-radius: 50%;
+  font-size: 20px;
+  
 }
