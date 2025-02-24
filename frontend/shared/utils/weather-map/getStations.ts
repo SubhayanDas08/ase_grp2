@@ -1,4 +1,7 @@
-const access_token:string | undefined = import.meta.env.VITE_WAQI_ACCESS_TOKEN;
+import dotenv from 'dotenv';
+dotenv.config();
+
+const access_token: string | undefined = process.env.VITE_WAQI_ACCESS_TOKEN;
 
 interface StationInfo {
     id: number;

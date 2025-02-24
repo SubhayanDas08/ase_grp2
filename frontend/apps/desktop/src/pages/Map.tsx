@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { warn, debug, trace, info, error } from '@tauri-apps/plugin-log';
+import dotenv from 'dotenv';
 
 import MapVisual from "../components/mapVisual";
 
-const waqiApiToken = import.meta.env.VITE_WAQI_API_TOKEN;
+dotenv.config();
+const waqiApiToken = process.env.VITE_WAQI_API_TOKEN;
 
 const city="Dublin";
 

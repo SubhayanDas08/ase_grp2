@@ -1,4 +1,7 @@
-const access_token:string | undefined = import.meta.env.VITE_WEATHER_API_ACCESS_TOKEN;
+import dotenv from 'dotenv';
+dotenv.config();
+
+const access_token:string | undefined = process.env.VITE_WEATHER_API_ACCESS_TOKEN;
 
 interface WeatherData {
     status: string;

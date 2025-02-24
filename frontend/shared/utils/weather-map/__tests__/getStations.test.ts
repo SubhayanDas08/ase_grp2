@@ -1,4 +1,6 @@
 import { getStations } from "../getStations";
+import dotenv
+dotenv.config();
 
 // declare const global: typeof globalThis & {
 //     fetch: jest.Mock;
@@ -21,7 +23,7 @@ describe("getStations", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        import.meta.env.VITE_WAQI_ACCESS_TOKEN = mockAccessToken;
+        process.env.VITE_WAQI_ACCESS_TOKEN = mockAccessToken;
     });
 
     // Test 1 : Successful API Response
