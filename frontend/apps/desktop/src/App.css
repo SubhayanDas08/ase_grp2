@@ -285,8 +285,29 @@ margin-left:10px;
   border-radius:50%;
   font-size:30px;
 }
-.map_container{
-  
+#add_btn{
+  margin-left:1290px;
+  height: 40px;
+  width: 100px;
+  margin-top:20px;
+}
+.blur-background {
+  backdrop-filter: blur(5px); /* Adjust the blur intensity as needed */
+  pointer-events: none; /* Prevent interaction with blurred elements */
+}
+.add-widget-container{
+  background-color: var(--primaryColor2);
+  margin-right: 400px;
+  z-index: 1000;
+  width:500px;
+  margin-bottom: 40px;
+}
+.widget-options{
+  flex-direction: column;
+}
+.widget-option{
+  height:130px;
+  background-color: var(--primaryColor1);
 }
 
 
