@@ -1,13 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiMapPin, FiSun, FiCloudRain, FiMinus } from "react-icons/fi";
 import { FaCloud } from "react-icons/fa";
 import { FaDroplet } from "react-icons/fa6";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import MapVisual from "../components/mapVisual";
 
 //import { IoRemoveCircle } from "react-icons/io5"; // Remove icon
 
+interface Location {
+  latitude: number;
+  longitude: number;
+  label: string;
+}
+
 export default function Home() {
   const [editMode, setEditMode] = useState(false); // State to track edit mode
+
+    const [location, setLocation] = useState<Location>({
+        latitude: 53.3498,
+        longitude: -6.2603,
+        label: "Dublin, Ireland",
+    });
+
+    useEffect(() => {
+        console.log(location);
+    }, [location]);
 
   return (
     <>
@@ -15,14 +32,13 @@ export default function Home() {
         <div className="home_title titleText">Home</div>
         <div>
        <button
-  className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
-    ${editMode ? "bg-gray-300 primaryColor2 w-[100px]" 
-               : "primaryColor2BG text-white w-[100px]"}`}
-  onClick={() => setEditMode(!editMode)}
->
-  {editMode ? "Done" : "Edit"}
-</button>
-
+          className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
+            ${editMode ? "bg-gray-300 primaryColor2 w-[100px]" 
+                      : "primaryColor2BG text-white w-[100px]"}`}
+          onClick={() => setEditMode(!editMode)}
+        >
+          {editMode ? "Done" : "Edit"}
+        </button>
 
         </div>
       </div>
@@ -160,20 +176,13 @@ export default function Home() {
         </div>
 
         <div className="second_row">
+              {editMode && (
+                <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer" />
+              )}
           
-          <div className="map_container h-[350px] w-[600px] bg-red-600 mt-10 rounded-[40px]"></div>
-          <MapContainer 
-    center={[53.3498, -6.2603]} // Example: Dublin's coordinates
-    zoom={13} 
-    style={{ height: "100%", width: "100%" }}
-  >
-    <TileLayer 
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    />
-    <Marker position={[53.3498, -6.2603]}>
-      <Popup> Dublin City Center </Popup>
-    </Marker>
-  </MapContainer>
+          <div className="map_container h-[350px] w-[600px] bg-red-600 mt-10 rounded-[40px]">
+              <MapVisual defaultLocation={location} setLocation={setLocation} />
+          </div>
         </div>
         <div className="third_row"></div>
       </div>
