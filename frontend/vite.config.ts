@@ -1,6 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from '@tailwindcss/vite'
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 const host = process.env.TAURI_DEV_HOST;
 
@@ -34,3 +38,6 @@ export default defineConfig(async () => ({
     },
   },
 }));
+
+console.log(host);
+
