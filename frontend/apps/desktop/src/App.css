@@ -55,3 +55,38 @@
 .loginGoogleRegistrationButton:hover {
   scale: 1.015;
 }
+
+.f-border{
+  border:none ; 
+  background-color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  height:35px; 
+  width:35px;
+  padding-left: 8px;
+  padding-top: 8px;
+}
+
+.sidebarIcons{
+  color: var(--primaryColor1);
+}
+
+.sidebarItems{
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebarText{
+  font-size:14px;
+}
+
+.sidebarContainer{
+  border-bottom: 1px solid white;
+}
+
+#one:hover{
+  border:none;
+  border-radius: 25px;
+  width: 120px;
+  background-color: var(--primaryColor2);
+}
