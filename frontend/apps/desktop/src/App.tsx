@@ -33,7 +33,7 @@ export default function App() {
                         <div className="ml-24 flex-1 overflow-y-auto p-5 ">
                             <Routes>
                                 <Route path="/" element={<Home />} />
-                                <Route path="/map" element={<WeatherMap />} />
+                                <Route path="/weather" element={<WeatherMap />} />
                                 <Route path="/events" element={<Events />} />
                                 <Route path="/routing" element={<Routing />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
