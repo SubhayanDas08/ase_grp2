@@ -28,10 +28,7 @@ export const getWeatherDetails = async (
         `Failed to fetch weather deatils of Coordinates: ${latitude} & ${longitude}: ${response.statusText}`,
       );
 
-    // console.log(await response.json());
-
     const weatherData: WeatherData = await response.json();
-    console.log(weatherData);
 
     if (!weatherData.current) {
       throw new Error(
