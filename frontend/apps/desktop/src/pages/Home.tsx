@@ -3,36 +3,63 @@ import { FiMapPin, FiSun, FiCloudRain, FiMinus } from "react-icons/fi";
 import { FaCloud } from "react-icons/fa";
 import { FaDroplet } from "react-icons/fa6";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-
-//import { IoRemoveCircle } from "react-icons/io5"; // Remove icon
+import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
 
 export default function Home() {
   const [editMode, setEditMode] = useState(false); // State to track edit mode
+  const [showAddWidget, setShowAddWidget] = useState(false); // State to manage widget container visibility
+  const [isAddingWidget, setIsAddingWidget] = useState(false); // State to track if adding widgets
+
+  // Add Widget Container Component
+  const AddWidgetContainer = () => {
+    return (
+      <div className="add-widget-container p-4 bg-white shadow-lg rounded-lg absolute top-20 right-10 z-10">
+        <h2 className="text-lg font-semibold mb-4 text-white">Add Widgets</h2>
+        <div className="widget-options flex flex-wrap">
+          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
+          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
+          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
+          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
+        </div>
+      </div>
+    );
+  };
+
+  // Handle Add/Done button click
+  const handleAddButtonClick = () => {
+    if (isAddingWidget) {
+      // Save changes (e.g., add selected widgets)
+      console.log("Changes saved!");
+    }
+    setIsAddingWidget(!isAddingWidget); // Toggle adding state
+    setShowAddWidget(!showAddWidget); // Toggle widget container visibility
+  };
 
   return (
     <>
+      {/* Header Section */}
       <div className="header flex flex-row">
         <div className="home_title titleText">Home</div>
         <div>
-       <button
-  className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
-    ${editMode ? "bg-gray-300 primaryColor2 w-[100px]" 
-               : "primaryColor2BG text-white w-[100px]"}`}
-  onClick={() => setEditMode(!editMode)}
->
-  {editMode ? "Done" : "Edit"}
-</button>
-
-
+          <button
+            className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
+              ${editMode ? "bg-gray-300 primaryColor2 w-[100px]" 
+                         : "primaryColor2BG text-white w-[100px]"}`}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? "Done" : "Edit"}
+          </button>
         </div>
       </div>
 
+      {/* Main Content Section */}
       <div className="home_main">
+        {/* First Row: Weather and Events Widgets */}
         <div className="first_row mt-4 flex">
           {/* Weather Widget */}
           <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
             {editMode && (
-              <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer" />
+              <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" />
             )}
             <div className="home_first_row flex flex-row justify-between mt-5">
               <div className="ml-5 flex flex-row">
@@ -117,7 +144,7 @@ export default function Home() {
           {/* Events Widget */}
           <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG ml-10">
             {editMode && (
-              <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer" />
+              <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" />
             )}
             <div className="home_first_row flex flex-row justify-between mt-5">
               <div className="ml-5 flex flex-row">
@@ -159,23 +186,39 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Second Row: Map Container */}
         <div className="second_row">
-          
-          <div className="map_container h-[350px] w-[600px] bg-red-600 mt-10 rounded-[40px]"></div>
-          <MapContainer 
-    center={[53.3498, -6.2603]} // Example: Dublin's coordinates
-    zoom={13} 
-    style={{ height: "100%", width: "100%" }}
-  >
-    <TileLayer 
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    />
-    <Marker position={[53.3498, -6.2603]}>
-      <Popup> Dublin City Center </Popup>
-    </Marker>
-  </MapContainer>
+        {editMode && (
+            <FiMinus className="circlecontainer -top-1 -right-1 cursor-pointer z-1000 ml-100" />
+          )}
+          <div className="map_container h-[350px] w-[600px] mt-10 rounded-[40px] overflow-hidden relative z-1">
+            <MapContainer 
+              center={[53.3498, -6.2603]} // Dublin's coordinates
+              zoom={13} 
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer 
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[53.3498, -6.2603]}>
+                <Popup> Dublin City Center </Popup>
+              </Marker>
+            </MapContainer>
+          </div>
         </div>
-        <div className="third_row"></div>
+
+        {/* Add/Done Button */}
+        <button
+          id="add_btn"
+          onClick={handleAddButtonClick}
+          className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out
+            ${isAddingWidget ? "bg-gray-300 primaryColor2" : "primaryColor2BG text-white"}`}
+        >
+          {isAddingWidget ? "Done" : "Add"}
+        </button>
+
+        {/* Add Widget Container */}
+        {showAddWidget && <AddWidgetContainer />}
       </div>
     </>
   );
