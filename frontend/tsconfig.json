@@ -25,6 +25,6 @@
     /* Jest Types for testing */
     "types": ["jest","node"]
   },
-  "include": ["src", "../../shared/utils/weather-map/api_handler", "../../shared/utils/weather-map/__tests__", "../../shared/utils/weather-map/getStationAqi.ts", "../../shared/utils/weather-map/getStations.ts", "../../shared/utils/weather-map/getWeatherDetails.ts"],
+  "include": ["apps/desktop/src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

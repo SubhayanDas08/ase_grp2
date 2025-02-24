@@ -5,6 +5,8 @@ import { useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
+import Button from "../../../../shared/components/Button.tsx";
+
 interface LoginProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
 }
@@ -48,6 +50,7 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
                         <div className="titleText primaryColor1">
                             Log In to your account
                         </div>
+                        <Button /> {/* This is temporary */}
                         <div className= "miniText secondaryColor">
                             Welcome back! Please enter your details.
                         </div>
