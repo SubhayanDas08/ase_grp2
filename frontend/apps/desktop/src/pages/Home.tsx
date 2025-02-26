@@ -5,6 +5,7 @@ import { FaDroplet } from "react-icons/fa6";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
 import { IoCloseOutline } from "react-icons/io5";
+import { FaPlus } from "react-icons/fa";
 
 export default function Home() {
   const [editMode, setEditMode] = useState(false); // State to track edit mode
@@ -18,18 +19,44 @@ export default function Home() {
   // Add Widget Container Component
   const AddWidgetContainer = () => {
     return (
-      <div className="add-widget-container p-4 bg-white shadow-lg rounded-lg absolute top-20 right-10 z-10 overflow-auto">
-        <div className="">
-          <button className="close_button ml-112" onClick={closeBtn}>
+      <div className="add-widget-container p-4 bg-white shadow-lg rounded-lg absolute top-20 right-10 z-10">
+        {/* Close Button (Fixed at the top) */}
+        <div className="flex justify-end">
+          <button className="close_button" onClick={closeBtn}>
             <IoCloseOutline />
           </button>
         </div>
-        <h2 className="text-lg font-semibold mb-4 text-white">Add Widgets</h2>
-        <div className="widget-options flex flex-wrap">
-          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-          <button className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
+  
+        {/* Scrollable Widget Options */}
+        <div className="widget-scroll-container overflow-y-auto max-h-[500px] mt-2">
+          <h2 className="text-lg font-semibold mb-4 text-white">Add Widgets</h2>
+          <div className="widget-options flex flex-wrap">
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            {/* Add more widgets to test scrolling */}
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+            <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
+              <button className="add_symbol"><FaPlus /></button>
+            </div>
+          </div>
         </div>
       </div>
     );

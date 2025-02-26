@@ -266,3 +266,12 @@ margin-left:10px;
   font-size: 20px;
   
 }
+.add_symbol{
+  background-color: var(--gradient2);
+  height:30px;
+  width:30px;
+  border-radius: 50%;
+  padding-left: 7px;
+  padding-top: 1px;
+  margin-left: 380px;
+}
