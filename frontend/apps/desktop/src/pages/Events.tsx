@@ -4,7 +4,7 @@ import { FiPlus, FiRotateCw } from "react-icons/fi";
 
 import { sampleData, Data } from '../data/DataFormat';
 import EventCard from '../../../../shared/components/weather-map/EventCard';
-import '../../../../shared/components/weather-map/EventCard.module.css';
+import '../../../../shared/styles/EventCard.module.css';
 
 export default function Events() {
     const [data, setData] = useState<Data[]>([]);

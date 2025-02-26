@@ -1,5 +1,5 @@
-import React from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import "../styles/App.css";
 
 interface DropdownProps {
   menuTitle: string;
@@ -17,7 +17,7 @@ export default function Dropdown({
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">
+        <MenuButton className="bg-blue-500 inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">
           {menuTitle}
           {menuIcon}
         </MenuButton>
@@ -25,7 +25,7 @@ export default function Dropdown({
 
       <MenuItems
         transition
-        className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+        className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in z-50"
       >
         <div className="py-1">
           {menuItemTitles.map((title: string, index: number) => (
