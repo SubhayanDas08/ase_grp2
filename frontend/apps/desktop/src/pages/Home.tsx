@@ -32,7 +32,7 @@ export default function Home() {
             <IoCloseOutline />
           </button>
         </div>
-  
+
         {/* Scrollable Widget Options */}
         <div className="widget-scroll-container overflow-y-auto max-h-[500px] mt-2">
           <h2 className="text-lg font-semibold mb-4 text-white">Add Widgets</h2>
@@ -78,17 +78,17 @@ export default function Home() {
     setShowAddWidget(!showAddWidget); // Toggle widget container visibility
   };
 
-    const [location, setLocation] = useState<Location>({
-        latitude: 53.3498,
-        longitude: -6.2603,
-        label: "Dublin, Ireland",
-    });
+  const [location, setLocation] = useState<Location>({
+    latitude: 53.3498,
+    longitude: -6.2603,
+    label: "Dublin, Ireland",
+  });
 
-    useEffect(() => {
-        console.log(location);
-    }, [location]);
+  useEffect(() => {
+    console.log(location);
+  }, [location]);
 
-      // State to track visibility of each widget
+  // State to track visibility of each widget
   const [widgetVisibility, setWidgetVisibility] = useState({
     weatherWidget: true,
     eventsWidget: true,
@@ -96,7 +96,7 @@ export default function Home() {
   });
 
   // Function to handle minus button click
-  const handleDeleteWidget = (widgetKey :any) => {
+  const handleDeleteWidget = (widgetKey: any) => {
     setWidgetVisibility((prev) => ({
       ...prev,
       [widgetKey]: false, // Hide the widget
@@ -123,8 +123,8 @@ export default function Home() {
       <div className="home_main ml-20 transition-all duration-300 relative">
         {/* Main Content Section */}
         <div className={`${showAddWidget ? "blur-sm" : ""} pointer-events-auto`}>
-          {/* First Row: Weather and Events Widgets */}
-          <div className="first_row mt-4 flex">
+          {/* Single Row for All Widgets */}
+          <div className="widgets-container flex flex-wrap gap-4 mt-4">
             {/* Weather Widget */}
             {widgetVisibility.weatherWidget && (
               <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
@@ -134,163 +134,162 @@ export default function Home() {
                     onClick={() => handleDeleteWidget("weatherWidget")}
                   />
                 )}
-              <div className="home_first_row flex flex-row justify-between mt-5">
-                <div className="ml-5 flex flex-row">
-                  <span className="mt-1">
-                    <FiMapPin />
-                  </span>
-                  <span className="ml-2 text-lg font-semibold">Dublin 1</span>
+                <div className="home_first_row flex flex-row justify-between mt-5">
+                  <div className="ml-5 flex flex-row">
+                    <span className="mt-1">
+                      <FiMapPin />
+                    </span>
+                    <span className="ml-2 text-lg font-semibold">Dublin 1</span>
+                  </div>
+                  <div className="text-sm mr-5">
+                    <span id="mostlycloudy">2 min ago</span>
+                  </div>
                 </div>
-                <div className="text-sm mr-5">
-                  <span id="mostlycloudy">2 min ago</span>
+
+                <div className="home_second_row flex flex-row justify-between">
+                  <div className="cloud_container w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FaCloud />
+                      </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2 h-5">
+                      <div className="cloud_info_firstrow text-xs">Temperature</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">6°C</div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">Mostly Cloudy</span>
+                      </div>
+                      <div className="cloud_info_firstrow mb-2">
+                        <span id="mostlycloudy">H L</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="drop_container w-1/2 flex flex-row mr-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FaDroplet />
+                      </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="cloud_info_firstrow text-xs">Precipitation</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">0 mm</div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">In last 24 hours</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="home_third_row flex flex-row justify-between">
+                  <div className="cloud_container w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FiSun />
+                      </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="cloud_info_firstrow text-xs">UV index</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">1</div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">Low for the rest of the day.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="drop_container w-1/2 flex flex-row mr-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FiCloudRain />
+                      </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="cloud_info_firstrow text-xs">Humidity</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">88%</div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">The dew point is 4°C right now.</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="home_second_row flex flex-row justify-between">
-                <div className="cloud_container w-1/2 flex flex-row ml-5">
-                  <div className="cloud_firstcolumn mt-5">
-                    <div id="cloud_logo">
-                      <FaCloud />
-                    </div>
-                  </div>
-                  <div className="cloud_secondcolumn ml-10 mt-2 h-5">
-                    <div className="cloud_info_firstrow text-xs">Temperature</div>
-                    <div className="cloud_info_firstrow text-lg mt-2 font-bold">6°C</div>
-                    <div className="cloud_info_firstrow mt-2">
-                      <span id="mostlycloudy">Mostly Cloudy</span>
-                    </div>
-                    <div className="cloud_info_firstrow mb-2">
-                      <span id="mostlycloudy">H L</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="drop_container w-1/2 flex flex-row mr-5">
-                  <div className="cloud_firstcolumn mt-5">
-                    <div id="cloud_logo">
-                      <FaDroplet />
-                    </div>
-                  </div>
-                  <div className="cloud_secondcolumn ml-10 mt-2">
-                    <div className="cloud_info_firstrow text-xs">Precipitation</div>
-                    <div className="cloud_info_firstrow text-lg mt-2 font-bold">0 mm</div>
-                    <div className="cloud_info_firstrow mt-2">
-                      <span id="mostlycloudy">In last 24 hours</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="home_third_row flex flex-row justify-between">
-                <div className="cloud_container w-1/2 flex flex-row ml-5">
-                  <div className="cloud_firstcolumn mt-5">
-                    <div id="cloud_logo">
-                      <FiSun />
-                    </div>
-                  </div>
-                  <div className="cloud_secondcolumn ml-10 mt-2">
-                    <div className="cloud_info_firstrow text-xs">UV index</div>
-                    <div className="cloud_info_firstrow text-lg mt-2 font-bold">1</div>
-                    <div className="cloud_info_firstrow mt-2">
-                      <span id="mostlycloudy">Low for the rest of the day.</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="drop_container w-1/2 flex flex-row mr-5">
-                  <div className="cloud_firstcolumn mt-5">
-                    <div id="cloud_logo">
-                      <FiCloudRain />
-                    </div>
-                  </div>
-                  <div className="cloud_secondcolumn ml-10 mt-2">
-                    <div className="cloud_info_firstrow text-xs">Humidity</div>
-                    <div className="cloud_info_firstrow text-lg mt-2 font-bold">88%</div>
-                    <div className="cloud_info_firstrow mt-2">
-                      <span id="mostlycloudy">The dew point is 4°C right now.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             )}
 
-              {/* Events Widget */}
-              {widgetVisibility.eventsWidget && (
-              <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG ml-10">
+            {/* Events Widget */}
+            {widgetVisibility.eventsWidget && (
+              <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG">
                 {editMode && (
                   <FiMinus
                     className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
                     onClick={() => handleDeleteWidget("eventsWidget")}
                   />
                 )}
-              <div className="home_first_row flex flex-row justify-between mt-5">
-                <div className="ml-5 flex flex-row">
-                  <span className="ml-2 text-lg font-semibold">Events</span>
+                <div className="home_first_row flex flex-row justify-between mt-5">
+                  <div className="ml-5 flex flex-row">
+                    <span className="ml-2 text-lg font-semibold">Events</span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="home_second_row flex flex-row justify-between">
-                <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
-                  <div className="cloud_firstcolumn mt-5">
-                    <div id="cloud_logo">
-                      <FaCloud />
+                <div className="home_second_row flex flex-row justify-between">
+                  <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FaCloud />
+                      </div>
                     </div>
-                  </div>
-                  <div className="cloud_secondcolumn ml-10 mt-2 w-full">
-                    <div className="cloud_info_firstrow text-xs ml-80">20 mins ago</div>
-                    <div className="cloud_info_firstrow text-lg mt-2 font-bold">
-                      Lightning strikes in Hamilton Gardens
+                    <div className="cloud_secondcolumn ml-10 mt-2 w-full">
+                      <div className="cloud_info_firstrow text-xs ml-80">20 mins ago</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">
+                        Lightning strikes in Hamilton Gardens
+                      </div>
+                      <div className="cloud_info_firstrow text-xs"> Burning house, people crying </div>
                     </div>
-                    <div className="cloud_info_firstrow text-xs"> Burning house, people crying </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="home_third_row flex flex-row justify-between">
-                <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
-                  <div className="cloud_firstcolumn mt-5">
-                    <div id="cloud_logo">
-                      <FiSun />
+                <div className="home_third_row flex flex-row justify-between">
+                  <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FiSun />
+                      </div>
                     </div>
-                  </div>
-                  <div className="cloud_secondcolumn ml-10 mt-2">
-                    <div className="event_info_secondrow text-xs ml-[360px]">15:45</div>
-                    <div className="event_info_secondrow text-lg mt-2 font-bold">Chain Reaction Collision</div>
-                    <div className="cloud_info_firstrow text-xs"> approx. 100 cars and 3 buses involved </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="event_info_secondrow text-xs ml-[360px]">15:45</div>
+                      <div className="event_info_secondrow text-lg mt-2 font-bold">Chain Reaction Collision</div>
+                      <div className="cloud_info_firstrow text-xs"> approx. 100 cars and 3 buses involved </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Map Widget */}
+            {widgetVisibility.mapWidget && (
+              <div className="relative map_container h-[350px] w-[600px] rounded-[40px]  primaryColor1BG">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={() => handleDeleteWidget("mapWidget")}
+                  />
+                )}
+                <div className="map_inner_container h-full w-full rounded-[40px] overflow-hidden">
+                  <MapContainer 
+                    center={[53.3498, -6.2603]} // Dublin's coordinates
+                    zoom={13} 
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer 
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker position={[53.3498, -6.2603]}>
+                      <Popup> Dublin City Center </Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              </div>
             )}
           </div>
-
-          {/* Second Row: Map Container */}
-          {/* Second Row: Map Container */}
-          {widgetVisibility.mapWidget && (
-            <div className="relative second_row">
-              {editMode && (
-                <FiMinus
-                  className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000 mr-178"
-                  onClick={() => handleDeleteWidget("mapWidget")}
-                />
-              )}
-            <div className="map_container h-[350px] w-[600px] mt-10 rounded-[40px] overflow-hidden relative z-1">
-              <MapContainer 
-                center={[53.3498, -6.2603]} // Dublin's coordinates
-                zoom={13} 
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TileLayer 
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={[53.3498, -6.2603]}>
-                  <Popup> Dublin City Center </Popup>
-                </Marker>
-              </MapContainer>
-            </div>
-          </div>
-           )}
 
           {/* Add/Done Button */}
           {editMode && (
