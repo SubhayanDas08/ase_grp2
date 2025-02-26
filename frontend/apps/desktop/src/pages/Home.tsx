@@ -88,6 +88,21 @@ export default function Home() {
         console.log(location);
     }, [location]);
 
+      // State to track visibility of each widget
+  const [widgetVisibility, setWidgetVisibility] = useState({
+    weatherWidget: true,
+    eventsWidget: true,
+    mapWidget: true,
+  });
+
+  // Function to handle minus button click
+  const handleDeleteWidget = (widgetKey :any) => {
+    setWidgetVisibility((prev) => ({
+      ...prev,
+      [widgetKey]: false, // Hide the widget
+    }));
+  };
+
   return (
     <>
       {/* Header Section */}
@@ -111,10 +126,14 @@ export default function Home() {
           {/* First Row: Weather and Events Widgets */}
           <div className="first_row mt-4 flex">
             {/* Weather Widget */}
-            <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
-              {editMode && (
-                <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" />
-              )}
+            {widgetVisibility.weatherWidget && (
+              <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={() => handleDeleteWidget("weatherWidget")}
+                  />
+                )}
               <div className="home_first_row flex flex-row justify-between mt-5">
                 <div className="ml-5 flex flex-row">
                   <span className="mt-1">
@@ -194,12 +213,17 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            )}
 
-            {/* Events Widget */}
-            <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG ml-10">
-              {editMode && (
-                <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" />
-              )}
+              {/* Events Widget */}
+              {widgetVisibility.eventsWidget && (
+              <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG ml-10">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={() => handleDeleteWidget("eventsWidget")}
+                  />
+                )}
               <div className="home_first_row flex flex-row justify-between mt-5">
                 <div className="ml-5 flex flex-row">
                   <span className="ml-2 text-lg font-semibold">Events</span>
@@ -238,13 +262,19 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            )}
           </div>
 
           {/* Second Row: Map Container */}
-          <div className="relative second_row">
-            {editMode && (
-              <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000 mr-178" />
-            )}
+          {/* Second Row: Map Container */}
+          {widgetVisibility.mapWidget && (
+            <div className="relative second_row">
+              {editMode && (
+                <FiMinus
+                  className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000 mr-178"
+                  onClick={() => handleDeleteWidget("mapWidget")}
+                />
+              )}
             <div className="map_container h-[350px] w-[600px] mt-10 rounded-[40px] overflow-hidden relative z-1">
               <MapContainer 
                 center={[53.3498, -6.2603]} // Dublin's coordinates
@@ -260,6 +290,7 @@ export default function Home() {
               </MapContainer>
             </div>
           </div>
+           )}
 
           {/* Add/Done Button */}
           {editMode && (
