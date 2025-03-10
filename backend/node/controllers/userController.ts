@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { saveRegistrationData, verifyUserCredentials, saveLocationToDatabase, getLocationData } from '../services/databaseService';
-import { aesEncrypt, aesDecrypt } from '../Interceptors/aesEncryption';
+import { aesEncrypt, aesDecrypt } from '../interceptors/aesEncryption';
 
 
 export const FEregistrationData = async (req: Request, res: Response): Promise<any> => {

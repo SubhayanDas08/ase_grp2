@@ -1,20 +1,25 @@
 import { Request, Response } from 'express'
 import redisClient from '../utils/redis'
 import {pool} from '../server'
+import { error } from 'console';
 
 // Create a new event
 export const createEvent = async (req: Request, res: Response): Promise<void> => {
-  const { name, start_date, end_date } = req.body
+  const { event_name, event_desc, start_date, start_time, event_location, end_date } = req.body;
+
+  if(!event_name || !event_desc || !start_date || !event_location){
+    res.status(400).json({error:"Event time or event description or start date or event location is missing"});
+  }
 
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     const insertEventQuery = `
-      INSERT INTO public.events (name, start_date, end_date)
-      VALUES ($1, $2, $3)
-      RETURNING id, name, start_date, end_date
+      INSERT INTO public.events (event_name, event_desc, start_date, start_time, event_location, end_date)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING * ;
     `
-    const result = await client.query(insertEventQuery, [name, start_date, end_date])
+    const result = await client.query(insertEventQuery, [event_name, event_desc, start_date, start_time, event_location, end_date])
     const newEvent = result.rows[0]
 
     // Cache the new event in Redis
@@ -46,7 +51,7 @@ export const getEventById = async (req: Request, res: Response): Promise<void> =
     }
 
     const result = await pool.query(
-      'SELECT id, name, start_date, end_date FROM public.events WHERE id = $1',
+      'SELECT * FROM public.events WHERE id = $1',
       [eventId]
     )
 
@@ -70,11 +75,66 @@ export const getEventById = async (req: Request, res: Response): Promise<void> =
 export const getAllEvents = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await pool.query(
-      'SELECT id, name, start_date, end_date FROM public.events ORDER BY start_date'
+      'SELECT * FROM public.events ORDER BY start_date'
     )
+    if(result.rows.length==0)
+      res.status(404).json({error:"No events found"})
+
     res.json(result.rows)
   } catch (error) {
     console.error('Error fetching all events:', error)
     res.status(500).json({ error: 'Internal server error.' })
+  }
+}
+
+// Update an event
+export const updateEvent = async (req: Request, res: Response): Promise<void> => {
+  const eventId=req.params.id;
+  const { event_name, event_desc, start_date, start_time, event_location, end_date } = req.body;
+
+  try {
+    const event=await pool.query(`SELECT * FROM public.events WHERE id= $1`,[eventId])
+    if (event.rows.length === 0) {
+      res.status(404).json({ error: 'Event not found.' })
+      return;
+    }
+
+    const values = [event_name, event_desc, start_date, start_time, event_location, end_date];
+    const updatedEvent=await pool.query(`UPDATE public.events
+    SET event_name = $1, event_desc = $2, start_date = $3, start_time = $4, event_location = $5, end_date = $6
+    WHERE id = $7
+    RETURNING *;
+    `,values);
+
+    await pool.query('COMMIT');
+    res.status(200).json(updatedEvent);
+  } catch (error) {
+    console.log("Error updating the event");
+    res.status(500).json({error:"Internal Server Error"});
+  }
+}
+
+// Delete an event
+export const deleteEvent = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const eventId=req.params.id;
+  const result = await pool.query(
+    'SELECT * FROM public.events WHERE id = $1',
+    [eventId]
+  );
+
+  if (result.rows.length === 0) {
+    res.status(404).json({ error: 'Event not found.' })
+    return
+  }
+
+  const deletedEvent = await pool.query(`DELETE FROM public.events WHERE id = $1 RETURNING *`,[eventId]);
+  await pool.query('COMMIT');
+
+  //Deleting event from Redis
+  res.status(200).json(deletedEvent.rows[0]);
+  } catch (error) {
+    console.log("Error deleting the event");
+    res.status(500).json({error:"Internal Server Error"});
   }
 }
