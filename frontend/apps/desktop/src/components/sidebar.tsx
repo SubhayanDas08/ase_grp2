@@ -50,10 +50,10 @@ export default function Sidebar() {
         </div>
         */
        <div className="flex flex-col h-full w-full primaryColor1BG">
-            <div className="mainHeaderHeight bg-red-500 w-full border">
+            <div className="mainHeaderHeight sidebarHeader">
 
             </div>
-            <div className="h-full w-full bg-green-500">
+            <div className="w-full h-full bg-green-500">
 
             </div>
        </div>

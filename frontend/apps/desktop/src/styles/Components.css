@@ -4,6 +4,11 @@
   font-size: 18px;
 }
 
+.sidebarHeader {
+  background-color: red;
+  border-bottom: 2px solid white;
+}
+
 /* Sidebar */
 .f-border {
   border: none;
