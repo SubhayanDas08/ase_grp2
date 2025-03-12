@@ -3,23 +3,43 @@ import { pool } from '../server';
 import { aesEncrypt, aesDecrypt } from '../interceptors/aesEncryption';
 
 // Save registration data with encrypted request body
-export const saveRegistrationData = async(firstName: string, lastName: string, email: string, password: string, phoneNumber: number): Promise<void> => {
+export const saveRegistrationData = async (
+    firstName: string, 
+    lastName: string, 
+    email: string, 
+    password: string, 
+    phoneNumber: number
+): Promise<any> => {  // Return type updated from `void` to `Promise<any>`
     let client: PoolClient | undefined;
     try {
         client = await pool.connect();
-        
+
+        // Extract domain from email
+        const emailDomain = email.split("@")[1];
+
+        // Assign role based on domain
+        const domainRoles: { [key: string]: string } = {
+            "tfi.com": "Admin",
+            "tcd.ie": "User",
+            "garda.com": "Admin",
+            "gmail.com": "User"
+        };
+
+        const assignedRole = domainRoles[emailDomain] || "User"; // Default to "User" if domain is not listed
+
         // Encrypt password before storing in the database
         const encryptedPassword = aesEncrypt(password);
-        
-        const query = `INSERT INTO users (first_name, last_name, email, password, phone_number, created_at) VALUES ($1, $2, $3, $4, $5, NOW())RETURNING *;`;
-        const values = [firstName, lastName, email, encryptedPassword, phoneNumber];
+
+        const query = `INSERT INTO users (first_name, last_name, email, password, phone_number, role, created_at) 
+                       VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *;`;
+
+        const values = [firstName, lastName, email, encryptedPassword, phoneNumber, assignedRole];
+
         const result = await client.query(query, values);
         const savedUser = result.rows[0];
-        
-        // await client.query(query, values);
-        // await client.query('COMMIT');
-        console.log('User registration data saved successfully.');
-        return savedUser
+
+        console.log('User registration data saved successfully:', savedUser);
+        return savedUser;  // ✅ Now returning user data instead of void
     } catch (error) {
         console.error('Error saving user data:', error);
         throw error;
@@ -27,6 +47,7 @@ export const saveRegistrationData = async(firstName: string, lastName: string, e
         client?.release();
     }
 };
+
 
 export const verifyUserCredentials = async (email: string): Promise<any> => {
     let client: PoolClient | undefined;
