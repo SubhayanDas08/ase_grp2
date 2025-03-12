@@ -101,13 +101,14 @@ export const getLocationByIp = async (req: Request, res: Response): Promise<void
        console.log("Received IP Request");
 
        // Retrieve user's IP address
-       const userIp = req.headers["x-real-ip"] || req.socket.remoteAddress;
-       console.log("User IP:", userIp);
+       // const userIp = req.headers["x-real-ip"] || req.socket.remoteAddress;
+       // console.log("User IP:", userIp);
 
        // // Encrypt the response
        // const encryptedResponse = aesEncrypt(JSON.stringify({ ip: userIp }));
 
-       res.status(200).json({ data: userIp });
+       // res.status(200).json({ data: userIp });
+       res.send("Hello, World!");
    } catch (error) {
        console.error("Internal Server Error:", error);
        res.status(500).json({ encryptedData: aesEncrypt(JSON.stringify({ error: "Internal Server Error" })) });
