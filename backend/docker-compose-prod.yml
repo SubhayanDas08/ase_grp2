@@ -1,0 +1,43 @@
+services:
+  redis:
+    image: redis:7.4
+    container_name: redis_server
+    restart: always
+    ports:
+      - "6379:6379"  # Plaintext port for local use
+      - "6380:6380"  # TLS port for external clients
+    volumes:
+      - ./redis_data:/data
+      - ./redis_logs:/var/log/redis
+      - /etc/docker-certs/redis/fullchain.pem:/certs/fullchain.pem:ro
+      - /etc/docker-certs/redis/privkey.pem:/certs/privkey.pem:ro
+    command: >
+      redis-server --requirepass ${REDIS_PASSWORD}
+      --port 6379
+      --tls-port 6380
+      --tls-cert-file /certs/fullchain.pem
+      --tls-key-file /certs/privkey.pem
+      --tls-auth-clients no
+
+  postgres:
+    image: postgres:17.0
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+      PGSSLMODE: require
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./postgres_logs:/var/log/postgresql
+      - /etc/docker-certs/postgres/fullchain.pem:/certs/server.crt:ro
+      - /etc/docker-certs/postgres/privkey.pem:/certs/server.key:ro
+      - /etc/docker-certs/postgres/fullchain.pem:/certs/root.crt:ro
+    command: >
+      postgres -c ssl=on
+      -c ssl_cert_file=/certs/server.crt
+      -c ssl_key_file=/certs/server.key
+      -c ssl_ca_file=/certs/root.crt
