@@ -10,7 +10,7 @@ import CreateAccount from "./pages/CreateAccount.tsx";
 import Routing from "./pages/Routing.tsx";
 
 import Sidebar from "./components/sidebar.tsx";
-import "./App.css";
+import "./styles/App.css";
 import { useState } from "react";
 
 export default function App() {

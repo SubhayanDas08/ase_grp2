@@ -3,6 +3,8 @@ import sidebarLogo from "../assets/sidebarLogo.svg";
 import { FiHome, FiMap, FiList, FiTrash2, FiCloudDrizzle, FiTruck, FiSettings } from "react-icons/fi";
 import { RiTrafficLightFill } from "react-icons/ri";
 
+import "../styles/Components.css";
+
 export default function Sidebar() {
     return(
         <div className="sidebarContainer primaryColor1BG textLight h-full w-full ">
