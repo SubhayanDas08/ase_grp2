@@ -124,7 +124,7 @@ const MapComponent = () => {
       <MapContainer
         center={position}
         zoom={13}
-        className="h-[500px] w-full .border-radius"
+        className="h-[500px] w-full .border-radius z-10"
       >
         {/* Base Map Layer */}
         <TileLayer

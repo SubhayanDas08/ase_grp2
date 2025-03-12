@@ -1,4 +1,4 @@
-import '../weather-map/EventCard.module.css';
+import '../../styles/EventCard.module.css';
 
 interface EventCardProps {
     eventTitle: string;
