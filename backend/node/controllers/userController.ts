@@ -95,3 +95,21 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
         res.status(500).json({ encryptedData: aesEncrypt(JSON.stringify({ error: "Internal Server Error" })) });
     }
 };
+
+export const getLocationByIp = async (req: Request, res: Response): Promise<void> => {
+  try {
+       console.log("Received IP Request");
+
+       // Retrieve user's IP address
+       const userIp = req.headers["x-real-ip"] || req.socket.remoteAddress;
+       console.log("User IP:", userIp);
+
+       // // Encrypt the response
+       // const encryptedResponse = aesEncrypt(JSON.stringify({ ip: userIp }));
+
+       res.status(200).json({ data: userIp });
+   } catch (error) {
+       console.error("Internal Server Error:", error);
+       res.status(500).json({ encryptedData: aesEncrypt(JSON.stringify({ error: "Internal Server Error" })) });
+   }
+};
