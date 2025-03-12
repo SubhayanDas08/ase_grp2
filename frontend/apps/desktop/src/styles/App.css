@@ -1,5 +1,10 @@
 @import "../../../../Global.css";
 
+/* General */
+.mainHeaderHeight {
+  height: 120px;
+}
+
 /* Login Page */
 .loginRegistrationFormInput {
   height: 46px;

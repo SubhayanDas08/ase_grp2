@@ -27,7 +27,7 @@ export default function App() {
                     </div>
                 ) : (
                     <div className="flex h-full w-full">
-                        <div className="h-full w-[250px] flex-none fixed overflow-y-auto">
+                        <div className="h-full w-[250px] flex-none fixed">
                             <Sidebar />
                         </div>
                         <div className="h-full grow ml-[250px] p-5">

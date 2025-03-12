@@ -1,5 +1,9 @@
 @import "../../../../Global.css";
 
+.sidebarText {
+  font-size: 18px;
+}
+
 /* Sidebar */
 .f-border {
   border: none;
@@ -19,14 +23,6 @@
 .sidebarItems {
   display: flex;
   flex-direction: row;
-}
-
-.sidebarText {
-  font-size: 14px;
-}
-
-.sidebarContainer {
-  border-bottom: 1px solid white;
 }
 
 #one:hover {
