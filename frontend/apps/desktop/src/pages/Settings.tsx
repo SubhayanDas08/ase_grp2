@@ -67,7 +67,7 @@ export default function Settings({ setUserAuthenticated }: SettingsProps): JSX.E
   };
 
   return (
-    <div className="contentContainer p-8 overflow-y-auto textColourDark">
+    <div className="h-full w-full p-8 overflow-y-auto textColourDark">
       <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
       <div className="space-y-6">
         {/* Profile Picture */}

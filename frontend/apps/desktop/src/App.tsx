@@ -26,11 +26,11 @@ export default function App() {
                         </Routes> 
                     </div>
                 ) : (
-                    <>
-                        <div className="h-full w-[185px] fixed overflow-y-auto">
+                    <div className="flex h-full w-full">
+                        <div className="h-full w-[250px] flex-none fixed overflow-y-auto">
                             <Sidebar />
                         </div>
-                        <div className="ml-24 flex-1 overflow-y-auto p-5 ">
+                        <div className="h-full grow ml-[250px] p-5">
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/weather" element={<WeatherMap />} />
@@ -40,7 +40,7 @@ export default function App() {
                                 
                             </Routes>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </Router>
