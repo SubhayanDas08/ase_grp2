@@ -13,7 +13,7 @@ import "./App.css";
 import { useState } from "react";
 
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
     return (
         <Router>
             <div className="flex h-screen"> 

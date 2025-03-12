@@ -17,9 +17,31 @@ export default function Home() {
   const [editMode, setEditMode] = useState(false); // State to track edit mode
   const [showAddWidget, setShowAddWidget] = useState(false); // State to manage widget container visibility
   const [isAddingWidget, setIsAddingWidget] = useState(false); // State to track if adding widgets
+  const [addWidget, setAddWidget] = useState(false); //state for the action of adding the widget from widget scrollable list 
 
   const closeBtn = () => {
     setShowAddWidget(false);
+  };
+
+  const NewsWidget = () => {
+    return (
+      <div className="relative news_widget h-85 w-80 primaryColor1BG">
+        <div className="home_first_row flex flex-row justify-between mt-5">
+          <div className="ml-5 flex flex-row">
+            <span className="ml-2 text-lg font-semibold">News</span>
+          </div>
+          <div className="text-sm mr-5">
+            <span id="mostlycloudy">2 min ago</span>
+          </div>
+        </div>
+        <div className="home_second_row flex flex-row justify-between">
+          <div className="ml-5 mt-2">
+            <div className="text-lg font-bold">Breaking News</div>
+            <div className="text-xs">Major event happening right now.</div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Add Widget Container Component
@@ -49,7 +71,6 @@ export default function Home() {
             <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
               <button className="add_symbol"><FaPlus /></button>
             </div>
-            {/* Add more widgets to test scrolling */}
             <div className="widget-option bg-gray-200 p-2 rounded-lg m-2 textDark">
               <button className="add_symbol"><FaPlus /></button>
             </div>
@@ -93,6 +114,7 @@ export default function Home() {
     weatherWidget: true,
     eventsWidget: true,
     mapWidget: true,
+    newsWidget: false,
   });
 
   // Function to handle minus button click
@@ -106,8 +128,8 @@ export default function Home() {
   return (
     <>
       {/* Header Section */}
-      <div className="header flex flex-row">
-        <div className="home_title titleText">Home</div>
+      <div className="header flex flex-row z-5">
+        <div className="home_title ml-40 titleText">Home</div>
         <div>
           <button
             className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
@@ -120,14 +142,14 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="home_main ml-20 transition-all duration-300 relative">
+      <div className="home_main w-full ml-40 transition-all duration-300 relative z-5">
         {/* Main Content Section */}
         <div className={`${showAddWidget ? "blur-sm" : ""} pointer-events-auto`}>
           {/* Single Row for All Widgets */}
-          <div className="widgets-container flex flex-wrap gap-4 mt-4">
+          <div className="widgets-container flex flex-wrap gap-4 mt-4 overflow-x-hidden sm:overflow-x-visible">
             {/* Weather Widget */}
             {widgetVisibility.weatherWidget && (
-              <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
+              <div className="relative home_weather h-85 w-80 primaryColor1BG">
                 {editMode && (
                   <FiMinus
                     className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
@@ -217,7 +239,7 @@ export default function Home() {
 
             {/* Events Widget */}
             {widgetVisibility.eventsWidget && (
-              <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG">
+              <div className="relative event_weather h-85 w-150 primaryColor1BG">
                 {editMode && (
                   <FiMinus
                     className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
@@ -231,13 +253,13 @@ export default function Home() {
                 </div>
 
                 <div className="home_second_row flex flex-row justify-between">
-                  <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
+                  <div className="event_container h-[120px] flex flex-row ml-5">
                     <div className="cloud_firstcolumn mt-5">
                       <div id="cloud_logo">
                         <FaCloud />
                       </div>
                     </div>
-                    <div className="cloud_secondcolumn ml-10 mt-2 w-full">
+                    <div className="ml-10 mt-2 w-full">
                       <div className="cloud_info_firstrow text-xs ml-80">20 mins ago</div>
                       <div className="cloud_info_firstrow text-lg mt-2 font-bold">
                         Lightning strikes in Hamilton Gardens
@@ -248,7 +270,7 @@ export default function Home() {
                 </div>
 
                 <div className="home_third_row flex flex-row justify-between">
-                  <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
+                  <div className="event_container h-[120px] flex flex-row ml-5">
                     <div className="cloud_firstcolumn mt-5">
                       <div id="cloud_logo">
                         <FiSun />
@@ -266,7 +288,7 @@ export default function Home() {
 
             {/* Map Widget */}
             {widgetVisibility.mapWidget && (
-              <div className="relative map_container h-[350px] w-[600px] rounded-[40px]  primaryColor1BG">
+              <div className="relative map_container h-85 w-80 rounded-[40px]  primaryColor1BG">
                 {editMode && (
                   <FiMinus
                     className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
@@ -304,7 +326,10 @@ export default function Home() {
             </div>
           )}
         </div>
-
+        
+        {widgetVisibility.newsWidget && (
+          <NewsWidget />
+        )}
         {/* Add Widget Container */}
         {showAddWidget && <AddWidgetContainer />}
       </div>

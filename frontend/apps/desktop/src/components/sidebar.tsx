@@ -5,7 +5,7 @@ import { RiTrafficLightFill } from "react-icons/ri";
 
 export default function Sidebar() {
     return(
-        <div className="sidebarContainer primaryColor1BG textLight h-full w-full ">
+        <div className="sidebarContainer primaryColor1BG textLight h-full w-full z-100 relative">
             <div className="h-24 flex justify-center items-center border-b border-white">
                 <img src={sidebarLogo} alt="Logo" className="h-1/2"/>
                 <div className="sidebarText ml-2">CityManager</div>
