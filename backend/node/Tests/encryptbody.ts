@@ -2,10 +2,10 @@ import { aesEncrypt } from '../Interceptors/aesEncryption'; // Import encryption
 
 // Sample User Data (For Registration/Login)
 const data = {
-  first_name: 'Simon',
-  last_name: 'Walter',
-  email: 'walters@garda.com',
-  password: 'simongoback',
+  first_name: 'sibin',
+  last_name: 'george',
+  email: 'sibin@garda.com',
+  password: 'sibin123',
   phone_number: '1234567890',
 };
 
