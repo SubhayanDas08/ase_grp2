@@ -22,7 +22,7 @@ interface SettingsProps {
         <div className="h-full w-full flex flex-col">
             <h2 className="text-3xl font-bold mb-6 primaryColor1">Settings {">"} Profile</h2>
 
-            <div className="h-full w-full bg-red-500 max-w-lg mx-auto p-8 space-y-6">
+            <div className="h-full w-full bg-red-500 p-8 space-y-6">
                 {/* First Name */}
                 <div className="flex items-center primaryColor1 rounded-full p-4">
                     <label className="w-1/4 text-white font-bold">Firstname</label>
