@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { saveRegistrationData, verifyUserCredentials, saveLocationToDatabase, getLocationData } from '../services/databaseService';
-import { aesDecrypt, aesEncrypt } from '../Interceptors/aesEncryption';
+import { aesDecrypt, aesEncrypt } from '../interceptors/aesEncryption';
 
 
 

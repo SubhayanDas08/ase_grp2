@@ -1,6 +1,6 @@
 import { PoolClient } from 'pg';
 import { pool } from '../server';
-import { aesEncrypt, aesDecrypt } from '../Interceptors/aesEncryption';
+import { aesEncrypt, aesDecrypt } from '../interceptors/aesEncryption';
 
 // Save registration data with encrypted request body
 export const saveRegistrationData = async (
