@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { saveRegistrationData, verifyUserCredentials, saveLocationToDatabase, getLocationData } from '../services/databaseService';
-import { aesDecrypt, aesEncrypt } from '../Interceptors/aesEncryption';
+import { aesDecrypt, aesEncrypt } from '../interceptors/aesEncryption';
 
 
 
@@ -94,4 +94,23 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
         console.error("Internal Server Error:", error);
         res.status(500).json({ encryptedData: aesEncrypt(JSON.stringify({ error: "Internal Server Error" })) });
     }
+};
+
+export const getLocationByIp = async (req: Request, res: Response): Promise<void> => {
+  try {
+       console.log("Received IP Request");
+
+       // Retrieve user's IP address
+       // const userIp = req.headers["x-real-ip"] || req.socket.remoteAddress;
+       // console.log("User IP:", userIp);
+
+       // // Encrypt the response
+       // const encryptedResponse = aesEncrypt(JSON.stringify({ ip: userIp }));
+
+       // res.status(200).json({ data: userIp });
+       res.send("Hello, World!");
+   } catch (error) {
+       console.error("Internal Server Error:", error);
+       res.status(500).json({ encryptedData: aesEncrypt(JSON.stringify({ error: "Internal Server Error" })) });
+   }
 };
