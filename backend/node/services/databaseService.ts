@@ -20,7 +20,7 @@ export const saveRegistrationData = async (
         // Assign role based on domain
         const domainRoles: { [key: string]: string } = {
             "tfi.com": "Admin",
-            "tcd.ie": "User",
+            "tcd.ie": "College",
             "garda.com": "Admin",
             "gmail.com": "User"
         };
@@ -39,7 +39,7 @@ export const saveRegistrationData = async (
         const savedUser = result.rows[0];
 
         console.log('User registration data saved successfully:', savedUser);
-        return savedUser;  // ✅ Now returning user data instead of void
+        return savedUser;
     } catch (error) {
         console.error('Error saving user data:', error);
         throw error;
