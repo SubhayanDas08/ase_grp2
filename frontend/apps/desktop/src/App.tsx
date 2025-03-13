@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import Home from "./pages/Home.tsx";
 import WeatherMap from "./pages/WeatherMap.tsx";
 import Events from "./pages/Events.tsx";
-import Settings from "./pages/Settings2.tsx";
+import Settings from "./pages/Settings.tsx";
 import Login from "./pages/Login.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import Routing from "./pages/Routing.tsx";

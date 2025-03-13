@@ -9,6 +9,9 @@
   --primaryColor2: #04b9c6;
   --secondaryColor: #70706f;
 
+  /* Gradient Color */
+  --primaryGradient: linear-gradient(to right,#029aa5, #04b9c6);
+
   /* Main text colour */
   --textLight: white;
   --textDark: black;
@@ -61,6 +64,9 @@ body {
 }
 .primaryColor2 {
   color: var(--primaryColor2);
+}
+.primaryGradient {
+  background: var(--primaryGradient);
 }
 .secondaryColor {
   color: var(--secondaryColor);
