@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import Home from "./pages/Home.tsx";
 import WeatherMap from "./pages/WeatherMap.tsx";
-import Events from "./pages/Events.tsx";
+import Events from "./pages/Events2.tsx";
 import Settings from "./pages/Settings.tsx";
 import Login from "./pages/Login.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";

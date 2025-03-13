@@ -8,7 +8,7 @@ interface SettingsProps {
 export default function Settings({setUserAuthenticated}:SettingsProps): JSX.Element {
     return(
         <div className="h-full w-full flex flex-col">
-            <h2 className="text-5xl mb-10 font-bold primaryColor1">Settings</h2>
+            <h2 className="text-5xl mb-10 font-extrabold primaryColor1">Settings</h2>
 
             <div className="h-full w-full flex flex-col space-y-5">
                 {/* User Profile */}
