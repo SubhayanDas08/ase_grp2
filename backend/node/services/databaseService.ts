@@ -135,14 +135,14 @@ export const saveRegistrationData = async (
         const emailDomain = email.split("@")[1];
 
         // Extract the first part of the domain before the dot (e.g., "tcd")
-        const role = emailDomain.split('.')[0];
+        // const domain = emailDomain.split('.')[0];
 
         // Encrypt password before storing in the database
         const encryptedPassword = aesEncrypt(password);
 
-        const query = `INSERT INTO users (first_name, last_name, email, password, phone_number, role, created_at) 
+        const query = `INSERT INTO users (first_name, last_name, email, password, phone_number, domain, created_at) 
                        VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *;`;
-        const values = [firstName, lastName, email, encryptedPassword, phoneNumber, role];
+        const values = [firstName, lastName, email, encryptedPassword, phoneNumber, emailDomain];
 
         const result = await client.query(query, values);
         const savedUser = result.rows[0];
