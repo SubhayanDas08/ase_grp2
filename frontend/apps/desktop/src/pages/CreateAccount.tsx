@@ -4,23 +4,27 @@ import FullLogo from "../assets/FullLogo.svg";
 import { useState, ChangeEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "./../components/login"; // Import API function
+
+
 
 interface FormDataInterface {
     firstName: string,
     lastName: string,
     email: string,
-    phoneNb: string,
+    phoneNumber: string,
     password: string
 }
 
 export default function CreateAccount() {
     const [showPassword, setShowPassword] = useState(false);
-
+    const navigate = useNavigate();
     const [formData, setFormData] = useState<FormDataInterface>({
         firstName: "",
         lastName: "",
         email: "",
-        phoneNb: "",
+        phoneNumber: "",
         password: "",
     });
 
@@ -31,6 +35,33 @@ export default function CreateAccount() {
           [name]: value,
         }));
     };
+
+    const handleRegistration = async() =>{
+        if (!formData.email || !formData.password || !formData.firstName|| !formData.lastName|| !formData.phoneNumber) {
+            console.error("A field is empty");
+            return;
+        }
+
+        try{
+            const response:any = await registerUser(formData);
+            console.log(response, "response");
+
+            if(response.error){
+                console.error("Registration Error:", response.error);
+                alert(response.error);
+                return;
+            }
+
+            else{
+                console.log("Registration Success:", response);
+                alert("Registration successful!");
+                navigate("/login")
+            }   
+        }catch (error) {
+            console.error("Unexpected Error:", error);
+            alert("Something went wrong! Please try again.");
+        }
+    }
 
     const checkRequiredFormFields = () => {
         for (const [key, value] of Object.entries(formData)) {
@@ -65,7 +96,7 @@ export default function CreateAccount() {
                             <input type="text" name="email" placeholder="Email" className="flex items-center loginRegistrationFormInput" value={formData.email} onChange={handleFormData}/>
                         </div>
                         <div className="flex justify-center items-center h-1/5">
-                            <input type="text" name="phoneNb" placeholder="Phone Number" className="flex items-center loginRegistrationFormInput " value={formData.phoneNb} onChange={handleFormData}/>
+                            <input type="text" name="phoneNumber" placeholder="Phone Number" className="flex items-center loginRegistrationFormInput " value={formData.phoneNumber} onChange={handleFormData}/>
                         </div>
                         <div className="flex justify-center items-center h-1/5">
                             <input name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="loginRegistrationFormInput ms-6" value={formData.password} onChange={handleFormData}/>
@@ -74,7 +105,7 @@ export default function CreateAccount() {
                             </button>
                         </div>
                         <div className="flex justify-center items-center h-1/5">
-                            <button className="loginRegistrationButton" onClick={() => checkRequiredFormFields()}>
+                            <button className="loginRegistrationButton" onClick={() => handleRegistration()}>
                                 Sign up
                             </button>
                         </div> 
