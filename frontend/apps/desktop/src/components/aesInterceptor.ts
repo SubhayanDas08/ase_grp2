@@ -8,7 +8,7 @@ const key = "z^ctdz%W}$jG-zCd";
  * @param content - The content to encrypt.
  * @returns The encrypted content as a string.
  */
-export const aesEncrypt = (content: string): string => {
+export const aesEncrypt = (content: any): string => {
   const parsedKey = CryptoJS.enc.Utf8.parse(key);
   const encrypted = CryptoJS.AES.encrypt(content, parsedKey, {
     mode: CryptoJS.mode.ECB,
@@ -22,7 +22,7 @@ export const aesEncrypt = (content: string): string => {
  * @param encryptedContent - The encrypted content to decrypt.
  * @returns The decrypted content as a string.
  */
-export const aesDecrypt = (encryptedContent: string): string => {
+export const aesDecrypt = (encryptedContent: any): string => {
   const parsedKey = CryptoJS.enc.Utf8.parse(key);
   const decrypted = CryptoJS.AES.decrypt(encryptedContent, parsedKey, {
     mode: CryptoJS.mode.ECB,

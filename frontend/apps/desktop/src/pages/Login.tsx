@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { loginUser } from "./../components/login"; // Import API function
 
@@ -22,6 +22,8 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
         email: "",
         password: "",
     });
+    const navigate = useNavigate();
+
 
     const handleFormData = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -39,22 +41,25 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
 
         try {
             const response:any = await loginUser(formData);
-            console.log(typeof(response),'response');
+            console.log((response),'response');
+            const parsedResp = JSON.parse(response)
             
 
-            if (response.error) {
+            if (parsedResp.error) {
                 console.error("Login Error:", response.error);
                 alert(response.error);
                 setUserAuthenticated(false);
                 return;
                 
             }
-            else{
+            else if (parsedResp.message == 'Login Successful') { 
                 console.log("Login Success:", response);
                 alert("Login successful!");
     
                 // Set authentication state
                 setUserAuthenticated(true);
+                navigate("/home")
+                
             }
         } catch (error) {
             console.error("Unexpected Error:", error);

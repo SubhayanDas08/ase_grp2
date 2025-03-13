@@ -10,10 +10,10 @@ import { registerUser } from "./../components/login"; // Import API function
 
 
 interface FormDataInterface {
-    firstName: string,
-    lastName: string,
+    first_name: string,
+    last_name: string,
     email: string,
-    phoneNumber: string,
+    phone_number: string,
     password: string
 }
 
@@ -21,10 +21,10 @@ export default function CreateAccount() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const [formData, setFormData] = useState<FormDataInterface>({
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         email: "",
-        phoneNumber: "",
+        phone_number: "",
         password: "",
     });
 
@@ -37,25 +37,27 @@ export default function CreateAccount() {
     };
 
     const handleRegistration = async() =>{
-        if (!formData.email || !formData.password || !formData.firstName|| !formData.lastName|| !formData.phoneNumber) {
+        if (!formData.email || !formData.password || !formData.first_name|| !formData.last_name|| !formData.phone_number) {
             console.error("A field is empty");
             return;
         }
 
         try{
             const response:any = await registerUser(formData);
-            console.log(response, "response");
+            const parsedResp = JSON.parse(response)
+            
 
-            if(response.error){
-                console.error("Registration Error:", response.error);
-                alert(response.error);
+
+            if(parsedResp.error){
+                console.error("Registration Error:", parsedResp.error);
+                alert(parsedResp.error);
                 return;
             }
 
             else{
-                console.log("Registration Success:", response);
+                console.log("Registration Success:", parsedResp);
                 alert("Registration successful!");
-                navigate("/login")
+                navigate("/")
             }   
         }catch (error) {
             console.error("Unexpected Error:", error);
@@ -88,15 +90,15 @@ export default function CreateAccount() {
                     <div className="text-center h-1/2"> 
                         <div className="flex justify-center items-center h-1/5">
                             <div className="flex justify-between gap-4" style={{width: "70%"}}> 
-                                <input type="text" name="firstName" placeholder="First Name" className="nameFormInput" onChange={handleFormData}/>
-                                <input type="text" name="lastName" placeholder="Last Name" className="nameFormInput" value={formData.lastName} onChange={handleFormData}/>
+                                <input type="text" name="first_name" placeholder="First Name" className="nameFormInput" onChange={handleFormData}/>
+                                <input type="text" name="last_name" placeholder="Last Name" className="nameFormInput" value={formData.last_name} onChange={handleFormData}/>
                             </div>
                         </div>
                         <div className="flex justify-center items-center h-1/5">
                             <input type="text" name="email" placeholder="Email" className="flex items-center loginRegistrationFormInput" value={formData.email} onChange={handleFormData}/>
                         </div>
                         <div className="flex justify-center items-center h-1/5">
-                            <input type="text" name="phoneNumber" placeholder="Phone Number" className="flex items-center loginRegistrationFormInput " value={formData.phoneNumber} onChange={handleFormData}/>
+                            <input type="text" name="phone_number" placeholder="Phone Number" className="flex items-center loginRegistrationFormInput " value={formData.phone_number} onChange={handleFormData}/>
                         </div>
                         <div className="flex justify-center items-center h-1/5">
                             <input name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="loginRegistrationFormInput ms-6" value={formData.password} onChange={handleFormData}/>

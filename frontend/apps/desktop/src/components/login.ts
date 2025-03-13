@@ -1,15 +1,19 @@
 import axios from "axios";
 import  {aesEncrypt, aesDecrypt} from './aesInterceptor'
 
-const API_BASE_URL = "http://localhost:5000"; // Change to your backend URL
+const API_BASE_URL = "http://localhost:3000"; // Change to your backend URL
 
 export const registerUser = async (userData:any) => {
     try {
-        const encryptedData = aesEncrypt(userData);
 
-        const response = await axios.post(`${API_BASE_URL}/register`, { encryptedData });
+        const encryptedData = aesEncrypt(JSON.stringify(userData));
+
+
+        const response = await axios.post(`${API_BASE_URL}/user/getRegistrationData`, { encryptedData });
+
 
         const decryptedResponse = aesDecrypt(response.data.encryptedData);
+
         return decryptedResponse;
     } catch (error) {
         console.error("Registration Error:", error);
@@ -19,11 +23,16 @@ export const registerUser = async (userData:any) => {
 
 export const loginUser = async (credentials:any) => {
     try {
-        const encryptedData = aesEncrypt(credentials);
 
-        const response = await axios.post(`${API_BASE_URL}/users/login`, { encryptedData });
+        
+        const encryptedData = aesEncrypt(JSON.stringify(credentials));
 
-        const decryptedResponse = aesDecrypt(response.data.encryptedData);
+        
+        const response = await axios.post(`${API_BASE_URL}/user/login`, { encryptedData });
+        
+
+        const decryptedResponse = aesDecrypt(response.data.encryptedData);      
+          
         return decryptedResponse;
     } catch (error) {
         console.error("Login Error:", error);

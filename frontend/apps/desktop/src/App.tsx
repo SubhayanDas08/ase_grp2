@@ -32,7 +32,7 @@ export default function App() {
                         </div>
                         <div className="ml-24 flex-1 overflow-y-auto p-5 ">
                             <Routes>
-                                <Route path="/" element={<Home />} />
+                                <Route path="/home" element={<Home />} />
                                 <Route path="/weather" element={<WeatherMap />} />
                                 <Route path="/events" element={<Events />} />
                                 <Route path="/routing" element={<Routing />} />
