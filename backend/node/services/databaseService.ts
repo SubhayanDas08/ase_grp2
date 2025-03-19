@@ -23,6 +23,28 @@ export const verifyUserCredentials = async (email: string): Promise<any> => {
   }
 };
 
+export const getUserById = async (userId: string): Promise<any> => {
+  let client: PoolClient | undefined;
+
+  try {
+    client = await pool.connect();
+    const query =
+      "SELECT id, first_name, last_name, email, phone_number, domain FROM users WHERE id = $1";
+    const result = await client.query(query, [userId]);
+
+    if (result.rows.length > 0) {
+      return result.rows[0];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    throw error;
+  } finally {
+    client?.release();
+  }
+};
+
 // Save location data with encrypted request body
 export const saveLocationToDatabase = async (
   label: string,
@@ -65,7 +87,7 @@ export const getLocationData = async (): Promise<any> => {
 
     if (result.rows.length > 0) {
       // Encrypt the retrieved data before sending response
-      return JSON.parse(result.rows[0]);
+      return result.rows[0];
     } else {
       return result;
     }
