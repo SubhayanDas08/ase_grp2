@@ -12,13 +12,14 @@ import Routing from "./pages/Routing.tsx";
 import Events from "./pages/Events.tsx";
 import Traffic from "./pages/Traffic.tsx";
 import Waste from "./pages/Waste.tsx";
-import WeatherMap from "./pages/WeatherMap.tsx";
+import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
 
 
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
+    // CHANGE THIS TO FALSE AT THE BEFORE PUSHING TO MAIN
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
     return (
         <Router>
             <div className="flex h-screen"> 
@@ -36,14 +37,12 @@ export default function App() {
                         </div>
                         <div className="h-full grow ml-[250px] p-5">
                             <Routes>
-                                <Route path="/home" element={<Home />} />
-                                <Route path="/weather" element={<WeatherMap />} />
-                                <Route path="/events" element={<Events />} />
+                                <Route path="/" element={<Home />} />
                                 <Route path="/routing" element={<Routing />} />
                                 <Route path="/events" element={<Events />} />
                                 <Route path="/traffic" element={<Traffic />} />
                                 <Route path="/waste" element={<Waste />} />
-                                <Route path="/weather" element={<WeatherMap />} />
+                                <Route path="/weather" element={<Weather />} />
                                 <Route path="/fleetsize" element={<FleetSize />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
                             </Routes>
