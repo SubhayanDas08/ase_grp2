@@ -20,6 +20,8 @@ import Settings from "./pages/Settings.tsx";
 export default function App() {
     // CHANGE THIS TO FALSE AT THE BEFORE PUSHING TO MAIN
     const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
+    const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
+    const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
     return (
         <Router>
             <div className="flex h-screen"> 
@@ -35,16 +37,13 @@ export default function App() {
                         <div className="h-full w-[250px] flex-none fixed">
                             <Sidebar />
                         </div>
-                        <div className="h-full grow ml-[250px] p-5">
+                        <div className="flex flex-col h-full grow ml-[250px] p-5">
                             <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/routing" element={<Routing />} />
-                                <Route path="/events" element={<Events />} />
-                                <Route path="/traffic" element={<Traffic />} />
-                                <Route path="/waste" element={<Waste />} />
-                                <Route path="/weather" element={<Weather />} />
-                                <Route path="/fleetsize" element={<FleetSize />} />
-                                <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
+                                {pageRoutesList.map((route, index) => {
+                                    return(
+                                        <Route path={route} element={pageRouteItemsList[index]} key={index} />
+                                    );
+                                })}
                             </Routes>
                         </div>
                     </div>
@@ -53,4 +52,3 @@ export default function App() {
         </Router>
     );
 }
-  
