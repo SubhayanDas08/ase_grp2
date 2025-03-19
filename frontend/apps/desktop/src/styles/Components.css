@@ -1,38 +1,37 @@
 @import "../../../../Global.css";
 
+/* Sidebar */
 .sidebarText {
   font-size: 18px;
 }
 
 .sidebarHeader {
-  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-bottom: 2px solid white;
+  margin: 0 20px 0 20px;
 }
 
-/* Sidebar */
-.f-border {
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  margin: 30px 30px 0 35px;
+  border-radius: var(--cornerRadius);
+}
+
+.sidebarItem:hover {
+  background-color: var(--primaryColor2);
+}
+
+.iconContainer {
   border: none;
   background-color: white;
-  font-size: 20px;
+  font-size: 35px;
   border-radius: 50%;
-  height: 35px;
-  width: 35px;
-  padding-left: 8px;
-  padding-top: 8px;
-}
-
-.sidebarIcons {
-  color: var(--primaryColor1);
-}
-
-.sidebarItems {
+  height: 50px;
+  width: 50px;
   display: flex;
-  flex-direction: row;
-}
-
-#one:hover {
-  border: none;
-  border-radius: 25px;
-  width: 120px;
-  background-color: var(--primaryColor2);
+  justify-content: center;
+  align-items: center;
 }
