@@ -37,7 +37,7 @@ export default function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/weather" element={<WeatherMap />} />
-                                <Route path="/events" element={<AddEvent />} />
+                                {/* <Route path="/events" element={<AddEvent />} /> */}
                                 <Route path="/routing" element={<Routing />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
                                 <Route path="/settings/profile" element={<SettingsProfile setUserAuthenticated={setUserAuthenticated} />} />

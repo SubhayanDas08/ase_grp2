@@ -60,7 +60,7 @@ interface SettingsProps {
                     <input
                     type="text"
                     value={email}
-                    className="w-8/10 textFieldBGDark rounded-full px-4 py-2 outline-none formText pl-10"
+                    className="w-8/10 textFieldBGDark rounded-full px-4 py-2 outline-none pl-10 placeholder:text-black"
                     />
                 </div>
 
@@ -70,7 +70,7 @@ interface SettingsProps {
                     <input
                     type="text"
                     value={phoneNumber}
-                    className="w-8/10 textFieldBGDark rounded-full px-4 py-2 outline-none formText pl-10"
+                    className="w-8/10 textFieldBGDark rounded-full px-4 py-2 outline-none pl-10 placeholder:text-black"
                     />
                 </div>
 
