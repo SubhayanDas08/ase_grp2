@@ -6,7 +6,7 @@ import { RiTrafficLightFill } from "react-icons/ri";
 import "../styles/Components.css";
 
 export default function Sidebar() {
-    const routesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize"];
+    const routesList: string[] = ["/home", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize"];
     const sidebarTitlesList: string[] = ["Home", "Routes", "Events", "Traffic", "Waste", "Weather", "Fleet Size"];
     const sidebarIconsList: React.ReactElement[] = [<FiHome />, <FiMap />, <FiList />, <RiTrafficLightFill />, <FiTrash2 />, <FiCloudDrizzle />, <FiTruck />];
 
