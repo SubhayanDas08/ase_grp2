@@ -4,7 +4,10 @@ import "leaflet/dist/leaflet.css";
 import Home from "./pages/Home.tsx";
 import WeatherMap from "./pages/WeatherMap.tsx";
 import AddEvent from "./pages/Events2.tsx";
-import Settings from "./pages/SettingsProfile.tsx";
+import Settings from "./pages/Settings.tsx";
+import SettingsProfile from "./pages/SettingsProfile.tsx";
+import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
+import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 import Login from "./pages/Login.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import Routing from "./pages/Routing.tsx";
@@ -37,7 +40,9 @@ export default function App() {
                                 <Route path="/events" element={<AddEvent />} />
                                 <Route path="/routing" element={<Routing />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
-                                
+                                <Route path="/settings/profile" element={<SettingsProfile setUserAuthenticated={setUserAuthenticated} />} />
+                                <Route path="/settings/changepassword" element={<SettingsChangePassword setUserAuthenticated={setUserAuthenticated} />} />
+                                <Route path="/settings/report" element={<ReportAnIssue setUserAuthenticated={setUserAuthenticated} />} />
                             </Routes>
                         </div>
                     </>

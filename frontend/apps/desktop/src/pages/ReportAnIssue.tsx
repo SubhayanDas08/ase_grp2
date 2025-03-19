@@ -21,9 +21,9 @@ interface SettingsProps {
 
     return (
         <div className="h-full w-full flex flex-col">
-            <h2 className="text-3xl font-extrabold mb-6 primaryColor1">Settings {">"} Report An Issue</h2>
+            <h2 className="text-5xl font-extrabold mb-10 primaryColor1">Settings {">"} Report An Issue</h2>
 
-            <div className="h-full w-full p-8 space-y-6 flex flex-col">
+            <div className="h-full w-full space-y-6 flex flex-col">
                 {/*Event Title */}
                 <div className="">
                 <h3 className="text-2xl font-extrabold primaryColor1">Subject</h3>
