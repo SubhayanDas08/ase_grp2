@@ -3,7 +3,7 @@ import { createEvent, getAllEvents , getEventById } from '../controllers/eventsC
 const router: Router = express.Router()
 
 // Define routes
-router.post('/', createEvent) // Route to create an event
+router.post('/create', createEvent) // Route to create an event
 router.get('/:id', getEventById) // Route to get an event by ID
 router.get('/', getAllEvents) // Route to get all events
 
