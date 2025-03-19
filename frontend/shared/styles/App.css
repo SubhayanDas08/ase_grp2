@@ -1,0 +1,7 @@
+@import "../../Global.css";
+
+.sharedButtonCSS {
+  height: 46px;
+  width: 70%;
+  background-color: var(--success);
+}
