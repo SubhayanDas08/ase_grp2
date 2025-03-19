@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react"; 
 
 interface SettingsProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
@@ -14,23 +13,42 @@ interface SettingsProps {
   }
 
   export default function SettingsProfile({ setUserAuthenticated }: SettingsProps): JSX.Element {
-    const [firstName, setFirstName] = useState<string>("Enter your firstname");
-    const [lastName, setLastName] = useState<string>("Enter your lastname");
-    const [email, setEmail] = useState<string>("sample.email@gmail.com");
-    const [phoneNumber, setphoneNumber] = useState<string>("+353 899739832");
+    const [subject, setSubject] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
+
+    const handleSubmit=(e: React.FormEvent)=>{
+        e.preventDefault();
+
+        if (!subject.trim() || !description.trim()) {
+            setErrorMessage("Subject and Description cannot be empty.");
+            return;
+        }
+
+        console.log("Issue succesfully reported!");
+        alert("Issue succesfully reported!");
+
+        setSubject("");
+        setDescription("");
+    }
+
 
     return (
         <div className="h-full w-full flex flex-col">
             <h2 className="text-5xl font-extrabold mb-10 primaryColor1">Settings {">"} Report An Issue</h2>
 
+            <form onSubmit={handleSubmit}>
             <div className="h-full w-full space-y-6 flex flex-col">
-                {/*Event Title */}
+                {/*Subject */}
                 <div className="">
                 <h3 className="text-2xl font-extrabold primaryColor1">Subject</h3>
                 <input
                     type="text"
-                    defaultValue="Old Password"
-                    className="textFieldBG w-full mt-4 rounded-2xl px-4 py-2 formText"
+                    value={subject}
+                    placeholder="Add Subject of the Issue"
+                    onChange={(e)=>setSubject(e.target.value)}
+                    className="textFieldBG w-full mt-4 rounded-2xl px-4 py-2 textDark"
                     />
                 </div>
 
@@ -38,16 +56,20 @@ interface SettingsProps {
                 <div className="flex flex-col h-50 ">
                 <h3 className="text-2xl font-extrabold primaryColor1">Issue Description</h3>
                 <textarea
-                    defaultValue="Add Description"
-                    className="grow textFieldBG w-full mt-4 rounded-2xl px-4 py-2 formText"
+                    value={description}
+                    placeholder="Add Description"
+                    onChange={(e)=>setDescription(e.target.value)}
+                    className="grow textFieldBG w-full mt-4 rounded-2xl px-4 py-2"
                     />
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex items-center justify-center h-12 w-35 font-extrabold rounded-2xl textLight primaryGradient">
+                <button className="flex items-center justify-center h-12 w-35 font-extrabold rounded-2xl textLight primaryGradient hover:cursor-pointer"
+                type="submit">
                     Report
-                </div>
+                </button>
             </div>
+            </form>
         </div>
     );
 }

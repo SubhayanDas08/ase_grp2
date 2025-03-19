@@ -38,7 +38,7 @@ interface SettingsProps {
                     value={firstName}
                     placeholder="Enter your First Name"
                     onChange={(e)=>setFirstName(e.target.value)}
-                    className="w-8/10 bg-white rounded-full px-4 py-2 outline-none formText pl-10"
+                    className="w-8/10 bg-white rounded-full px-4 py-2 outline-none textDark pl-10"
                     />
                 </div>
 
@@ -50,7 +50,7 @@ interface SettingsProps {
                     value={lastName}
                     placeholder="Enter your Last Name"
                     onChange={(e)=>setLastName(e.target.value)}
-                    className="w-8/10 bg-white rounded-full px-4 py-2 outline-none formText pl-10"
+                    className="w-8/10 bg-white rounded-full px-4 py-2 outline-none textDark pl-10"
                     />
                 </div>
 
