@@ -1,3 +1,4 @@
+/*
 import { useState, useEffect } from "react";
 import { warn, debug, trace, info, error } from '@tauri-apps/plugin-log';
 import dotenv from 'dotenv';
@@ -77,3 +78,4 @@ export default function Map() {
     </div>
   );
 }
+*/
