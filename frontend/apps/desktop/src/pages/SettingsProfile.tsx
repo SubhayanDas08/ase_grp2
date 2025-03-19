@@ -13,10 +13,17 @@ interface SettingsProps {
   }
 
   export default function SettingsProfile({ setUserAuthenticated }: SettingsProps): JSX.Element {
-    const [firstName, setFirstName] = useState<string>("Enter your firstname");
-    const [lastName, setLastName] = useState<string>("Enter your lastname");
-    const [email, setEmail] = useState<string>("sample.email@gmail.com");
+    const [firstName, setFirstName] = useState<string>("John");
+    const [lastName, setLastName] = useState<string>("Doe");
+    const [email, setEmail] = useState<string>("user.email@gmail.com");
     const [phoneNumber, setphoneNumber] = useState<string>("+353 899739832");
+
+    const handleSubmit=()=>{
+        const userData={
+            firstName,lastName
+        };
+        console.log("Submitted Data",userData);  
+    }
 
     return (
         <div className="h-full w-full flex flex-col">
@@ -28,7 +35,9 @@ interface SettingsProps {
                     <label className="w-2/10  pl-10 text-white font-bold">Firstname</label>
                     <input
                     type="text"
-                    defaultValue="Firstname"
+                    value={firstName}
+                    placeholder="Enter your First Name"
+                    onChange={(e)=>setFirstName(e.target.value)}
                     className="w-8/10 bg-white rounded-full px-4 py-2 outline-none formText pl-10"
                     />
                 </div>
@@ -38,7 +47,9 @@ interface SettingsProps {
                     <label className="w-2/10  pl-10 text-white font-bold">Last Name</label>
                     <input
                     type="text"
-                    defaultValue="Firstname"
+                    value={lastName}
+                    placeholder="Enter your Last Name"
+                    onChange={(e)=>setLastName(e.target.value)}
                     className="w-8/10 bg-white rounded-full px-4 py-2 outline-none formText pl-10"
                     />
                 </div>
@@ -48,8 +59,8 @@ interface SettingsProps {
                     <label className="w-2/10  pl-10 text-white font-bold">Email</label>
                     <input
                     type="text"
-                    defaultValue="Email"
-                    className="w-8/10 bg-white rounded-full px-4 py-2 outline-none formText pl-10"
+                    value={email}
+                    className="w-8/10 textFieldBGDark rounded-full px-4 py-2 outline-none formText pl-10"
                     />
                 </div>
 
@@ -58,15 +69,15 @@ interface SettingsProps {
                     <label className="w-2/10  pl-10 text-white font-bold">Phone Number</label>
                     <input
                     type="text"
-                    defaultValue="Phone Number"
-                    className="w-8/10 bg-white rounded-full px-4 py-2 outline-none formText pl-10"
+                    value={phoneNumber}
+                    className="w-8/10 textFieldBGDark rounded-full px-4 py-2 outline-none formText pl-10"
                     />
                 </div>
 
-                {/* Delete Account */}
-                <div className="flex justify-center rounded-4xl p-4 error mt-auto">
-                    <label className="pl-10 text-white font-bold">Delete Account</label>
-                </div>
+                <button className="flex justify-center rounded-4xl p-4 text-white font-bold mt-auto bg-[#04b9c6]  hover:bg-[#029aa5] cursor-pointer"
+                onClick={handleSubmit}>
+                    Save
+                </button>
             </div>
         </div>
     );

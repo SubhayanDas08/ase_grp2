@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import Home from "./pages/Home.tsx";
 import WeatherMap from "./pages/WeatherMap.tsx";
-import Events from "./pages/Events2.tsx";
-import Settings from "./pages/Settings.tsx";
+import AddEvent from "./pages/Events2.tsx";
+import Settings from "./pages/SettingsProfile.tsx";
 import Login from "./pages/Login.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import Routing from "./pages/Routing.tsx";
@@ -34,7 +34,7 @@ export default function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/weather" element={<WeatherMap />} />
-                                <Route path="/events" element={<Events />} />
+                                <Route path="/events" element={<AddEvent />} />
                                 <Route path="/routing" element={<Routing />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
                                 
