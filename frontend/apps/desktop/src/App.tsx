@@ -18,7 +18,7 @@ import Settings from "./pages/Settings.tsx";
 
 
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
     return (
         <Router>
             <div className="flex h-screen"> 
@@ -36,7 +36,9 @@ export default function App() {
                         </div>
                         <div className="h-full grow ml-[250px] p-5">
                             <Routes>
-                                <Route path="/" element={<Home />} />
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/weather" element={<WeatherMap />} />
+                                <Route path="/events" element={<Events />} />
                                 <Route path="/routing" element={<Routing />} />
                                 <Route path="/events" element={<Events />} />
                                 <Route path="/traffic" element={<Traffic />} />
