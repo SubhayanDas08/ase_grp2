@@ -1,17 +1,21 @@
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import "leaflet/dist/leaflet.css";
-import Home from "./pages/Home.tsx";
-import WeatherMap from "./pages/WeatherMap.tsx";
-import Events from "./pages/Events.tsx";
-import Settings from "./pages/Settings.tsx";
-import Login from "./pages/Login.tsx";
-import CreateAccount from "./pages/CreateAccount.tsx";
-import Routing from "./pages/Routing.tsx";
+import "./styles/App.css";
 
+import CreateAccount from "./pages/CreateAccount.tsx";
+import Login from "./pages/Login.tsx";
 import Sidebar from "./components/sidebar.tsx";
-import "./App.css";
-import { useState } from "react";
+import Home from "./pages/Home.tsx";
+import Routing from "./pages/Routing.tsx";
+import Events from "./pages/Events.tsx";
+import Traffic from "./pages/Traffic.tsx";
+import Waste from "./pages/Waste.tsx";
+import WeatherMap from "./pages/WeatherMap.tsx";
+import FleetSize from "./pages/FleetSize.tsx";
+import Settings from "./pages/Settings.tsx";
+
 
 export default function App() {
     const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
@@ -26,21 +30,25 @@ export default function App() {
                         </Routes> 
                     </div>
                 ) : (
-                    <>
-                        <div className="h-full w-[185px] fixed overflow-y-auto">
+                    <div className="flex h-full w-full">
+                        <div className="h-full w-[250px] flex-none fixed">
                             <Sidebar />
                         </div>
-                        <div className="ml-24 flex-1 overflow-y-auto p-5 ">
+                        <div className="h-full grow ml-[250px] p-5">
                             <Routes>
                                 <Route path="/home" element={<Home />} />
                                 <Route path="/weather" element={<WeatherMap />} />
                                 <Route path="/events" element={<Events />} />
                                 <Route path="/routing" element={<Routing />} />
+                                <Route path="/events" element={<Events />} />
+                                <Route path="/traffic" element={<Traffic />} />
+                                <Route path="/waste" element={<Waste />} />
+                                <Route path="/weather" element={<WeatherMap />} />
+                                <Route path="/fleetsize" element={<FleetSize />} />
                                 <Route path="/settings" element={<Settings setUserAuthenticated={setUserAuthenticated} />} />
-                                
                             </Routes>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </Router>
