@@ -21,7 +21,7 @@ export default function Events2({setUserAuthenticated}:EventsProps): JSX.Element
             </div>
             <div className="h-full w-full flex flex-col space-y-3">
                 {/* Event Card */}
-                <div className="flex items-center h-20 rounded-3xl primaryGradient">
+                <div className="flex items-center h-20 rounded-3xl primaryGradient hover:cursor-pointer">
                     <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
                         <FaBolt className="text-2l"/>
                     </div>
