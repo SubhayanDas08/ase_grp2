@@ -25,7 +25,7 @@ export default function AddEvent({setUserAuthenticated}:SettingsProps): JSX.Elem
                 <input
                     type="text"
                     // value={subject}
-                    placeholder="Add Subject of the Issue"
+                    placeholder="Add Name of the Event"
                     // onChange={(e)=>setSubject(e.target.value)}
                     className="textFieldBG w-full mt-4 rounded-2xl px-4 py-2 textDark"
                     />
@@ -44,7 +44,7 @@ export default function AddEvent({setUserAuthenticated}:SettingsProps): JSX.Elem
                                 onChange={(date:Date | null) => setSelectedDate(date)}
                                 dateFormat="dd/MM/yyyy"
                                 className="p-2 border border-gray-300 rounded-md"
-                                placeholderText="Select a date"
+                                placeholderText="Select Date of the Event"
                                 />
                             </div>
                         </div>
@@ -53,7 +53,7 @@ export default function AddEvent({setUserAuthenticated}:SettingsProps): JSX.Elem
                         <div className="bg-pink-400">
                             <h3 className="text-2xl font-extrabold primaryColor1">Time</h3>
                             <div className="bg-red-50">
-                            <TimePicker onChange={(time:string|null)=>setSelectedTime(time)} />
+                            <TimePicker onChange={(time:string|null)=>setSelectedTime(time)}/>
                             </div>
                         </div>
                     </div>
@@ -87,8 +87,8 @@ export default function AddEvent({setUserAuthenticated}:SettingsProps): JSX.Elem
                 </div>
 
                 {/* Delete Button */}
-                <button className="flex items-center justify-center h-12 w-36 font-extrabold rounded-2xl textLight error hover:cursor-pointer">
-                    Delete Event
+                <button className="flex items-center justify-center h-12 w-36 font-extrabold rounded-2xl textLight primaryGradient hover:cursor-pointer">
+                    Add Event
                 </button>
             </div>
         </div>
