@@ -53,7 +53,7 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
                 
             }
             else if (parsedResp.message == 'Login Successful') { 
-                console.log("Login Success:", response);
+                console.log("Login Success:", parsedResp);
                 alert("Login successful!");
     
                 // Set authentication state
