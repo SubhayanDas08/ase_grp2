@@ -83,10 +83,7 @@
   height:1/4;
   color:white;
 }
-.home_title{
-  font-size: 19px;
-  color:var(--primaryColor2);
-}
+
 #loc_icon{
 margin-top:5px;
 }
@@ -196,6 +193,7 @@ margin-left:10px;
   width:500px;
   margin-bottom: 40px;
   border-radius: var(--cornerRadius);
+  padding-left: 70px;
 }
 .widget-options{
   flex-direction: column;
@@ -274,4 +272,274 @@ margin-left:10px;
   padding-left: 7px;
   padding-top: 1px;
   margin-left: 380px;
+}
+.widgets-container {
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap to new row when needed */
+  gap: 20px; /* Space between widgets */
+  justify-content: flex-start; /* Aligns widgets to start */
+}
+
+.new-widget-container {
+  width: 300px; /* Adjust width to fit multiple widgets in a row */
+  height: 150px;
+  background-color: var(--primaryColor1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  font-size: 16px;
+}
+.add_symbol{
+  padding-top: 5px;
+}
+.eventscontainer{
+height:300px;
+}
+#weatherwidget{
+  background-color:var(--primaryColor1) ;
+  color:var(--primaryColor2);
+  width:300px;
+}
+#eventwidget{
+  width:300px;
+}
+.fleet_widgets{
+  background-color: white;
+}
+#custom_widget_heading{
+  margin-bottom: 200px;
+  margin-left: 20px;
+  width:200px;
+}
+#fleet_widget_heading{
+  margin-bottom: 180px;
+  margin-left: 117px;
+  color:var(--primaryColor1);
+}
+.fleetsize_content{
+  margin-right:150px;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  
+}
+#cloud_icon{
+  margin-top: 3px;
+  border:1px solid white;
+  background-color: white;
+  color:var(--primaryColor1);
+  border-radius:50px;
+  padding-top: 1px;
+  padding-left: 2px;
+  height:15px;
+  width: 15px;
+}
+#buses_content{
+  margin-left: 10px;
+  margin-top: 4px;
+}
+#addbuses{
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+  background-color: var(--primaryColor1);
+  border-radius:50px;
+  height:35px;
+}
+#busattention{
+  font-size: 7px;
+  margin-left:30px;
+  background-color: yellow;
+  border-radius: 25px;
+  width:65px;
+  padding-left: 3px;
+  color:black;
+}
+#bustime{
+  font-size: 5px;
+  margin-left: 120px;
+  margin-top: 15px;
+}
+
+#exceptional{
+  display: flex;
+  flex-direction: column;
+  width:270px;
+  margin-top: 10px;
+  background-color: var(--primaryColor1);
+  border-radius:50px;
+  padding-left: 7px;
+  height: 35px;
+}
+#exceptionalfirstrow{
+display: flex;
+flex-direction: row;
+}
+
+#exceptionalsuggestion{
+  font-size: 7px;
+  margin-left:30px;
+  background-color: green;
+  border-radius: 25px;
+  width:65px;
+  padding-left: 12px;
+  color:white;
+}
+
+#exceptionaltime{
+font-size: 5px;
+margin-left: 10px;
+margin-top: 14px;
+}
+
+#thunderlogo{
+  margin-top: 3px;
+  border:1px solid white;
+  background-color: white;
+  color:var(--primaryColor1);
+  border-radius:50px;
+  padding-top: 2px;
+  padding-left: 2px;
+  height:15px;
+  width: 15px;
+}
+#exceptional_content{
+  margin-left: 10px;
+  margin-top: 4px;
+}
+.recommendation{
+
+}
+#recom_logo{
+  font-size: 11px;
+  margin-top:2px;
+}
+#past_recommendation{
+  display: flex;
+  flex-direction: row;
+  color:black;
+  margin-left:8px;
+  margin-top:20px;
+}
+.chain_reaction{
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primaryColor1);
+  color:white;
+  margin-top:10px;
+  padding-left: 5px;
+  height:38px;
+  border-radius: 50px;
+}
+#chain_content{
+  margin-left: 10px;
+  margin-top: 4px;
+}
+#busfirstrow{
+  display: flex;
+  flex-direction: row;
+}
+#chainfirstrow{
+  display: flex;
+  flex-direction: row;
+  margin-left: 4px;
+}
+#chainaction{
+  font-size: 7px;
+  margin-left:30px;
+  background-color: purple;
+  border-radius: 25px;
+  width:65px;
+  padding-left: 12px;
+  color:white;
+}
+.chain_time{
+  display: flex;
+  flex-direction: column;
+  font-size: 5px;
+  color:white;
+  margin-left:50px;
+  margin-top: 10px;
+}
+
+.main_fleet_size{
+  background-color: rgb(216, 216, 216);
+}
+.fleetheading{
+  color:var(--primaryColor1);
+}
+.fleet_main_firstrow{
+  display: flex;
+  flex-direction: row;
+}
+
+#tfi{
+  margin-left:220px;
+  background-color: var(--primaryColor2);
+  width: 220px;
+  padding-left: 15px;
+  border-radius: 25px;
+  height:34px;
+  padding-top: 5px;
+}
+
+.add_more{
+  background-color: var(--primaryColor1);
+  border-radius: 50px;
+}
+.attention_needed{
+  margin-left: 30px;
+  border-radius:50px;
+}
+.attention_time{
+  margin-top: 14px;
+}
+#attention_cloud_logo{
+  background-color: white;
+  color: var(--primaryColor1);
+  width: 25px;
+  height: 25px;
+  padding-left: 4px;
+  padding-top: 4px;
+  border-radius: 50px;
+}
+.exceptional_high_demand{
+  background-color: var(--primaryColor1);
+ border-radius: 50px;
+}
+.suggestion_needed{
+  margin-left: 30px;
+  border-radius:50px;
+}
+.double_chain{
+  background-color: var(--primaryColor1);
+  border-radius: 50px;
+}
+.action_criticial{
+  margin-left: 30px;
+  border-radius: 50px;
+}
+#critical_time{
+  margin-top: 10px;
+}
+.fleet_size_heading{
+  color: var(--primaryColor1);
+}
+.past_recom_heading{
+  color: black;
+}
+.past_recom{
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px;
+}
+#past_recom_logo{
+  font-size: 23px;
+  color:black;
+}
+.home_title{
+  margin-left: 70px;
+  color: var(--primaryColor1);
 }
