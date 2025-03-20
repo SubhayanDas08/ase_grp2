@@ -155,12 +155,21 @@ INSERT INTO users (first_name, last_name, email, phone_number, password, domain)
 VALUES 
     ('John', 'Doe', 'john.doe@garda.ie', '1234567890', 'hashed_password', 'garda.ie'),
     ('Jane', 'Smith', 'jane.smith@tfi.ie', '0987654321', 'hashed_password', 'tfi.ie'),
-    ('Janedsa', 'ali', 'jane.smisadfath@gmail.com', '0987654321', 'hashed_password', 'gmail.com');
+    ('Janedsa', 'ali', 'jane.smisadfath@gmail.com', '0987654321', 'hashed_password', 'gmail.com'),
+    ('Jack', 'Smith', 'jack.smith@hospital.ie', '02859394', 'hashed_password', 'hospital.ie'),
+    ('Jane', 'Doe', 'jane.doe@waste.ie', '18493758', 'hashed_password', 'waste.ie'),
+    ('Mary', 'John', 'mary.john@citymanangement.ie', '198394897', 'hashed_password', 'citymanangement.ie'),
+    ('Jack', 'Doe', 'jack.doe@systemadmin.ie', '2749720', 'hashed_password', 'systemadmin.ie');
 
 INSERT INTO domain_access (role_id, domain)
 VALUES 
     ((SELECT id FROM roles WHERE name = 'Garda'), 'garda.ie'),
-    ((SELECT id FROM roles WHERE name = 'TFI Administrator'), 'tfi.ie');
+    ((SELECT id FROM roles WHERE name = 'General Public'), 'gmail.com'),
+    ((SELECT id FROM roles WHERE name = 'Emergency Services'), 'hospital.ie'),
+    ((SELECT id FROM roles WHERE name = 'System Admin'), 'systemadmin.ie'),
+    ((SELECT id FROM roles WHERE name = 'TFI Administrator'), 'tfi.ie'),
+    ((SELECT id FROM roles WHERE name = 'City Manager'), 'citymanangement.ie'),
+    ((SELECT id FROM roles WHERE name = 'Waste Managers'), 'waste.ie');
 
 INSERT INTO events (name, start_date, end_date, created_by)
 VALUES 
