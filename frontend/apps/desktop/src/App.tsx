@@ -16,7 +16,6 @@ import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
 
-
 export default function App() {
     // CHANGE THIS TO FALSE AT THE BEFORE PUSHING TO MAIN
     const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
@@ -37,7 +36,7 @@ export default function App() {
                         <div className="h-full w-[250px] flex-none fixed">
                             <Sidebar />
                         </div>
-                        <div className="flex flex-col h-full grow ml-[250px] p-5">
+                        <div className="flex flex-col h-full grow ml-[250px] ps-5 pe-5 pb-5">
                             <Routes>
                                 {pageRoutesList.map((route, index) => {
                                     return(
