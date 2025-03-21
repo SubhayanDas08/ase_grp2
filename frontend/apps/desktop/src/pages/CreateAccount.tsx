@@ -46,18 +46,18 @@ export default function CreateAccount({ setUserAuthenticated }: RegisterProps) {
       !formData.last_name ||
       !formData.phone_number
     ) {
-      console.error("A field is empty");
+      alert("All fields are required. Please fill in all information.");
       return;
     }
 
     try {
-      const successful: any = await register(formData);
+      const result = await register(formData);
 
-      if (!successful) {
-        setUserAuthenticated(false);
+      if (!result.success) {
+        alert(result.message);
         return;
       } else {
-        console.log("Registration Success:");
+        console.log("Registration Success");
         // Set authentication state
         setUserAuthenticated(true);
         navigate("/home");

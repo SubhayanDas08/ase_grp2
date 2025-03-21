@@ -34,16 +34,15 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
 
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      console.error("Email or Password is empty");
+      alert("Email and password are required");
       return;
     }
 
-    try {
-      console.log("formData", formData);
-      const successful: any = await login(formData);
+    try {      
+      const result = await login(formData);
 
-      if (!successful) {
-        setUserAuthenticated(false);
+      if (!result.success) {
+        alert(result.message);
         return;
       } else {
         console.log("Login Success:");

@@ -33,7 +33,9 @@ export async function clearAuthTokens(): Promise<void> {
   await store.save();
 }
 
-export async function login(userData: any): Promise<boolean> {
+export async function login(
+  userData: any,
+): Promise<{ success: boolean; message: string }> {
   try {
     const response = await axios.post(`${API_BASE_URL}/user/login`, {
       userData,
@@ -41,8 +43,6 @@ export async function login(userData: any): Promise<boolean> {
 
     const accessToken = response.data.token;
     const refreshToken = response.data.refreshToken;
-
-    console.log("accessToken: ", accessToken);
 
     // Save the tokens with both expiration times
     await saveAuthTokens({
@@ -52,10 +52,37 @@ export async function login(userData: any): Promise<boolean> {
       refreshTokenExpiresAt: Date.now() + 180 * 24 * 60 * 60 * 1000, // 180 days
     });
 
-    return true;
+    return {
+      success: true,
+      message: "Login successful!",
+    };
   } catch (error) {
     console.error("Login error:", error);
-    return false;
+
+    // Check if it's an Axios error with a response
+    if (axios.isAxiosError(error) && error.response) {
+      const statusCode = error.response.status;
+      const errorMessage = error.response.data?.error || "Login failed";
+
+      // Handle specific error cases
+      if (statusCode === 401) {
+        return {
+          success: false,
+          message: "Invalid email or password. Please try again.",
+        };
+      } else if (statusCode === 400) {
+        // Return the specific validation error from the server
+        return { success: false, message: errorMessage };
+      } else {
+        return { success: false, message: errorMessage };
+      }
+    }
+
+    // Generic error handling
+    return {
+      success: false,
+      message: "Login failed. Please try again later.",
+    };
   }
 }
 
@@ -116,7 +143,9 @@ export async function isAuthenticated(): Promise<boolean> {
   return await refreshToken();
 }
 
-export async function register(userData: any): Promise<boolean> {
+export async function register(
+  userData: any,
+): Promise<{ success: boolean; message: string }> {
   try {
     // Send registration data to server
     const response = await axios.post(
@@ -126,6 +155,7 @@ export async function register(userData: any): Promise<boolean> {
       },
     );
 
+    // If registration successful and tokens are returned
     if (response.data.token && response.data.refreshToken) {
       await saveAuthTokens({
         accessToken: response.data.token,
@@ -135,10 +165,38 @@ export async function register(userData: any): Promise<boolean> {
       });
     }
 
-    return true;
+    return {
+      success: true,
+      message: "Registration successful!",
+    };
   } catch (error) {
     console.error("Registration error:", error);
-    return false;
+
+    // Check if it's an Axios error with a response
+    if (axios.isAxiosError(error) && error.response) {
+      const statusCode = error.response.status;
+      const errorMessage = error.response.data?.error || "Registration failed";
+
+      // Handle specific error cases
+      if (statusCode === 409) {
+        return {
+          success: false,
+          message:
+            "Email already in use. Please use a different email address.",
+        };
+      } else if (statusCode === 400) {
+        // Return the specific validation error from the server
+        return { success: false, message: errorMessage };
+      } else {
+        return { success: false, message: errorMessage };
+      }
+    }
+
+    // Generic error handling
+    return {
+      success: false,
+      message: "Registration failed. Please try again later.",
+    };
   }
 }
 
