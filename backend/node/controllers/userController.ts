@@ -20,11 +20,45 @@ export const FEregistrationData = async (
   try {
     const { first_name, last_name, email, password, phone_number } =
       req.body.userData;
+
+    // Check for required fields
     if (!first_name || !last_name || !email || !password || !phone_number) {
       console.error("Error: Missing required user data fields");
       return res
         .status(400)
         .json({ error: "Missing required user data fields" });
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Check if email is already in use
+    try {
+      const existingUser = await verifyUserCredentials(email);
+      if (existingUser) {
+        return res.status(409).json({ error: "Email already in use" });
+      }
+    } catch (error) {
+      // If error is not because of duplicate email, rethrow it
+      if (!(error instanceof Error && error.message.includes("not found"))) {
+        throw error;
+      }
+    }
+
+    // Password strength validation
+    if (password.length < 8) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
+    }
+
+    // Phone number validation (just checking for digits for now)
+    const phoneRegex = /^\d+$/;
+    if (!phoneRegex.test(phone_number)) {
+      return res.status(400).json({ error: "Invalid phone number" });
     }
 
     console.log("Registering User:", {
@@ -82,23 +116,34 @@ export const FEregistrationData = async (
 export const FElogin = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body.userData;
+
+    // Check for required fields
     if (!email || !password) {
       console.error("Error: Missing required credentials");
-      return res.status(400).json({ error: "Missing required credentials" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Check if user exists
     const userData = await verifyUserCredentials(email);
     if (!userData) {
       console.error("Error: User not found");
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
+    // Verify password
     const passwordMatch = await bcrypt.compare(password, userData.password);
     if (!passwordMatch) {
       console.error("Error: Password Mismatch");
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
+    // Generate tokens
     const sessionToken = jwt.sign({ userId: userData.id }, JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -106,6 +151,7 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
       expiresIn: "180d",
     });
 
+    // Store tokens in Redis
     await redisClient.setEx(
       `session:${sessionToken}`,
       3600,
@@ -118,17 +164,18 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
     );
     await redisClient.sAdd(`user:${userData.id}:sessions`, sessionToken);
 
+    // Remove password from user data
     const { password: userPassword, ...userDataWithoutPassword } = userData;
 
     res.status(200).json({
-      message: "Login Successful",
+      message: "Login successful",
       user: userDataWithoutPassword,
       token: sessionToken,
       refreshToken,
     });
   } catch (error) {
     console.error("Internal Server Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Login failed. Please try again later." });
   }
 };
 
