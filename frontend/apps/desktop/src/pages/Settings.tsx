@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
 
 interface SettingsProps {
   setUserAuthenticated: (userAuthenticated: any) => void;
@@ -62,6 +63,7 @@ export default function Settings({ setUserAuthenticated }: SettingsProps): JSX.E
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     setUserAuthenticated(false);
     navigate("/");
   };
