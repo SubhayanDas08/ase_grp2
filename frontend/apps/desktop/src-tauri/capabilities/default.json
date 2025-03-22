@@ -9,6 +9,7 @@
     "core:default",
     "shell:allow-open",
     "notification:default",
-    "log:default"
+    "log:default",
+    "store:default"
   ]
 }

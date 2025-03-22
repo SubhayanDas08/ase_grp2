@@ -1,6 +1,11 @@
-@import "../../../Global.css";
+@import "../../../../Global.css";
 
-/* Component CSS classes */
+/* General */
+.mainHeaderHeight {
+  min-height: 130px;
+}
+
+/* Login Page */
 .loginRegistrationFormInput {
   height: 46px;
   width: 70%;
@@ -56,9 +61,156 @@
   scale: 1.015;
 }
 
+/* Home Page */
+.editHomeButton {
+  height: 35px;
+  width: 100px;
+  background-color: var(--primaryColor2);
+  border-radius: var(--cornerRadius);
+  box-shadow: 3px 4px 5px var(--formText);
+  color: var(--textLight);
+}
+.header {
+  justify-content: space-between;
+}
+.first_row {
+  display: flex;
+  flex-direction: row;
+}
+.home_weather {
+  border: none;
+  border-radius: 35px;
+  height: 1/4;
+  color: white;
+}
+.event_weather {
+  border: none;
+  border-radius: 35px;
+  height: 1/4;
+  color: white;
+}
+.home_title {
+  font-size: 19px;
+  color: var(--primaryColor2);
+}
+#loc_icon {
+  margin-top: 5px;
+}
+#loc_name {
+  margin-left: 10px;
+}
+
+.cloud_container {
+  margin-top: 10px;
+  border-radius: 40px;
+  border: none;
+  padding-left: 20px;
+  background-color: var(--primaryColor2);
+  width: 310px;
+  margin-right: 5px;
+}
+
+.event_container {
+  margin-top: 10px;
+  border-radius: 40px;
+  border: none;
+  padding-left: 20px;
+  background-color: var(--primaryColor2);
+  width: 550px;
+  margin-right: 5px;
+}
+
+.drop_container {
+  margin-top: 10px;
+  border-radius: 40px;
+  border: none;
+  padding-left: 20px;
+  background-color: var(--primaryColor2);
+  width: 310px;
+  margin-left: 5px;
+}
+
+#cloud_logo {
+  border: 1px solid white;
+  font-size: 50px;
+  height: 70px;
+  width: 70px;
+  padding-left: 10px;
+  padding-top: 10px;
+  border-radius: 50%;
+  color: var(--primaryColor1);
+  background-color: white;
+}
+#mostlycloudy {
+  color: var(--gradient1);
+}
+.home_second_row {
+  border-radius: 25px;
+}
+
+.drop_container {
+  width: 48%;
+  height: 120px;
+  display: flex;
+  border-radius: 40px;
+  background-color: var(--primaryColor2);
+}
+
+.minus-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.minus-button {
+  transform: scale(1.2);
+  background-color: grey;
+}
+
+.circlecontainer {
+  background-color: var(--gradient2);
+  color: black;
+  border-radius: 50%;
+  font-size: 30px;
+}
+#add_btn {
+  margin-left: 1290px;
+  height: 40px;
+  width: 100px;
+  margin-top: 20px;
+}
+.blur-background {
+  backdrop-filter: blur(5px);
+  pointer-events: none;
+}
+.add-widget-container {
+  background-color: var(--primaryColor2);
+  margin-right: 400px;
+  z-index: 1000;
+  width: 500px;
+  margin-bottom: 40px;
+}
+.widget-options {
+  flex-direction: column;
+}
+.widget-option {
+  height: 130px;
+  background-color: var(--primaryColor1);
+}
 
 /* Weather Map */
-.weather-map-custom-icon .circle{
+.weather-map-custom-icon .circle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,13 +223,13 @@
   font-weight: bold;
 }
 
-.border-radius{
+.border-radius {
   border-radius: var(--cornerRadius);
   background-color: #c60452;
 }
 
 .event-card {
-  background-color: linear-gradient(to right, #029AA5, #04B9C6);
+  background-color: linear-gradient(to right, #029aa5, #04b9c6);
   padding: 15px;
   margin: 10px 0;
   border-radius: 5px;
@@ -102,208 +254,4 @@
   font-size: 12px;
   color: white;
   margin-top: 10px;
-}
-
-/* Old classes */
-/*
-.mainBGColour {
-  background-color: var(--main-colour);
-}
-
-.secondaryBGColour {
-  background-color: var(--secondary-color);
-}
-
-.tertiaryBGColour {
-  background-color: var(--tertiary-color);
-}
-
-.textColourDark {
-  color: var(--textDark);
-}
-
-.textColourLight {
-  color: var(--textLight);
-}
-
-.editHomeButton {
-  height: 35px;
-  width: 100px;
-  background-color: var(--primaryColor2);
-  border-radius: var(--cornerRadius);
-  box-shadow: 3px 4px 5px var(--formText);
-  color: var(--textLight);
-}
-.header{
-  justify-content:space-between ;
-}
-.first_row{
-  display: flex;
-  flex-direction: row;
-}
-.home_weather{
-  border:none;
-  border-radius: 35px;
-  height:1/4;
-  color:white;
-}
-.event_weather{
-  border:none;
-  border-radius: 35px;
-  height:1/4;
-  color:white;
-}
-.home_title{
-  font-size: 19px;
-  color:var(--primaryColor2);
-}
-#loc_icon{
-margin-top:5px;
-}
-#loc_name{
-margin-left:10px;  
-}
-
-.cloud_container{
-  margin-top: 10px;
-  border-radius:40px;
-  border:none;
-  padding-left: 20px;
-  background-color: var(--primaryColor2);
-  width:310px;
-  margin-right: 5px;
-}
-
-.event_container{
-  margin-top: 10px;
-  border-radius:40px;
-  border:none;
-  padding-left: 20px;
-  background-color: var(--primaryColor2);
-  width:550px;
-  margin-right: 5px;
-}
-
-.drop_container{
-  margin-top: 10px;
-  border-radius:40px;
-  border:none;
-  padding-left: 20px;
-  background-color: var(--primaryColor2);
-  width:310px;
-  margin-left: 5px;
-}
-
-#cloud_logo{
-  border: 1px solid white;
-  font-size: 50px;
-  height:70px;
-  width:70px;
-  padding-left:10px;
-  padding-top:10px;
-  border-radius: 50%;
-  color:var(--primaryColor1);
-  background-color: white;
-}
-#mostlycloudy{
-  color:var(--gradient1);
-}
-.home_second_row{
-  border-radius: 25px;
-}
-
-.drop_container {
-  width: 48%; 
-  height: 120px; 
-  display: flex;
-  border-radius: 40px;
-  background-color: var(--primaryColor2);
-}
-
-.minus-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(255, 0, 0, 0.8); 
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.minus-button {
-  transform: scale(1.2);
-  background-color: grey;
-}
-
-.circlecontainer{
-  background-color: var(--gradient2);
-  color:black;
-  border-radius:50%;
-  font-size:30px;
-}
-#add_btn{
-  margin-left:1290px;
-  height: 40px;
-  width: 100px;
-  margin-top:20px;
-}
-.blur-background {
-  backdrop-filter: blur(5px); 
-  pointer-events: none; 
-}
-.add-widget-container{
-  background-color: var(--primaryColor2);
-  margin-right: 400px;
-  z-index: 1000;
-  width:500px;
-  margin-bottom: 40px;
-}
-.widget-options{
-  flex-direction: column;
-}
-.widget-option{
-  height:130px;
-  background-color: var(--primaryColor1);
-}
-
-.f-border{
-  border:none ; 
-  background-color: white;
-  font-size: 20px;
-  border-radius: 50%;
-  height:35px; 
-  width:35px;
-  padding-left: 8px;
-  padding-top: 8px;
-}
-
-.sidebarIcons{
-  color: var(--primaryColor1);
-}
-
-.sidebarItems{
-  display: flex;
-  flex-direction: row;
-}
-
-.sidebarText{
-  font-size:14px;
-}
-
-.sidebarContainer{
-  border-bottom: 1px solid white;
-}
-
-#one:hover{
-  border:none;
-  border-radius: 25px;
-  width: 120px;
-  background-color: var(--primaryColor2);
 }

@@ -1,4 +1,4 @@
-import { aesEncrypt } from '../Interceptors/aesEncryption'; // Import encryption function
+import { aesEncrypt } from '../interceptors/aesEncryption'; // Import encryption function
 
 // Sample User Data (For Registration/Login)
 const data = {
