@@ -10,6 +10,9 @@ import { isAuthenticated } from "./utils/auth";
 import "leaflet/dist/leaflet.css";
 import "./styles/App.css";
 
+import SettingsProfile from "./pages/SettingsProfile.tsx";
+import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
+import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import Login from "./pages/Login.tsx";
 import Sidebar from "./components/sidebar.tsx";
@@ -148,6 +151,36 @@ export default function App() {
                   element={
                     <ProtectedRoute>
                       <Settings setUserAuthenticated={setUserAuthenticated} />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/profile"
+                  element={
+                    <ProtectedRoute>
+                      <SettingsProfile
+                        setUserAuthenticated={setUserAuthenticated}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/changepassword"
+                  element={
+                    <ProtectedRoute>
+                      <SettingsChangePassword
+                        setUserAuthenticated={setUserAuthenticated}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/report"
+                  element={
+                    <ProtectedRoute>
+                      <ReportAnIssue
+                        setUserAuthenticated={setUserAuthenticated}
+                      />
                     </ProtectedRoute>
                   }
                 />
