@@ -7,12 +7,8 @@ import { getStations } from "../../../../shared/utils/weather-map/getStations.ts
 import { getStationAqi } from "../../../../shared/utils/weather-map/getStationAqi.ts";
 import { getWeatherDetails } from "../../../../shared/utils/weather-map/getWeatherDetails.ts";
 import MarkerIcon from "../../../../shared/components/weather-map/MarkerIcon.tsx";
-import { FunnelIcon } from "@heroicons/react/20/solid";
-//import Dropdown from "../components/dropdown.tsx";
-/* Old dropdown imports
-import Dropdown from "../../../../shared/components/Dropdown.tsx";
-*/
-import Dropdown from "../../../../shared/components/Dropdown.tsx";
+import { FunnelIcon } from "@heroicons/react/24/outline";
+import Dropdown from "../components/dropdown.tsx";
 
 export default function Weather() {
     const [stations, setStations] = useState<any[]>([]);
@@ -105,29 +101,28 @@ export default function Weather() {
         <div className="h-full w-full flex flex-col">
             <div className="mainHeaderHeight w-full flex items-center justify-between">
                 <div className="titleText primaryColor1">Weather</div>
-                <div className="w-72 h-12">
-                    {/*
-                    <Dropdown text={menuTitle} backgroundColor="primaryColor2BG" textColor="textLight" />
-                    */}
+                <div className="flex h-fit w-fit items-center justify-end">
                     <Dropdown
                         menuTitle={menuTitle}
                         menuIcon={
                             <FunnelIcon
-                            aria-hidden="true"
-                            className="-mr-1 size-5 text-gray-400"
+                              aria-hidden="true"
+                              className="size-5 textLight"
                             />
                         }
-                        menuItemTitles={["Air Quality Index", "Temperature"]}
+                        menuItemTitles={["Air Quality Index (AQI)", "Temperature"]}
                         menuItemFunctions={[
                             () => {
                                 setWeatherDatatype("aqi");
-                                setMenuTitle("Air Quality Index");
+                                setMenuTitle("Air Quality Index (AQI)");
                             },
                             () => {
-                                setWeatherDatatype("temperature");
+                                setWeatherDatatype("temp");
                                 setMenuTitle("Temperature");
                             },
                         ]}
+                        backgroundColor={"primaryColor1BG"}
+                        textColor={"textLight"}
                     />
                 </div>
             </div>

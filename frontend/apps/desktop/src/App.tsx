@@ -48,7 +48,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
         
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
+    // UPDATE THIS BEFORE MERGING WITH MAIN - true to false
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
     const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
     const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
     
@@ -59,7 +60,8 @@ export default function App() {
         setUserAuthenticated(authenticated);
       };
 
-      checkAuth();
+      // UPDATE THIS BEFORE MERGING WITH MAIN - uncomment
+      //checkAuth();
     }, []);
     return (
         <Router>
@@ -81,14 +83,13 @@ export default function App() {
                         <div className="flex flex-col h-full grow ml-[250px] ps-5 pe-5 pb-5">
                             <Routes>
                                 {pageRoutesList.map((route, index) => {
+                                    {/* UPDATE THIS BEFORE MERGING WITH MAIN - BRING BACK <ProtectedRoute> */}
                                     return(
                                         <Route 
-                                          path={route} 
+                                          path={route}
                                           element={
-                                            <ProtectedRoute>
-                                              {pageRouteItemsList[index]}
-                                            </ProtectedRoute>
-                                          } 
+                                            pageRouteItemsList[index]
+                                          }
                                           key={index} 
                                         />
                                     );
