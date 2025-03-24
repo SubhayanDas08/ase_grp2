@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { isAuthenticated } from "./utils/auth";
 
 import "leaflet/dist/leaflet.css";
 import "./styles/App.css";
@@ -16,10 +22,45 @@ import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      setIsAuth(authenticated);
+      setAuthChecked(true);
+    };
+
+    checkAuth();
+  }, []);
+
+  if (!authChecked) {
+    return <div>Loading...</div>; // Show loading indicator while checking auth
+  }
+
+  if (!isAuth) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+}
+        
 export default function App() {
     const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
     const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
     const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
+    
+    // Check authentication on app load
+    useEffect(() => {
+      const checkAuth = async () => {
+        const authenticated = await isAuthenticated();
+        setUserAuthenticated(authenticated);
+      };
+
+      checkAuth();
+    }, []);
     return (
         <Router>
             <div className="flex h-screen"> 
@@ -27,8 +68,10 @@ export default function App() {
                     <div className="h-full w-full">  
                         <Routes> 
                             <Route path="/" element={<Login setUserAuthenticated={setUserAuthenticated} />} />
-                            <Route path="/create_account" element={<CreateAccount />} />
-                        </Routes> 
+                            <Route path="/create_account" element={<CreateAccount setUserAuthenticated={setUserAuthenticated} />} />
+                            {/* Redirect any other route to login */}
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
                     </div>
                 ) : (
                     <div className="flex h-full w-full">
@@ -39,9 +82,21 @@ export default function App() {
                             <Routes>
                                 {pageRoutesList.map((route, index) => {
                                     return(
-                                        <Route path={route} element={pageRouteItemsList[index]} key={index} />
+                                        <Route 
+                                          path={route} 
+                                          element={
+                                            <ProtectedRoute>
+                                              pageRouteItemsList[index]
+                                            </ProtectedRoute>
+                                          } 
+                                          key={index} 
+                                        />
                                     );
                                 })}
+                              {/* Redirect to home if authenticated and accessing root */}
+                              <Route path="/" element={<Navigate to="/home" replace />} />
+                              {/* Catch any other routes and redirect to home */}
+                              <Route path="*" element={<Navigate to="/home" replace />} />
                             </Routes>
                         </div>
                     </div>
