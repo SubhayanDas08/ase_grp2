@@ -18,7 +18,7 @@ import Routing from "./pages/Routing.tsx";
 import Events from "./pages/Events.tsx";
 import Traffic from "./pages/Traffic.tsx";
 import Waste from "./pages/Waste.tsx";
-import WeatherMap from "./pages/WeatherMap.tsx";
+import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
 
@@ -46,120 +46,62 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
-
+        
 export default function App() {
-  const [userAuthenticated, setUserAuthenticated] = useState<boolean>(false);
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
+    const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
+    const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
+    
+    // Check authentication on app load
+    useEffect(() => {
+      const checkAuth = async () => {
+        const authenticated = await isAuthenticated();
+        setUserAuthenticated(authenticated);
+      };
 
-  // Check authentication on app load
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authenticated = await isAuthenticated();
-      setUserAuthenticated(authenticated);
-    };
-
-    checkAuth();
-  }, []);
-
-  return (
-    <Router>
-      <div className="flex h-screen">
-        {!userAuthenticated ? (
-          <div className="h-full w-full">
-            <Routes>
-              <Route
-                path="/"
-                element={<Login setUserAuthenticated={setUserAuthenticated} />}
-              />
-              <Route
-                path="/create_account"
-                element={
-                  <CreateAccount setUserAuthenticated={setUserAuthenticated} />
-                }
-              />
-              {/* Redirect any other route to login */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        ) : (
-          <div className="flex h-full w-full">
-            <div className="h-full w-[250px] flex-none fixed">
-              <Sidebar />
+      checkAuth();
+    }, []);
+    return (
+        <Router>
+            <div className="flex h-screen"> 
+                {!userAuthenticated ? (
+                    <div className="h-full w-full">  
+                        <Routes> 
+                            <Route path="/" element={<Login setUserAuthenticated={setUserAuthenticated} />} />
+                            <Route path="/create_account" element={<CreateAccount setUserAuthenticated={setUserAuthenticated} />} />
+                            {/* Redirect any other route to login */}
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
+                    </div>
+                ) : (
+                    <div className="flex h-full w-full">
+                        <div className="h-full w-[250px] flex-none fixed">
+                            <Sidebar />
+                        </div>
+                        <div className="flex flex-col h-full grow ml-[250px] ps-5 pe-5 pb-5">
+                            <Routes>
+                                {pageRoutesList.map((route, index) => {
+                                    return(
+                                        <Route 
+                                          path={route} 
+                                          element={
+                                            <ProtectedRoute>
+                                              pageRouteItemsList[index]
+                                            </ProtectedRoute>
+                                          } 
+                                          key={index} 
+                                        />
+                                    );
+                                })}
+                              {/* Redirect to home if authenticated and accessing root */}
+                              <Route path="/" element={<Navigate to="/home" replace />} />
+                              {/* Catch any other routes and redirect to home */}
+                              <Route path="*" element={<Navigate to="/home" replace />} />
+                            </Routes>
+                        </div>
+                    </div>
+                )}
             </div>
-            <div className="h-full grow ml-[250px] p-5">
-              <Routes>
-                <Route
-                  path="/home"
-                  element={
-                    <ProtectedRoute>
-                      <Home />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/weather"
-                  element={
-                    <ProtectedRoute>
-                      <WeatherMap />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events"
-                  element={
-                    <ProtectedRoute>
-                      <Events />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/routing"
-                  element={
-                    <ProtectedRoute>
-                      <Routing />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/traffic"
-                  element={
-                    <ProtectedRoute>
-                      <Traffic />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/waste"
-                  element={
-                    <ProtectedRoute>
-                      <Waste />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/fleetsize"
-                  element={
-                    <ProtectedRoute>
-                      <FleetSize />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings setUserAuthenticated={setUserAuthenticated} />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* Redirect to home if authenticated and accessing root */}
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                {/* Catch any other routes and redirect to home */}
-                <Route path="*" element={<Navigate to="/home" replace />} />
-              </Routes>
-            </div>
-          </div>
-        )}
-      </div>
-    </Router>
-  );
+        </Router>
+    );
 }

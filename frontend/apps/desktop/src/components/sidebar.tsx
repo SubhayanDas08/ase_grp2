@@ -6,12 +6,12 @@ import { RiTrafficLightFill } from "react-icons/ri";
 import "../styles/Components.css";
 
 export default function Sidebar() {
-    const routesList: string[] = ["/home", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize"];
+    const routesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize"];
     const sidebarTitlesList: string[] = ["Home", "Routes", "Events", "Traffic", "Waste", "Weather", "Fleet Size"];
     const sidebarIconsList: React.ReactElement[] = [<FiHome />, <FiMap />, <FiList />, <RiTrafficLightFill />, <FiTrash2 />, <FiCloudDrizzle />, <FiTruck />];
 
     return(
-       <div className="flex flex-col h-full w-full primaryColor1BG sidebarText font-bold textLight pb-5 cursor-default">
+       <div className="flex flex-col h-full w-full primaryColor1BG sidebarText font-bold textLight pb-5 cursor-default overflow-y-auto">
             <div className="mainHeaderHeight sidebarHeader">
                 <img src={sidebarLogo} alt="Logo" className="h-2/3"/>
                 <div className="ml-2">CityManager</div>
