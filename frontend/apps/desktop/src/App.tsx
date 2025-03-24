@@ -86,7 +86,7 @@ export default function App() {
                                           path={route} 
                                           element={
                                             <ProtectedRoute>
-                                              pageRouteItemsList[index]
+                                              {pageRouteItemsList[index]}
                                             </ProtectedRoute>
                                           } 
                                           key={index} 
