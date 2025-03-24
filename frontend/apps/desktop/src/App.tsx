@@ -17,8 +17,7 @@ import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
 
 export default function App() {
-    // CHANGE THIS TO FALSE AT THE BEFORE PUSHING TO MAIN
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
     const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
     const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
     return (
