@@ -10,6 +10,9 @@ import { isAuthenticated } from "./utils/auth";
 import "leaflet/dist/leaflet.css";
 import "./styles/App.css";
 
+import SettingsProfile from "./pages/SettingsProfile.tsx";
+import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
+import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import Login from "./pages/Login.tsx";
 import Sidebar from "./components/sidebar.tsx";
@@ -59,49 +62,139 @@ export default function App() {
         setUserAuthenticated(authenticated);
       };
 
-      checkAuth();
-    }, []);
-    return (
-        <Router>
-            <div className="flex h-screen"> 
-                {!userAuthenticated ? (
-                    <div className="h-full w-full">  
-                        <Routes> 
-                            <Route path="/" element={<Login setUserAuthenticated={setUserAuthenticated} />} />
-                            <Route path="/create_account" element={<CreateAccount setUserAuthenticated={setUserAuthenticated} />} />
-                            {/* Redirect any other route to login */}
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                        </Routes>
-                    </div>
-                ) : (
-                    <div className="flex h-full w-full">
-                        <div className="h-full w-[250px] flex-none fixed">
-                            <Sidebar />
-                        </div>
-                        <div className="flex flex-col h-full grow ml-[250px] ps-5 pe-5 pb-5">
-                            <Routes>
-                                {pageRoutesList.map((route, index) => {
-                                    return(
-                                        <Route 
-                                          path={route} 
-                                          element={
-                                            <ProtectedRoute>
-                                              {pageRouteItemsList[index]}
-                                            </ProtectedRoute>
-                                          } 
-                                          key={index} 
-                                        />
-                                    );
-                                })}
-                              {/* Redirect to home if authenticated and accessing root */}
-                              <Route path="/" element={<Navigate to="/home" replace />} />
-                              {/* Catch any other routes and redirect to home */}
-                              <Route path="*" element={<Navigate to="/home" replace />} />
-                            </Routes>
-                        </div>
-                    </div>
-                )}
+    checkAuth();
+  }, []);
+
+  return (
+    <Router>
+      <div className="flex h-screen">
+        {!userAuthenticated ? (
+          <div className="h-full w-full">
+            <Routes>
+              <Route
+                path="/"
+                element={<Login setUserAuthenticated={setUserAuthenticated} />}
+              />
+              <Route
+                path="/create_account"
+                element={
+                  <CreateAccount setUserAuthenticated={setUserAuthenticated} />
+                }
+              />
+              {/* Redirect any other route to login */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+        ) : (
+          <div className="flex h-full w-full">
+            <div className="h-full w-[250px] flex-none fixed">
+              <Sidebar />
             </div>
-        </Router>
-    );
+            <div className="h-full grow ml-[250px] p-5">
+              <Routes>
+                <Route
+                  path="/home"
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/weather"
+                  element={
+                    <ProtectedRoute>
+                      <WeatherMap />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/events"
+                  element={
+                    <ProtectedRoute>
+                      <Events />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/routing"
+                  element={
+                    <ProtectedRoute>
+                      <Routing />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/traffic"
+                  element={
+                    <ProtectedRoute>
+                      <Traffic />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/waste"
+                  element={
+                    <ProtectedRoute>
+                      <Waste />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/fleetsize"
+                  element={
+                    <ProtectedRoute>
+                      <FleetSize />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings setUserAuthenticated={setUserAuthenticated} />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/profile"
+                  element={
+                    <ProtectedRoute>
+                      <SettingsProfile
+                        setUserAuthenticated={setUserAuthenticated}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/changepassword"
+                  element={
+                    <ProtectedRoute>
+                      <SettingsChangePassword
+                        setUserAuthenticated={setUserAuthenticated}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/report"
+                  element={
+                    <ProtectedRoute>
+                      <ReportAnIssue
+                        setUserAuthenticated={setUserAuthenticated}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Redirect to home if authenticated and accessing root */}
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                {/* Catch any other routes and redirect to home */}
+                <Route path="*" element={<Navigate to="/home" replace />} />
+              </Routes>
+            </div>
+          </div>
+        )}
+      </div>
+    </Router>
+  );
 }
