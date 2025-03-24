@@ -7,15 +7,17 @@ import { getStations } from "../../../../shared/utils/weather-map/getStations.ts
 import { getStationAqi } from "../../../../shared/utils/weather-map/getStationAqi.ts";
 import { getWeatherDetails } from "../../../../shared/utils/weather-map/getWeatherDetails.ts";
 import MarkerIcon from "../../../../shared/components/weather-map/MarkerIcon.tsx";
-import Dropdown from "../components/dropdown.tsx";
+import { FunnelIcon } from "@heroicons/react/20/solid";
+//import Dropdown from "../components/dropdown.tsx";
 /* Old dropdown imports
 import Dropdown from "../../../../shared/components/Dropdown.tsx";
 */
+import Dropdown from "../../../../shared/components/Dropdown.tsx";
 
 export default function Weather() {
     const [stations, setStations] = useState<any[]>([]);
     const [weatherDatatype, setWeatherDatatype] = useState<string>("aqi");
-    const [menuTitle, setMenuTitle] = useState<string>("Air Quality Index");
+    const [menuTitle, setMenuTitle] = useState<string>("Air Quality Index (AQI)");
     const hasFetched = useRef(false);
     const position: LatLngTuple = [53.338252, -6.280805];
 
@@ -104,8 +106,9 @@ export default function Weather() {
             <div className="mainHeaderHeight w-full flex items-center justify-between">
                 <div className="titleText primaryColor1">Weather</div>
                 <div className="w-72 h-12">
-                    <Dropdown text="Air Quality Index (AQI)" backgroundColor="primaryColor2BG" textColor="textLight" />
                     {/*
+                    <Dropdown text={menuTitle} backgroundColor="primaryColor2BG" textColor="textLight" />
+                    */}
                     <Dropdown
                         menuTitle={menuTitle}
                         menuIcon={
@@ -126,7 +129,6 @@ export default function Weather() {
                             },
                         ]}
                     />
-                    */}
                 </div>
             </div>
             <div className="h-full w-full">
