@@ -17,6 +17,7 @@ interface SettingsProps {
     const [description, setDescription] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState<string>("");
 
+    const navigate=useNavigate();
 
     const handleSubmit=(e: React.FormEvent)=>{
         e.preventDefault();
@@ -36,8 +37,10 @@ interface SettingsProps {
 
     return (
         <div className="h-full w-full flex flex-col">
-            <h2 className="text-5xl font-extrabold mb-10 primaryColor1">Settings {">"} Report An Issue</h2>
-
+            <h2 className="text-5xl mb-10 font-bold mb-6 primaryColor1">
+            <span className="cursor-pointer border-b-5 border-primaryColor1 pb-1" onClick={()=>navigate("/settings/")}>Settings</span><span> </span>
+            {">"} Report an Issue
+            </h2>
             <form onSubmit={handleSubmit}>
             <div className="h-full w-full space-y-6 flex flex-col">
                 {/*Subject */}
