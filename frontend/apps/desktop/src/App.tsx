@@ -19,6 +19,7 @@ import Sidebar from "./components/sidebar.tsx";
 import Home from "./pages/Home.tsx";
 import Routing from "./pages/Routing.tsx";
 import Events from "./pages/Events.tsx";
+import AddEvent from "./pages/AddEvent.tsx";
 import Traffic from "./pages/Traffic.tsx";
 import Waste from "./pages/Waste.tsx";
 import Weather from "./pages/Weather.tsx";
@@ -104,7 +105,7 @@ export default function App() {
                   path="/weather"
                   element={
                     <ProtectedRoute>
-                      <WeatherMap />
+                      <Weather />
                     </ProtectedRoute>
                   }
                 />
@@ -113,6 +114,14 @@ export default function App() {
                   element={
                     <ProtectedRoute>
                       <Events />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/events/add"
+                  element={
+                    <ProtectedRoute>
+                      <AddEvent />
                     </ProtectedRoute>
                   }
                 />
