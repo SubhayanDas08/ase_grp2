@@ -18,6 +18,8 @@ interface SettingsProps {
     const [email, setEmail] = useState<string>("user.email@gmail.com");
     const [phoneNumber, setphoneNumber] = useState<string>("+353 899739832");
 
+    const navigate=useNavigate();
+
     const handleSubmit=()=>{
         const userData={
             firstName,lastName
@@ -27,7 +29,10 @@ interface SettingsProps {
 
     return (
         <div className="h-full w-full flex flex-col">
-            <h2 className="text-5xl mb-10 font-bold mb-6 primaryColor1">Settings {">"} Profile</h2>
+            <h2 className="text-5xl mb-10 font-bold mb-6 primaryColor1">
+            <span className="cursor-pointer border-b-5 border-primaryColor1 pb-1" onClick={()=>navigate("/settings/")}>Settings</span> <span> </span>
+            {">"} Profile
+            </h2>
 
             <div className="h-full w-full space-y-6 flex flex-col flex-1">
                 {/* First Name */}
