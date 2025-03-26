@@ -39,10 +39,8 @@ export const authenticate = async (
     }
 
     // Fetch user permissions from Redis
-    const permissions = await redisClient.lRange(
+    const permissions = await redisClient.sMembers(
       `permissions:${user.domain}`,
-      0,
-      -1,
     );
 
     // Attach user and permissions to request
