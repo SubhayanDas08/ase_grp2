@@ -12,38 +12,43 @@ export const createEvent = async (
   const permission = "manage_events";
 
   if (!req.user?.permissions?.includes(permission)) {
+    console.log(req.user,"user");
+    console.log(req.user?.permissions,"permissions");
     res
       .status(403)
       .json({ error: "You don't have permission to create an event" });
     return;
   }
-  const { name, start_date, end_date } = req.body;
+  const { name, event_date, event_time,location,area,description } = req.body;
 
-  if (!name || !start_date || !end_date) {
+  if (!name || !event_date || !event_time || !location || !area || !description) {
     res.status(400).json({
       error:
-        "Event time or event description or start date or event location is missing",
+        "Add all the required details",
     });
     return;
   }
 
-  const created_by = 1;
+  const created_by = req.user?.id;
   const created_at = new Date();
 
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const insertEventQuery = `
-      INSERT INTO public.events (name, start_date, end_date, created_by, created_at)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO public.events (name, event_date, event_time, location, area, description, created_by, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING * ;
     `;
     const result = await client.query(insertEventQuery, [
       name,
-      start_date,
-      end_date,
+      event_date,
+      event_time,
+      location,
+      area,
+      description,
       created_by,
-      created_at,
+      created_at
     ]);
     const newEvent = result.rows[0];
 

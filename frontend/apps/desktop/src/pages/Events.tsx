@@ -64,16 +64,6 @@ export default function Events2(): JSX.Element {
                 </div>
             </div>
 
-            <div className="flex w-full border border-gray-400 p-2">
-                <div className="w-16 h-16 bg-red-500"></div>
-                <div className="w-16 h-16 bg-green-500"></div>
-                <div className="flex-grow bg-blue-500 p-2">
-                    <div className="w-8 h-8 bg-yellow-500"></div>
-                    <div className="w-8 h-8 bg-purple-500"></div>
-                </div>
-            </div>
-
-            
         </div>
     );
 }

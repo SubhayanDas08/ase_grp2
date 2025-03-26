@@ -21,8 +21,8 @@ export const authenticate = async (
   if (!token) {
     res.status(401).json({ error: "No token provided" });
     return;
-  }
-
+  }  
+  
   try {
     // Check Redis for the session token
     const userId = await redisClient.get(`session:${token}`);

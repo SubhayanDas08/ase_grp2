@@ -34,13 +34,25 @@ CREATE TABLE IF NOT EXISTS domain_access (
     CONSTRAINT fk_domain_access_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
+-- CREATE TABLE IF NOT EXISTS events (
+--     id SERIAL PRIMARY KEY,
+--     name VARCHAR(255) NOT NULL,
+--     start_date TIMESTAMP NOT NULL,
+--     end_date TIMESTAMP NOT NULL,
+--     created_by INT NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     CONSTRAINT fk_events_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+-- );
+
 CREATE TABLE IF NOT EXISTS events (
-    id SERIAL PRIMARY KEY,
+id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL,
+    event_date DATE NOT NULL,
+    event_time TIMESTAMP NOT NULL,
+    location VARCHAR(255),
+    area VARCHAR(255),
+    description TEXT,
     created_by INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_events_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -171,7 +183,29 @@ VALUES
     ((SELECT id FROM roles WHERE name = 'City Manager'), 'citymanangement.ie'),
     ((SELECT id FROM roles WHERE name = 'Waste Managers'), 'waste.ie');
 
-INSERT INTO events (name, start_date, end_date, created_by)
+-- INSERT INTO events (name, event_date, end_date, created_by)
+-- VALUES 
+--     ('Tech Conference', '2025-05-01 10:00:00', '2025-05-02 18:00:00', (SELECT id FROM users WHERE email = 'john.doe@garda.ie')),
+--     ('Workshop', '2025-06-15 09:00:00', '2025-06-15 17:00:00', (SELECT id FROM users WHERE email = 'jane.smith@tfi.ie'));
+
+
+INSERT INTO events (name, event_date, event_time, location, area, description, created_by)
 VALUES 
-    ('Tech Conference', '2025-05-01 10:00:00', '2025-05-02 18:00:00', (SELECT id FROM users WHERE email = 'john.doe@garda.ie')),
-    ('Workshop', '2025-06-15 09:00:00', '2025-06-15 17:00:00', (SELECT id FROM users WHERE email = 'jane.smith@tfi.ie'));
+  (
+    'Tech Conference',
+    '2025-05-01',
+    '2025-05-01 10:00:00',
+    'Dublin Tech Hall',
+    'Dublin 2',
+    'A two-day technology and innovation event',
+    (SELECT id FROM users WHERE email = 'john.doe@garda.ie')
+  ),
+  (
+    'Workshop',
+    '2025-06-15',
+    '2025-06-15 09:00:00',
+    'TFI HQ',
+    'Dublin 1',
+    'Transport strategy planning workshop',
+    (SELECT id FROM users WHERE email = 'jane.smith@tfi.ie')
+  );
