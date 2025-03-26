@@ -55,7 +55,7 @@ export default function Home() {
       {/* Main Content Section */}
       <div className="home_main">
         {/* First Row: Weather and Events Widgets */}
-        <div className="first_row mt-4 flex">
+        <div className="first_row mt-4 mr-2 flex">
           {/* Weather Widget */}
           <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
             {editMode && (

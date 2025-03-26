@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { FaUser,FaSlidersH, FaFileAlt, FaInfoCircle } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import SettingsProfile from "./SettingsProfile.tsx";
-import SettingsChangePassword from "./SettingsChangePassword.tsx";
 
 interface SettingsProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
@@ -52,6 +50,20 @@ export default function Settings({setUserAuthenticated}:SettingsProps): JSX.Elem
                     </div>
 
                     <span className="ml-15 textLight text-xl font-semibold">About</span>
+                </div>
+
+                {/* Log Out */}
+                <div className="flex items-center primaryGradient rounded-3xl h-20 hover:cursor-pointer"
+                onClick={()=>{
+                    setUserAuthenticated(false);
+                    navigate("/login");
+                    }
+                }>
+                <div className="w-14 h-14 ml-5 flex items-center justify-center rounded-full bg-white text-primaryColor2">
+                        <FiLogOut className="text-2xl" />
+                    </div>
+
+                    <span className="ml-15 textLight text-xl font-semibold">Log Out</span>
                 </div>
                 
             </div>
