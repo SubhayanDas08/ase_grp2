@@ -255,3 +255,46 @@
   color: white;
   margin-top: 10px;
 }
+
+.route_waste_container {
+  margin-top: 10px;
+  border-radius: var(--cornerRadius);
+  border: none;
+  padding-left: 20px;
+  background-color: var(--primaryColor2);
+  width: full;
+  margin-right: 5px;
+  height : 75px;
+}
+
+.routes_waste {
+  border-radius: 25px;
+}
+
+#routes_waste_logo {
+  border: 1px solid white;
+  font-size: 35px;
+  height: 50px;
+  width: 50px;
+  padding-left: 8px;
+  padding-top: 8px;
+  border-radius: 50%;
+  color: var(--primaryColor1);
+  background-color: white;
+}
+
+#routes_waste_logo2 {
+  border: 1px;
+  font-size: 100px;
+  height: 150px;
+  width: 150px;
+  padding-left: 27px;
+  padding-top: 27px;
+  border-radius: 50%;
+  color: white;
+  background-color: var(--primaryColor1);
+}
+
+#road_list_waste {
+  color: white;
+}

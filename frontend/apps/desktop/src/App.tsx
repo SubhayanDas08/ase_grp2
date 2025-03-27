@@ -21,6 +21,7 @@ import Waste from "./pages/Waste.tsx";
 import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
+import WasteRoutes from "./pages/Waste_route.tsx";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [authChecked, setAuthChecked] = useState(false);
@@ -48,9 +49,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
         
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
-    const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
-    const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
+    const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings", "/wasteroutes"];
+    const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />, <WasteRoutes />];
     
     // Check authentication on app load
     useEffect(() => {
@@ -59,7 +60,7 @@ export default function App() {
         setUserAuthenticated(authenticated);
       };
 
-      checkAuth();
+      //checkAuth();
     }, []);
     return (
         <Router>
@@ -84,11 +85,7 @@ export default function App() {
                                     return(
                                         <Route 
                                           path={route} 
-                                          element={
-                                            <ProtectedRoute>
-                                              {pageRouteItemsList[index]}
-                                            </ProtectedRoute>
-                                          } 
+                                          element={pageRouteItemsList[index]}
                                           key={index} 
                                         />
                                     );
