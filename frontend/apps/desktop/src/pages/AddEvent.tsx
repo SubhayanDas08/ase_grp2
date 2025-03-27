@@ -4,7 +4,7 @@ import { useState } from "react";
 import { LoadScript,Autocomplete } from "@react-google-maps/api";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-clock/dist/Clock.css";
-import axios from "axios";
+import { authenticatedPost } from "../utils/auth";
 
 const GOOGLE_MAPS_API_KEY="AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY"
 
@@ -21,21 +21,22 @@ export default function AddEvent(): JSX.Element {
     const navigate=useNavigate();
 
     const handleAddEvent = async () => {
-        if(!eventname || !selectedDate || !selectedTime || !selectedLocation || !area){
+        if(!eventname || !selectedDate || !selectedTime || !selectedLocation || !area || !description){
             alert("Fill all the details!");
             return;
         }
 
         const newEvent={
             name:eventname,
-            date:selectedDate,
-            time:selectedTime,
+            event_date:selectedDate,
+            event_time:selectedTime,
             location:selectedLocation,
+            area,
             description:description
         }
 
         try {
-            await axios.post("/events/create", newEvent);
+            await authenticatedPost("/events/create",newEvent);
             navigate("/events");
           } catch (error) {
             console.error("Error adding event:", error);

@@ -40,7 +40,7 @@ export default function ViewEvent():JSX.Element {
                     {/* Event Name */}
                     <div className="">
                         <h3 className="text-2xl font-extrabold primaryColor1">Event Name</h3>
-                        <div className="textFieldBG border-gray-100 w-full mt-2 rounded-md h-10 textDark">
+                        <div className="textFieldBGDark border-gray-100 w-full mt-2 rounded-md h-10 px-4 py-2 textDark">
                             {event?.name}
                         </div>
                     </div>
@@ -53,7 +53,7 @@ export default function ViewEvent():JSX.Element {
                                 {/* Date of Event*/}
                                 <div className="min-w-[50%]">
                                     <h3 className="text-2xl font-extrabold primaryColor1">Date</h3>
-                                    <div className="textFieldBG border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 textDark">
+                                    <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 textDark">
                                     {event?.event_date ? new Date(event.event_date).toLocaleDateString() : "N/A"}
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@ export default function ViewEvent():JSX.Element {
                                 {/* Time of Event */}
                                 <div className="min-w-[50%]">
                                     <h3 className="text-2xl font-extrabold primaryColor1">Time</h3>
-                                    <div className="textFieldBG border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 textDark">
+                                    <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 textDark">
                                     {event?.event_time ? new Date(event.event_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "N/A"}
                                 </div>
                             </div>
@@ -71,7 +71,7 @@ export default function ViewEvent():JSX.Element {
                                 {/* Location of Event */}
                                 <div className="min-w-[50%]">
                                     <h3 className="text-2xl font-extrabold primaryColor1">Location</h3>
-                                    <div className="textFieldBG border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 h-10 textDark">
+                                    <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 h-10 textDark">
                                         {event?.location}
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@ export default function ViewEvent():JSX.Element {
                                 {/* Area of Event */}
                                 <div className="min-w-[50%]">
                                     <h3 className="text-2xl font-extrabold primaryColor1">Area</h3>
-                                    <div className="textFieldBG border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 h-10 textDark">
+                                    <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 h-10 textDark">
                                         {event?.area}
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@ export default function ViewEvent():JSX.Element {
                         {/* Event Description */}
                         <div className="flex flex-col h-50 ">
                         <h3 className="text-2xl font-extrabold primaryColor1">Event Description</h3>
-                        <div className="textFieldBG p-4 rounded-md h-50 mt-2">
+                        <div className="textFieldBGDark p-4 rounded-md h-50 mt-2">
                             {event?.description}
                         </div>
                         </div>
