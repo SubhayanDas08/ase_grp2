@@ -33,52 +33,47 @@ export default function Waste() {
     };
 
     return (
-        <>
-            <div>
-                {/* Header Section */}
-                <div className="header flex flex-row mt-5">
-                    <div className="home_title titleText">Waste</div>
-                    <div>
-                    <button
-                        className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
-                        ${recommendations ? "bg-gray-300 primaryColor2 w-[200px]" 
-                                    : "primaryColor2BG text-white w-[200px]"}`}
-                        onClick={() => setRecommendations(!recommendations)}
-                    >
-                        {recommendations ? "Done" : "Recommendations"}
-                    </button>
-                    </div>
+        <div className='flex flex-col h-full w-full'>
+            {/* Header Section */}
+            <div className="mainHeaderHeight header w-full flex items-center justify-between">
+                <div className="home_title titleText">Waste</div>
+                <div>
+                <button
+                    className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
+                    ${recommendations ? "bg-gray-300 primaryColor2 w-[200px]" 
+                                : "primaryColor2BG text-white w-[200px]"}`}
+                    onClick={() => setRecommendations(!recommendations)}
+                >
+                    {recommendations ? "Done" : "Recommendations"}
+                </button>
                 </div>
-
-                <div className="routes_waste flex flex-col justify-between">
-                {["Route 1", "Route 2"].map((route, index) => (
-                    <Link key={index} to="/wasteroutes" className="route_waste_container flex flex-row ml-5 p-3">
-                        <div className="routes_waste_logo mt-3">
-                            <HiOutlineLightningBolt className="text-white text-2xl" />
-                        </div>
-                        <div className="cloud_secondcolumn ml-10 mt-1 h-5">
-                            <div className="text-lg font-bold text-white">{route}</div>
-                            <div className="cloud_info_firstrow mb-2">
-                                <span id="road_list_waste">Ballsbridge, Dublin - Pembroke Road, Anglesea Road, Lansdowne Road, Herbert Park Road, Ailesbury Road, Mespil Road ...</span>
-                            </div>
-                        </div>
-                    </Link>
-                ))}
             </div>
 
-                {/* Add/Done Button */}
+            <div className="routes_waste flex flex-col justify-between">
+            {["Route 1", "Route 2"].map((route, index) => (
+                <Link key={index} to="/wasteroutes" className="route_waste_container flex flex-row">
+                    <div className="routes_waste_logo mt-3">
+                        <HiOutlineLightningBolt className="text-white text-2xl" />
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-1 h-5">
+                        <div className="text-lg font-bold text-white">{route}</div>
+                        <div className="cloud_info_firstrow mb-2">
+                            <span id="road_list_waste">Ballsbridge, Dublin - Pembroke Road, Anglesea Road, Lansdowne Road, Herbert Park Road, Ailesbury Road, Mespil Road ...</span>
+                        </div>
+                    </div>
+                </Link>
+            ))}
+            </div>
+            <div className='flex w-full grow justify-end items-end'> 
                 <button
-                id="add_btn"
-                onClick={handleAddButtonClick}
-                className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out
-                    ${isAddingWidget ? "bg-gray-300 primaryColor2" : "primaryColor2BG text-white"}`}
+                    onClick={handleAddButtonClick}
+                    className={`px-6 py-2 h-12 rounded-full font-semibold transition-all duration-300 ease-in-out
+                        ${isAddingWidget ? "bg-gray-300 primaryColor2" : "primaryColor2BG text-white"}`}
                 >
-                {isAddingWidget ? "Done" : "Add"}
+                    {isAddingWidget ? "Done" : "Add"}
                 </button>
-
-                {/* Add Widget Container */}
                 {showAddWidget && <AddWidgetContainer />}
             </div>
-        </>
+        </div>
     )
 }
