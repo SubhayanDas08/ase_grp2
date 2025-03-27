@@ -69,7 +69,7 @@ export const createEvent = async (
 
 // Fetch an event by ID
 export const getEventById = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
   const eventId = req.params.id;
@@ -106,7 +106,7 @@ export const getEventById = async (
 
 // Fetch all events
 export const getAllEvents = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
   try {
