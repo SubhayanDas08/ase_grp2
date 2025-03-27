@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { LatLngTuple } from "leaflet";
+import { LatLngTuple, map } from "leaflet";
 
 import { getStations } from "../../../../shared/utils/weather-map/getStations.ts";
 import { getStationAqi } from "../../../../shared/utils/weather-map/getStationAqi.ts";
@@ -9,6 +9,57 @@ import { getWeatherDetails } from "../../../../shared/utils/weather-map/getWeath
 import MarkerIcon from "../../../../shared/components/weather-map/MarkerIcon.tsx";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import Dropdown from "../components/dropdown.tsx";
+
+function markerDataDisplay(station: any, weatherDatatype: string) {
+  switch (weatherDatatype) {
+    case "aqi":
+      return (
+        <>
+          <p>AQI: {station.aqi}</p>
+          <p>Lat: {station.lat}, Lon: {station.lon}</p>
+        </>
+      );
+      case "temp":
+        return (
+          <>
+            <p>Temperature: {station.weatherData.temp_c || "N/A"}°C</p>
+            <p>Feels Like: {station.weatherData.feelslike_c || "N/A"}°C</p>
+            <p>Dewpoint: {station.weatherData.dewpoint_c || "N/A"}°C</p>
+            <p>Lat: {station.lat}, Lon: {station.lon}</p>
+          </>
+      );
+      case "wind_kph":
+        return (
+          <>
+            <p>Wind Speed: {station.weatherData.wind_kph || "N/A"} km/h</p>
+            <p>Lat: {station.lat}, Lon: {station.lon}</p>
+          </>
+      );
+      case "humidity":
+        return (
+          <>
+            <p>Humidity: {station.weatherData.humidity || "N/A"}%</p>
+            <p>Lat: {station.lat}, Lon: {station.lon}</p>
+          </>
+      );
+      case "precip_mm":
+        return (
+          <>
+            <p>Precipitation: {station.weatherData.precip_mm || "N/A"} mm</p>
+            <p>Lat: {station.lat}, Lon: {station.lon}</p>
+          </>
+      );
+      case "uv":
+        return (
+          <>
+            <p>UV Index: {station.weatherData.uv || "N/A"}</p>
+            <p>Lat: {station.lat}, Lon: {station.lon}</p>
+          </>
+      );
+    default:
+      return <p>Invalid weather data type</p>;
+  }
+}
 
 export default function Weather() {
     const [stations, setStations] = useState<any[]>([]);
@@ -22,7 +73,7 @@ export default function Weather() {
         const fetchStations = async () => {
           try {
             //Fetching all stations in a bound
-            const bounds = "53.2000,-6.4000,53.4100,-6.0500";
+            const bounds = "53.2000,-6.4700,53.4500,-6.0500";
             const stationsList = await getStations(bounds);
             console.log("Fetched stations:", stationsList);
     
@@ -110,7 +161,7 @@ export default function Weather() {
                               className="size-5 textLight"
                             />
                         }
-                        menuItemTitles={["Air Quality Index (AQI)", "Temperature"]}
+                        menuItemTitles={["Air Quality Index (AQI)", "Temperature", "Wind Speed", "Humidity", "Precipitation", "UV Index"]}
                         menuItemFunctions={[
                             () => {
                                 setWeatherDatatype("aqi");
@@ -119,6 +170,22 @@ export default function Weather() {
                             () => {
                                 setWeatherDatatype("temp");
                                 setMenuTitle("Temperature");
+                            },
+                            () => {
+                                setWeatherDatatype("wind_kph");
+                                setMenuTitle("Wind Speed");
+                            },
+                            () => {
+                                setWeatherDatatype("humidity");
+                                setMenuTitle("Humidity");
+                            },
+                            () => {
+                                setWeatherDatatype("precip_mm");
+                                setMenuTitle("Precipitation");
+                            },
+                            () => {
+                                setWeatherDatatype("uv");
+                                setMenuTitle("UV Index");
                             },
                         ]}
                         backgroundColor={"primaryColor1BG"}
@@ -147,24 +214,8 @@ export default function Weather() {
                         >
                             <Popup>
                                 <div>
-                                <h3>{station.id}</h3>
-                                {weatherDatatype === "aqi" ? (
-                                    <>
-                                    <p>AQI: {station.aqi}</p>
-                                    <p>
-                                        Lat: {station.lat}, Lon: {station.lon}
-                                    </p>
-                                    </>
-                                ) : (
-                                    <>
-                                    <p>
-                                        Humidity: {station.weather?.current?.humidity || "N/A"}%
-                                    </p>
-                                    <p>
-                                        Temperature: {station.weather?.current?.temp_c || "N/A"}°C
-                                    </p>
-                                    </>
-                                )}
+                                  <h3>Weather Station ID: {station.id}</h3>
+                                  {markerDataDisplay(station, weatherDatatype)}
                                 </div>
                             </Popup>
                         </Marker>
