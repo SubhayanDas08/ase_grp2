@@ -111,7 +111,7 @@ export const getAllEvents = async (
 ): Promise<void> => {
   try {
     const result = await pool.query(
-      "SELECT * FROM public.events ORDER BY start_date",
+      "SELECT * FROM public.events ORDER BY event_date",
     );
     if (result.rows.length == 0)
       res.status(404).json({ error: "No events found" });

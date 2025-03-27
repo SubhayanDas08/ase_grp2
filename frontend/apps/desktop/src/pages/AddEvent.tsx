@@ -5,14 +5,9 @@ import { LoadScript,Autocomplete } from "@react-google-maps/api";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-clock/dist/Clock.css";
 import axios from "axios";
-import { time } from "console";
 
 const GOOGLE_MAPS_API_KEY="AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY"
 
-interface SettingsProps {
-    setUserAuthenticated: (userAuthenticated: any) => void;
-  }
-  
 export default function AddEvent(): JSX.Element {
 
     const [eventname,setEventname] = useState("");

@@ -1,13 +1,34 @@
 import { FaBolt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { authenticatedGet } from "../utils/auth";
+import { useEffect, useState } from "react";
 
-interface EventsProps {
-    setUserAuthenticated: (userAuthenticated: any) => void;
+interface Event {
+    id: number;
+    name: string;
+    event_date: string;
+    event_time: string;
+    location: string;
+    area: string;
+    description: string;
   }
   
 export default function Events2(): JSX.Element {
     const navigate=useNavigate();
+    const [events, setEvents] = useState<Event[]>([]);
     
+    useEffect(()=>{
+        const fetchEvents=async ()=>{
+            try {
+                const data = await authenticatedGet<Event[]>("/events/");
+                setEvents(data);
+            } catch (error) {
+                console.error("Error fetching events",error);
+            }
+    }
+    fetchEvents();
+    },[]);
+
     return(
         <div className="w-full h-full">
             <div className="flex">
@@ -19,49 +40,25 @@ export default function Events2(): JSX.Element {
                 </div>
             </div>
             </div>
+
             <div className="h-full w-full flex flex-col space-y-3">
-                {/* Event Card */}
-                <div className="flex items-center h-20 rounded-3xl primaryGradient hover:cursor-pointer">
+            {events.map((event) => (
+                // Event Card
+                <div key={event.id} className="flex items-center h-20 rounded-3xl primaryGradient hover:cursor-pointer"
+                onClick={()=>navigate(`/events/view/${event.id}`)}>
                     <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
-                        <FaBolt className="text-2l"/>
+                        <FaBolt className="text-2l" />
                     </div>
                     <div className="ml-10 flex flex-col">
-                        <div className="text-lg font-semibold textLight">Lightning strike in Hamilton Gardens</div>
-                        <div className="textLight">Burning houses, People crying</div>
+                        <div className="text-lg font-semibold textLight">{event.name}</div>
+                        <div className="textLight">{event.description}</div>
                     </div>
                     <div className="flex justify-end grow mr-10 font-bold textLight">
-                        11:11
+                        {event.event_time}
                     </div>
-                    
                 </div>
+            ))}
 
-                <div className="flex items-center h-20 rounded-3xl primaryGradient">
-                    <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
-                        <FaBolt className="text-2l"/>
-                    </div>
-                    <div className="ml-10 flex flex-col">
-                        <div className="text-lg font-semibold textLight">Lightning strike in Hamilton Gardens</div>
-                        <div className="textLight">Burning houses, People crying</div>
-                    </div>
-                    <div className="flex justify-end grow mr-10 font-bold textLight">
-                        11:11
-                    </div>
-                    
-                </div>
-
-                <div className="flex items-center h-20 rounded-3xl primaryGradient">
-                    <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
-                        <FaBolt className="text-2l"/>
-                    </div>
-                    <div className="ml-10 flex flex-col">
-                        <div className="text-lg font-semibold textLight">Lightning strike in Hamilton Gardens</div>
-                        <div className="textLight">Burning houses, People crying</div>
-                    </div>
-                    <div className="flex justify-end grow mr-10 font-bold textLight">
-                        11:11
-                    </div>
-                    
-                </div>
             </div>
 
         </div>

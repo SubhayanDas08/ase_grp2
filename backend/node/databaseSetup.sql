@@ -48,11 +48,12 @@ CREATE TABLE IF NOT EXISTS events (
 id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     event_date DATE NOT NULL,
-    event_time TIMESTAMP NOT NULL,
+    event_time TIME NOT NULL,
     location VARCHAR(255),
     area VARCHAR(255),
     description TEXT,
     created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_events_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
