@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { authenticatedGet } from "../utils/auth";
 
 interface EventData {
     name: string;
@@ -19,9 +20,9 @@ export default function ViewEvent():JSX.Element {
     useEffect(()=>{
         const fetchEvent=async()=>{
             try {
-                const response=await axios.get(`http://localhost:3000/events/${id}`);                
-                console.log(response.data);
-                setEvent(response.data);
+                const response = await authenticatedGet<EventData>(`/events/${id}`);              
+                console.log(response);
+                setEvent(response || null);
             } catch (error) {
                 console.error("Error fetching the event",error);
             }
