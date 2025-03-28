@@ -1,0 +1,37 @@
+@import "../../../../Global.css";
+
+/* Sidebar */
+.sidebarText {
+  font-size: 18px;
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid white;
+  margin: 0 20px 0 20px;
+}
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  margin: 30px 30px 0 35px;
+  border-radius: var(--cornerRadius);
+}
+
+.sidebarItem:hover {
+  background-color: var(--primaryColor2);
+}
+
+.iconContainer {
+  border: none;
+  background-color: white;
+  font-size: 35px;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

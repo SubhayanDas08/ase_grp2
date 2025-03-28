@@ -1,0 +1,42 @@
+module.exports = {
+  apps: [
+    {
+      name: "backend",
+      script: "./build/server.js",
+      env: {
+        NODE_ENV: "development",
+        // Redis credentials
+        REDIS_HOST: "localhost",
+        REDIS_PORT: 6379,
+        REDIS_PASSWORD: "password",
+        // PostgreSQL credentials
+        PG_HOST: "localhost",
+        PG_PORT: 5432,
+        PG_DATABASE: "postgres",
+        PG_USER: "postgres",
+        PG_PASSWORD: "password",
+      },
+      env_production: {
+        NODE_ENV: "production",
+         // Redis credentials
+        REDIS_HOST: "localhost",
+        REDIS_PORT: 6379,
+        REDIS_PASSWORD: "password",
+        // PostgreSQL credentials
+        PG_HOST: "localhost",
+        PG_PORT: 5432,
+        PG_DATABASE: "postgres",
+        PG_USER: "postgres",
+        PG_PASSWORD: "password",
+      },
+      instances: 1,
+      exec_mode: "fork",
+      watch: false,
+      max_memory_restart: "1G",
+      log_date_format: "YYYY-MM-DD HH:mm:ss Z",
+      error_file: "logs/error.log",
+      out_file: "logs/output.log",
+      combine_logs: true,
+    },
+  ],
+};
