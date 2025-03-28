@@ -35,7 +35,7 @@ const TRANSPORT_OPTIONS = [
   { value: "car", label: "Car" },
   { value: "bike", label: "Bike" },
   { value: "foot", label: "Walking" },
-  { value: "BUS", label: "Public Transport" },
+  { value: "bus", label: "Public Transport" },
 ];
 
 const GraphHopperMap = () => {
@@ -100,46 +100,32 @@ const GraphHopperMap = () => {
     const currentDate = new Date().toISOString();
 
     const requestBody = {
-        "type": "LEAVE_AFTER",
-        "modes": ["BUS","TRAM","RAIL"],
-        "date": currentDate,
-        "time": currentDate,
-        "clientTimeZoneOffsetInMs": 0,
-        "routeType": "FASTEST",
-        "cyclePlanType": "BALANCED",
-        "cycleSpeed": 20,
-        "walkingSpeed": 1,
-        "maxWalkTime": 30,
-        "minComfortWaitTime": 5,
-        "includeRealTimeUpdates": true,
-        "restrictToFreeTravelPassOnly": false,
-        "showNoBikesAllowedOnTrains": false,
-        "includeIntermediateStops": true,
-        "operator": {
-          "code": "",
-          "name": "journeyPlanner.options.publicTransport.operator.anyOperator"
+      type: "LEAVE_AFTER",
+      modes: ["BUS", "RAIL"],
+      date: currentDate,
+      time: currentDate,
+      clientTimeZoneOffsetInMs: 0,
+      routeType: "FASTEST",
+      includeIntermediateStops: true,
+      origin: {
+        coordinate: {
+          latitude: startLoc.coordinates[0],
+          longitude: startLoc.coordinates[1]
         },
-        "origin": {
-          "coordinate": {
-            "latitude": startLoc.coordinates[0],
-            "longitude": startLoc.coordinates[1]
-          },
-          "id": startLoc.id,
-          "name": startLoc.name,
-          "type": startLoc.type
+        id: startLoc.id,
+        name: startLoc.name,
+        type: startLoc.type
+      },
+      destination: {
+        name: endLoc.name,
+        id: endLoc.id,
+        coordinate: {
+          latitude: endLoc.coordinates[0],
+          longitude: endLoc.coordinates[1]
         },
-        "destination": {
-          "status": { "success": true },
-          "name": endLoc.name,
-          "id": endLoc.id,
-          "coordinate": {
-            "latitude": endLoc.coordinates[0],
-            "longitude": endLoc.coordinates[1]
-          },
-          "type": endLoc.type
-        },
-        "via": null
-      };
+        type: endLoc.type
+      }
+    };
 
     try {
       const response = await axios.post(apiUrl, requestBody, {
@@ -161,21 +147,20 @@ const GraphHopperMap = () => {
     const routes = [];
     const descriptions = [];
     const legDurations = [];
-  
-    journeys.slice(0, 3).forEach((journey) => {
+
+    journeys.slice(0, 2).forEach((journey) => {
+      let description = '';
       const journeyStops = [];
       const journeyLegDurations = [];
-      let description = '';
-      console.log(journey);
+
       journey.legs.forEach((leg, index) => {
-        // Duration calculation 
-        console.log(leg);
+        // Duration calculation
         const durationMatch = leg.duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
         const hours = parseInt(durationMatch?.[1] || 0);
         const minutes = parseInt(durationMatch?.[2] || 0);
         const seconds = parseInt(durationMatch?.[3] || 0);
         const totalMinutes = (hours * 60 + minutes + seconds / 60).toFixed(1);
-  
+
         // Stop processing
         const processStop = (stopData, type) => ({
           position: [stopData.coordinate.latitude, stopData.coordinate.longitude],
@@ -184,7 +169,7 @@ const GraphHopperMap = () => {
           serviceNumber: leg.serviceNumber || "N/A",
           mode: leg.mode
         });
-  
+
         // Add origin, intermediate, and destination stops
         journeyStops.push(processStop(leg.origin, 'origin'));
         
@@ -199,58 +184,32 @@ const GraphHopperMap = () => {
             })
           );
         }
-  
+
         journeyStops.push(processStop(leg.destination, 'destination'));
-  
-        // Build leg description
+
+        // Build route description
         const legDescription = {
           'TRAM': `Tram ${leg.serviceNumber || ''}: ${leg.origin.name} → ${leg.destination.name} (${totalMinutes} mins)`,
           'BUS': `Bus ${leg.serviceNumber || ''}: ${leg.origin.name} → ${leg.destination.name} (${totalMinutes} mins)`,
           'WALK': `Walk: ${leg.origin.name} → ${leg.destination.name} (${totalMinutes} mins)`,
           'RAIL': `Train ${leg.serviceNumber || ''}: ${leg.origin.name} → ${leg.destination.name} (${totalMinutes} mins)`
         };
-  
-        // Append leg description with a space if not the first leg
-        const legDesc = legDescription[leg.mode] || `${leg.mode}: ${leg.origin.name} → ${leg.destination.name} (${totalMinutes} mins)`;
-        description += (index > 0 ? ' ' : '') + legDesc;
+
+        description += legDescription[leg.mode] || `${leg.mode}: ${leg.origin.name} → ${leg.destination.name} (${totalMinutes} mins)`;
         journeyLegDurations.push(totalMinutes);
       });
-    
-      console.log("Start At",journey.legs[0].origin.departure);
-      // Get departure time from first leg's origin
-      
-    
-      const departureTime = journey.legs[0].origin.departure
-  ? new Date(journey.legs[0].origin.departure).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'Europe/Dublin'
-    })
-  : 'N/A';
-        console.log("Departure Time",departureTime);
-      // Calculate total time for this journey
-      const totalTime = journeyLegDurations.reduce((acc, time) => acc + parseFloat(time), 0).toFixed(1);
-      // Create description with departure time
-      const journeyDescription = `Leave at: ${departureTime} | ${description} | (Total journey time: ${totalTime} mins)`;
-      descriptions.push(journeyDescription);
-  
+
       // Collect processed data
       stops.push(...journeyStops);
       routes.push({
-        coordinates: journeyStops.reduce((acc, stop) => {
-          // Fixed line with proper parenthesis
-          if (stop.position && Array.isArray(stop.position)) {
-            acc.push([stop.position[0], stop.position[1]]);
-          }
-          return acc;
-        }, []),
+        coordinates: journeyStops.map(stop => stop.position),
         mode: journey.modes[0] || 'BUS',
         serviceNumber: journey.legs.find(l => l.mode === 'BUS')?.serviceNumber || "N/A"
       });
+      descriptions.push(description);
       legDurations.push(journeyLegDurations);
     });
-  
+
     return { stops, routes, descriptions, legDurations };
   };
 
@@ -262,7 +221,7 @@ const GraphHopperMap = () => {
     }
 
     try {
-      if (mode === 'BUS') {
+      if (mode === 'bus') {
         const response = await fetchPublicTransportRoutes(startLocation, endLocation);
         
         if (!response[0]?.legs?.length) {
@@ -297,9 +256,6 @@ const GraphHopperMap = () => {
           );
 
           setRoutes(allRoutes);
-          // After setting routes in fetchRoutes
-            console.log('Processed routes:', routes);
-            console.log('Route coordinates sample:', routes[0]?.coordinates);
           setDistances(allDistances);
           setTimes(allTimes);
           setBusStops([]);
@@ -344,7 +300,7 @@ const GraphHopperMap = () => {
       </button>
 
       {/* Route information display */}
-      {transportMode === 'BUS' 
+      {transportMode === 'bus' 
         ? pathDescriptions.map((description, index) => (
             <p key={index}>
               <span style={{ color: ROUTE_COLORS[index % ROUTE_COLORS.length], fontWeight: "bold" }}>
@@ -387,7 +343,7 @@ const GraphHopperMap = () => {
         )}
 
         {/* Bus stops markers */}
-        {transportMode === 'BUS' && busStops.map((stop, index) => (
+        {transportMode === 'bus' && busStops.map((stop, index) => (
           <Marker
             key={`bus-stop-${index}`}
             position={stop.position}
@@ -410,7 +366,7 @@ const GraphHopperMap = () => {
         ))}
 
         {/* Route polylines */}
-        {transportMode === 'BUS' ? (
+        {transportMode === 'bus' ? (
           routes.map((route, index) => (
             <Polyline
               key={`route-${index}`}
