@@ -6,10 +6,9 @@ import axios from "axios";
 import LocationSearch from "./LocationSearch";
 import Select from "react-select";
 import tollData from "./tollData.json";
+import { GRAPHHOPPER_API_KEY, PUBLIC_TRANSPORT_API_KEY } from '../config';
 
-// Configuration constants
-const GRAPHHOPPER_API_KEY = 'afa8f81e-bb1b-4d1e-aec9-c6bd1664d322';
-const PUBLIC_TRANSPORT_API_KEY = '630688984d38409689932a37a8641bb9';
+
 const DEFAULT_CENTER = [53.3498, -6.2603];
 
 // Marker Icons Configuration
