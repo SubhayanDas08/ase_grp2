@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { authenticatedGet } from "../utils/auth";
+import { authenticatedDelete, authenticatedGet } from "../utils/auth";
 
 interface EventData {
     name: string;
@@ -16,6 +16,22 @@ export default function ViewEvent():JSX.Element {
     const {id}=useParams();    
     const navigate=useNavigate();
     const [event,setEvent]=useState<EventData | null>(null);
+
+    const handleDeleteEvent = async () => {                
+        if (!id) return;
+
+        // const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+        // if (!confirmDelete) return;        
+      
+        try {
+          await authenticatedDelete(`/events/delete/${id}`);
+          alert("Event deleted successfully!");
+          navigate("/events");
+        } catch (error) {
+          console.error("Failed to delete event:", error);
+          alert("Failed to delete event. Please try again.");
+        }
+      };
 
     useEffect(()=>{
         const fetchEvent=async()=>{
@@ -96,10 +112,10 @@ export default function ViewEvent():JSX.Element {
                         </div>
         
                         {/* Delete Button */}
-                        {/* <button className="flex items-center justify-center h-12 w-36 font-extrabold rounded-2xl textLight primaryGradient hover:cursor-pointer"
-                        onClick={handleAddEvent}>
-                            Add Event
-                        </button> */}
+                        <button className="flex items-center justify-center h-12 w-36 font-extrabold rounded-2xl textLight error hover:cursor-pointer"
+                        onClick={handleDeleteEvent}>
+                            Delete Event
+                        </button>
                     
                     </div>
                 </div>
