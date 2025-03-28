@@ -298,6 +298,14 @@ export async function authenticatedPost<T>(
   });
 }
 
+// Convenience wrapper for DELETE requests
+export async function authenticatedDelete<T>(
+  url: string,
+  config: AxiosRequestConfig = {},
+): Promise<T> {
+  return authenticatedRequest<T>(url, { ...config, method: "DELETE" });
+}
+
 export async function logout(): Promise<void> {
   try {
     // Use the authenticatedPost function which will automatically
