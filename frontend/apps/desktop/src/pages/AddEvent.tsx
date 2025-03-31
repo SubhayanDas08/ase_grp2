@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-clock/dist/Clock.css";
 import { authenticatedPost } from "../utils/auth";
 
-const GOOGLE_MAPS_API_KEY="AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY"
+const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 export default function AddEvent(): JSX.Element {
 
@@ -66,10 +66,13 @@ export default function AddEvent(): JSX.Element {
       };
       
     return(
-        <div className="w-full h-full">
-            <div className="flex">
-            <h2 className="text-5xl mb-10 font-extrabold primaryColor1">
-            <span className="cursor-pointer border-b-5 border-primaryColor1 pb-0.6" onClick={()=>navigate("/events/")}>Events</span> {">"} Add Event</h2>
+        <div className="w-full h-full flex flex-col">
+            <div className="mainHeaderHeight w-full flex items-center justify-between">
+                <div className="titleText primaryColor1 flex">
+                    <div className="underline cursor-pointer mr-2" onClick={()=>navigate("/events/")}>Events</div>
+                    <div className="mr-2">{">"}</div>
+                    <div>Add Event</div>
+                </div>
             </div>
             <div className="h-full w-full flex flex-col space-y-3">
 
@@ -113,7 +116,7 @@ export default function AddEvent(): JSX.Element {
                             type="time"
                             value={selectedTime}
                             onChange={(e) => setSelectedTime(e.target.value)}
-                            className="p-2 w-60 border-gray-100 textFieldBG border-gray-300 rounded-md bg-white text-black"
+                            className="p-2 w-60 textFieldBG border-gray-100 rounded-md bg-white text-black"
                             />
                             </div>
                         </div>
@@ -121,7 +124,7 @@ export default function AddEvent(): JSX.Element {
 
                     <div className="flex justify-between">
                         {/* Location of Event */}
-                        <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
+                        <LoadScript googleMapsApiKey={API_KEY} libraries={["places"]}>
                         <div className="min-w-[50%]">
                             <h3 className="text-2xl font-extrabold primaryColor1">Location</h3>
                             <div className="">
@@ -140,7 +143,7 @@ export default function AddEvent(): JSX.Element {
                                 <input
                                 type="text"
                                 placeholder="Search Location"
-                                className="w-60 p-2 border-gray-100 textFieldBG border-gray-300 rounded-md bg-white text-black"
+                                className="w-60 p-2 border-gray-100 textFieldBG rounded-md bg-white text-black"
                                 value={selectedLocation}
                                 onChange={(e) => setSelectedLocation(e.target.value)}
                                 />
@@ -155,7 +158,7 @@ export default function AddEvent(): JSX.Element {
                             <input
                             type="text"
                             placeholder="Area"
-                            className="w-60 p-2 border-gray-100 textFieldBG border-gray-300 rounded-md bg-white text-black"
+                            className="w-60 p-2 border-gray-100 textFieldBG rounded-md bg-white text-black"
                             value={area}
                             readOnly
                             />

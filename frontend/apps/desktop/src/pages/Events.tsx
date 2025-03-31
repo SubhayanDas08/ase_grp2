@@ -25,22 +25,21 @@ export default function Events2(): JSX.Element {
             } catch (error) {
                 console.error("Error fetching events",error);
             }
-    }
-    fetchEvents();
+        }
+        fetchEvents();
     },[]);
 
     return(
-        <div className="w-full h-full">
-            <div className="flex">
-            <h2 className="text-5xl mb-10 font-extrabold primaryColor1">Events</h2>
-            <div className="flex grow">
-                <div className="flex justify-center items-center ml-auto mr-4 mt-4 mb-auto h-10 w-35 rounded-2xl primaryColor1BG font-semibold textLight hover:cursor-pointer"
-                onClick={()=>navigate("/events/add")}>
-                    + Add Event
+        <div className="w-full h-full flex flex-col">
+            <div className="mainHeaderHeight w-full flex items-center justify-between">
+                <div className="titleText primaryColor1">Events</div>
+                <div className="flex h-fit w-fit items-center justify-end">
+                    <div className="px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out primaryColor2BG text-white cursor-pointer"
+                    onClick={()=>navigate("/events/add")}>
+                        Add Event
+                    </div>
                 </div>
             </div>
-            </div>
-
             <div className="h-full w-full flex flex-col space-y-3">
             {events.map((event) => (
                 // Event Card
