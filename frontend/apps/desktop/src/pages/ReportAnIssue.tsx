@@ -37,12 +37,15 @@ interface SettingsProps {
 
     return (
         <div className="h-full w-full flex flex-col">
-            <h2 className="text-5xl mb-10 font-bold mb-6 primaryColor1">
-            <span className="cursor-pointer border-b-5 border-primaryColor1 pb-1" onClick={()=>navigate("/settings/")}>Settings</span><span> </span>
-            {">"} Report an Issue
-            </h2>
+            <div className="mainHeaderHeight w-full flex items-center justify-between">
+                <div className="titleText primaryColor1 flex">
+                    <div className="underline cursor-pointer mr-2" onClick={()=>navigate("/settings/")}>Settings</div>
+                    <div className="mr-2">{">"}</div>
+                    <div>Report an Issue</div>
+                </div>
+            </div>
             <form onSubmit={handleSubmit}>
-            <div className="h-full w-full space-y-6 flex flex-col">
+            <div className="flex flex-col flex-1 h-full w-full space-y-6">
                 {/*Subject */}
                 <div className="">
                 <h3 className="text-2xl font-extrabold primaryColor1">Subject</h3>
