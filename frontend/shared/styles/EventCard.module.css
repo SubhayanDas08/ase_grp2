@@ -1,0 +1,29 @@
+@import "../../Global.css";
+
+.event-card {
+  background-color: linear-gradient(to right, #029aa5, #04b9c6);
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+}
+
+.event-title {
+  font-weight: bold;
+  color: white;
+  margin-top: 1px;
+}
+
+.event-description {
+  font-size: 14px;
+  color: white;
+  margin-top: 5px;
+}
+
+.event-time {
+  font-size: 12px;
+  color: white;
+  margin-top: 10px;
+}

@@ -48,6 +48,52 @@ const GraphHopperMap = () => {
   const [busStops, setBusStops] = useState([]);
   const [pathDescriptions, setPathDescriptions] = useState([]);
 
+  // Function to fetch location details from coordinates
+  const fetchLocationDetails = async (latitude, longitude) => {
+    try {
+      const apiUrl = 'https://api-lts.transportforireland.ie/lts/lts/v1/public/reverseLocationLookup';
+      
+      const requestBody = {
+        "coord": {
+          "longitude": longitude,
+          "latitude": latitude,
+          "pixel": [
+            170.55027141873433,
+            440.6569131791863
+          ]
+        },
+        "type": [
+          "AIR_PORT",
+          "BUS_STOP",
+          "COACH_STOP",
+          "FERRY_PORT",
+          "TRAIN_STATION",
+          "TRAM_STOP",
+          "TRAM_STOP_AREA",
+          "UNDERGROUND_STOP",
+          "ADDRESS",
+          "COORDINATE",
+          "LOCALITY",
+          "POINT_OF_INTEREST",
+          "STREET"
+        ],
+        "language": "en"
+      };
+
+      const response = await axios.post(apiUrl, requestBody, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Ocp-Apim-Subscription-Key': PUBLIC_TRANSPORT_API_KEY
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching location details:', error);
+      return null;
+    }
+  };
+
   // Fetch user's location on component mount
   useEffect(() => {
     const fetchUserLocation = async () => {
@@ -62,30 +108,72 @@ const GraphHopperMap = () => {
 
         const userCoords = [position.coords.latitude, position.coords.longitude];
         setUserLocation(userCoords);
-        setStartLocation({
-          coordinates: userCoords,
-          label: "Trinity College, Dublin City",
-          name: "Trinity College, Dublin City",
-          type: "LOCALITY",
-          id: "E0822090",
-          eastingnorthing: "31598207,23408364"
-        });
+        
+        // Fetch location details from the API
+        const locationDetails = await fetchLocationDetails(userCoords[0], userCoords[1]);
+        
+        if (locationDetails && locationDetails.status.success) {
+          setStartLocation({
+            coordinates: userCoords,
+            label: locationDetails.name,
+            name: locationDetails.name,
+            type: locationDetails.type,
+            id: locationDetails.id || `coord:${userCoords[0]},${userCoords[1]}`, // Use coordinates as ID if not provided
+            eastingnorthing: locationDetails.eastingnorthing || ""
+          });
+        } else {
+          // Fallback if API doesn't return proper data
+          setStartLocation({
+            coordinates: userCoords,
+            label: `Location at ${userCoords[0].toFixed(5)}, ${userCoords[1].toFixed(5)}`,
+            name: `Location at ${userCoords[0].toFixed(5)}, ${userCoords[1].toFixed(5)}`,
+            type: "COORDINATE",
+            id: `coord:${userCoords[0]},${userCoords[1]}`,
+            eastingnorthing: ""
+          });
+        }
       } catch (error) {
         console.error("Location error:", error);
         try {
+          // Fallback to IP-based location
           const response = await axios.get("https://ipapi.co/json/");
           const userCoords = [response.data.latitude, response.data.longitude];
           setUserLocation(userCoords);
-          setStartLocation({
-            coordinates: userCoords,
-            label: "Trinity College, Dublin City",
-            name: "Trinity College, Dublin City",
-            type: "LOCALITY",
-            id: "E0822090",
-            eastingnorthing: "31598207,23408364"
-          });
+          
+          // Fetch location details from the API for IP-based location
+          const locationDetails = await fetchLocationDetails(userCoords[0], userCoords[1]);
+          
+          if (locationDetails && locationDetails.status.success) {
+            setStartLocation({
+              coordinates: userCoords,
+              label: locationDetails.name,
+              name: locationDetails.name,
+              type: locationDetails.type,
+              id: locationDetails.id || `coord:${userCoords[0]},${userCoords[1]}`,
+              eastingnorthing: locationDetails.eastingnorthing || ""
+            });
+          } else {
+            // Fallback if API doesn't return proper data
+            setStartLocation({
+              coordinates: userCoords,
+              label: `Location at ${userCoords[0].toFixed(5)}, ${userCoords[1].toFixed(5)}`,
+              name: `Location at ${userCoords[0].toFixed(5)}, ${userCoords[1].toFixed(5)}`,
+              type: "COORDINATE",
+              id: `coord:${userCoords[0]},${userCoords[1]}`,
+              eastingnorthing: ""
+            });
+          }
         } catch (ipError) {
           console.error("IP location fetch error:", ipError);
+          // Use default coordinates if all else fails
+          setStartLocation({
+            coordinates: DEFAULT_CENTER,
+            label: "Dublin City Center",
+            name: "Dublin City Center",
+            type: "LOCALITY",
+            id: `coord:${DEFAULT_CENTER[0]},${DEFAULT_CENTER[1]}`,
+            eastingnorthing: ""
+          });
         }
       }
     };
@@ -315,6 +403,57 @@ const GraphHopperMap = () => {
     }
   };
 
+  // Custom function for LocationSearch to use Transport for Ireland API when needed
+  const handleLocationSelect = async (location, isStartLocation) => {
+    // If the location already has all required fields, use it directly
+    if (location && location.coordinates) {
+      // Check if we need to fetch additional data from reverseLocationLookup API
+      if (!location.type || !location.eastingnorthing) {
+        try {
+          const locationDetails = await fetchLocationDetails(location.coordinates[0], location.coordinates[1]);
+          
+          if (locationDetails && locationDetails.status.success) {
+            const enhancedLocation = {
+              ...location,
+              name: locationDetails.name || location.name || location.label,
+              type: locationDetails.type,
+              id: locationDetails.id || `coord:${location.coordinates[0]},${location.coordinates[1]}`,
+              eastingnorthing: locationDetails.eastingnorthing || ""
+            };
+            
+            if (isStartLocation) {
+              setStartLocation(enhancedLocation);
+            } else {
+              setEndLocation(enhancedLocation);
+            }
+          } else {
+            // Use the original location if API fails
+            if (isStartLocation) {
+              setStartLocation(location);
+            } else {
+              setEndLocation(location);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching location details:", error);
+          // Use the original location if API fails
+          if (isStartLocation) {
+            setStartLocation(location);
+          } else {
+            setEndLocation(location);
+          }
+        }
+      } else {
+        // Location already has all needed fields
+        if (isStartLocation) {
+          setStartLocation(location);
+        } else {
+          setEndLocation(location);
+        }
+      }
+    }
+  };
+
   return (
     <div>
       <Select
@@ -327,12 +466,12 @@ const GraphHopperMap = () => {
         }}
       />
       <LocationSearch
-        onSelect={setStartLocation}
+        onSelect={(location) => handleLocationSelect(location, true)}
         label="Starting Location"
         defaultLocation={userLocation}
       />
       <LocationSearch
-        onSelect={setEndLocation}
+        onSelect={(location) => handleLocationSelect(location, false)}
         label="Destination Location"
       />
       <button
