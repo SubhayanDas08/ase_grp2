@@ -10,9 +10,6 @@ import { isAuthenticated } from "./utils/auth";
 import "leaflet/dist/leaflet.css";
 import "./styles/App.css";
 
-import SettingsProfile from "./pages/SettingsProfile.tsx";
-import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
-import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import Login from "./pages/Login.tsx";
 import Sidebar from "./components/sidebar.tsx";
@@ -20,12 +17,15 @@ import Home from "./pages/Home.tsx";
 import Routing from "./pages/Routing.tsx";
 import Events from "./pages/Events.tsx";
 import AddEvent from "./pages/AddEvent.tsx";
+import ViewEvent from "./pages/ViewEvent.tsx";
 import Traffic from "./pages/Traffic.tsx";
 import Waste from "./pages/Waste.tsx";
 import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
-import ViewEvent from "./pages/ViewEvent.tsx";
+import SettingsProfile from "./pages/SettingsProfile.tsx";
+import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
+import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [authChecked, setAuthChecked] = useState(false);
@@ -54,8 +54,36 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
         
 export default function App() {
     const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
-    const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
-    const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
+    const pageRoutesList: string[] = [
+      "/home",
+      "/routing",
+      "/events",
+      "/events/add",
+      "/events/view/:id",
+      "/traffic",
+      "/waste",
+      "/weather",
+      "/fleetsize",
+      "/settings",
+      "/settings/profile",
+      "/settings/changepassword",
+      "/settings/report"
+    ];
+    const pageRouteItemsList: React.ReactElement[] = [
+      <Home />,
+      <Routing />,
+      <Events />,
+      <AddEvent />
+      <ViewEvent />,
+      <Traffic />,
+      <Waste />,
+      <Weather />,
+      <FleetSize />,
+      <Settings setUserAuthenticated={setUserAuthenticated} />,
+      <SettingsProfile setUserAuthenticated={setUserAuthenticated} />,
+      <SettingsChangePassword setUserAuthenticated={setUserAuthenticated} />,
+      <ReportAnIssue setUserAuthenticated={setUserAuthenticated} />
+    ];
     
     // Check authentication on app load
     useEffect(() => {
@@ -63,152 +91,49 @@ export default function App() {
         const authenticated = await isAuthenticated();
         setUserAuthenticated(authenticated);
       };
-
-    checkAuth();
-  }, []);
-
-  return (
-    <Router>
-      <div className="flex h-screen">
-        {!userAuthenticated ? (
-          <div className="h-full w-full">
-            <Routes>
-              <Route
-                path="/"
-                element={<Login setUserAuthenticated={setUserAuthenticated} />}
-              />
-              <Route
-                path="/create_account"
-                element={
-                  <CreateAccount setUserAuthenticated={setUserAuthenticated} />
-                }
-              />
-              {/* Redirect any other route to login */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        ) : (
-          <div className="flex h-full w-full">
-            <div className="h-full w-[250px] flex-none fixed">
-              <Sidebar />
-            </div>
-            <div className="h-full grow ml-[250px] p-5">
-              <Routes>
-                <Route
-                  path="/home"
-                  element={
-                    <ProtectedRoute>
-                      <Home />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/weather"
-                  element={
-                    <ProtectedRoute>
-                      <Weather />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events"
-                  element={
-                    <ProtectedRoute>
-                      <Events />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events/add"
-                  element={
-                    <ProtectedRoute>
-                      <AddEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events/view/:id"
-                  element={
-                    <ProtectedRoute>
-                      <ViewEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/routing"
-                  element={
-                    <ProtectedRoute>
-                      <Routing />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/traffic"
-                  element={
-                    <ProtectedRoute>
-                      <Traffic />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/waste"
-                  element={
-                    <ProtectedRoute>
-                      <Waste />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/fleetsize"
-                  element={
-                    <ProtectedRoute>
-                      <FleetSize />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings setUserAuthenticated={setUserAuthenticated} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings/profile"
-                  element={
-                    <ProtectedRoute>
-                      <SettingsProfile
-                        setUserAuthenticated={setUserAuthenticated}
-                      />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings/changepassword"
-                  element={
-                    <ProtectedRoute>
-                      <SettingsChangePassword
-                        setUserAuthenticated={setUserAuthenticated}
-                      />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings/report"
-                  element={
-                    <ProtectedRoute>
-                      <ReportAnIssue
-                        setUserAuthenticated={setUserAuthenticated}
-                      />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* Redirect to home if authenticated and accessing root */}
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                {/* Catch any other routes and redirect to home */}
-                <Route path="*" element={<Navigate to="/home" replace />} />
-              </Routes>
+      
+      checkAuth();
+    }, []);
+    return (
+        <Router>
+            <div className="flex h-screen"> 
+                {!userAuthenticated ? (
+                    <div className="h-full w-full">  
+                        <Routes> 
+                            <Route path="/" element={<Login setUserAuthenticated={setUserAuthenticated} />} />
+                            <Route path="/create_account" element={<CreateAccount setUserAuthenticated={setUserAuthenticated} />} />
+                            {/* Redirect any other route to login */}
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
+                    </div>
+                ) : (
+                    <div className="flex h-full w-full">
+                        <div className="h-full w-[250px] flex-none fixed">
+                            <Sidebar />
+                        </div>
+                        <div className="flex flex-col h-full grow ml-[250px] ps-5 pe-5 pb-5">
+                            <Routes>
+                                {pageRoutesList.map((route, index) => {
+                                    return(
+                                        <Route 
+                                          path={route}
+                                          element={
+                                            <ProtectedRoute>
+                                              {pageRouteItemsList[index]}
+                                            </ProtectedRoute>
+                                          }
+                                          key={index} 
+                                        />
+                                    );
+                                })}
+                              {/* Redirect to home if authenticated and accessing root */}
+                              <Route path="/" element={<Navigate to="/home" replace />} />
+                              {/* Catch any other routes and redirect to home */}
+                              <Route path="*" element={<Navigate to="/home" replace />} />
+                            </Routes>
+                        </div>
+                    </div>
+                )}
             </div>
           </div>
         )}
