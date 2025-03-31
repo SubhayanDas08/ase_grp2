@@ -274,8 +274,7 @@ export const getCurrentUser = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const userId = (req as any)
-  console.log(userId);
+
   try {
     const userId = (req as any).user?.id;
     console.log(userId);

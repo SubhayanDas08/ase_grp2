@@ -39,11 +39,19 @@ export const authenticate = async (
     }
 
     // Fetch user permissions from Redis
-    const permissions = await redisClient.lRange(
-      `permissions:${user.domain}`,
-      0,
-      -1,
-    );
+
+    // const permissions = await redisClient.lRange(
+    //   `permissions:${user.domain}`,
+    //   0,
+    //   -1,
+    // );
+    
+    let permissions: string[] = [];
+    try {
+      permissions = await redisClient.lRange(`permissions:${user.domain}`, 0, -1);
+    } catch (error) {
+      console.error(`Error fetching permissions for domain ${user.domain}:`, error);
+    }
 
     // Attach user and permissions to request
     req.user = {
