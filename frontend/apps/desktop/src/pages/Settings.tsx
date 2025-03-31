@@ -1,6 +1,7 @@
 import { FaUser,FaSlidersH, FaFileAlt, FaInfoCircle } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
 
 interface SettingsProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
@@ -55,6 +56,7 @@ export default function Settings({setUserAuthenticated}:SettingsProps): JSX.Elem
                 {/* Log Out */}
                 <div className="flex items-center primaryGradient rounded-3xl h-20 hover:cursor-pointer"
                 onClick={()=>{
+                    logout();
                     setUserAuthenticated(false);
                     navigate("/login");
                     }

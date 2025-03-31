@@ -25,6 +25,7 @@ import Waste from "./pages/Waste.tsx";
 import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
+import ViewEvent from "./pages/ViewEvent.tsx";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [authChecked, setAuthChecked] = useState(false);
@@ -122,6 +123,14 @@ export default function App() {
                   element={
                     <ProtectedRoute>
                       <AddEvent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/events/view/:id"
+                  element={
+                    <ProtectedRoute>
+                      <ViewEvent />
                     </ProtectedRoute>
                   }
                 />

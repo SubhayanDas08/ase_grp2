@@ -4,23 +4,47 @@ import { useState } from "react";
 import { LoadScript,Autocomplete } from "@react-google-maps/api";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-clock/dist/Clock.css";
-import { time } from "console";
+import { authenticatedPost } from "../utils/auth";
 
 const GOOGLE_MAPS_API_KEY="AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY"
 
-interface SettingsProps {
-    setUserAuthenticated: (userAuthenticated: any) => void;
-  }
-  
 export default function AddEvent(): JSX.Element {
 
+    const [eventname,setEventname] = useState("");
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState<string>('10:00');
     const [selectedLocation, setSelectedLocation] = useState("");
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
-    const [neighbourhood, setNeighbourhood] = useState<string>("");
+    const [area, setArea] = useState<string>("");
+    const [description,setDescription] = useState("");
 
     const navigate=useNavigate();
+
+    const handleAddEvent = async () => {
+        if(!eventname || !selectedDate || !selectedTime || !selectedLocation || !area || !description){
+            alert("Fill all the details!");
+            return;
+        }
+
+        const newEvent={
+            name:eventname,
+            event_date:selectedDate,
+            event_time:selectedTime,
+            location:selectedLocation,
+            area,
+            description:description
+        }
+
+        try {
+            await authenticatedPost("/events/create",newEvent);
+            navigate("/events");
+          } catch (error) {
+            console.error("Error adding event:", error);
+            alert("Something went wrong while saving the event.");
+          }
+
+    }
+
     const handlePlaceSelect = () => {
         if (autocomplete) {
           const place = autocomplete.getPlace();
@@ -34,9 +58,9 @@ export default function AddEvent(): JSX.Element {
         );
 
         if (neighborhoodComponent) {
-            setNeighbourhood(neighborhoodComponent.long_name);
+            setArea(neighborhoodComponent.long_name);
         } else {
-            setNeighbourhood("");
+            setArea("");
         }
             }
       };
@@ -54,9 +78,9 @@ export default function AddEvent(): JSX.Element {
                 <h3 className="text-2xl font-extrabold primaryColor1">Event Name</h3>
                 <input
                     type="text"
-                    // value={subject}
+                    value={eventname}
                     placeholder="Add Name of the Event"
-                    // onChange={(e)=>setSubject(e.target.value)}
+                    onChange={(e)=>setEventname(e.target.value)}
                     className="textFieldBG border-gray-100 w-full mt-4 rounded-md px-4 py-2 textDark"
                     />
             </div>
@@ -132,7 +156,7 @@ export default function AddEvent(): JSX.Element {
                             type="text"
                             placeholder="Area"
                             className="w-60 p-2 border-gray-100 textFieldBG border-gray-300 rounded-md bg-white text-black"
-                            value={neighbourhood}
+                            value={area}
                             readOnly
                             />
                         </div>
@@ -143,15 +167,16 @@ export default function AddEvent(): JSX.Element {
                 <div className="flex flex-col h-50 ">
                 <h3 className="text-2xl font-extrabold primaryColor1">Event Description</h3>
                 <textarea
-                    // value={description}
+                    value={description}
                     placeholder="Add Description"
-                    // onChange={(e)=>setDescription(e.target.value)}
+                    onChange={(e)=>setDescription(e.target.value)}
                     className="grow textFieldBG w-full mt-4 rounded-md px-4 py-2"
                     />
                 </div>
 
-                {/* Delete Button */}
-                <button className="flex items-center justify-center h-12 w-36 font-extrabold rounded-2xl textLight primaryGradient hover:cursor-pointer">
+                {/* Add Button */}
+                <button className="flex items-center justify-center h-12 w-36 font-extrabold rounded-2xl textLight primaryGradient hover:cursor-pointer"
+                onClick={handleAddEvent}>
                     Add Event
                 </button>
             </div>
