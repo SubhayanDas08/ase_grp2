@@ -36,11 +36,11 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="h-full w-full flex flex-col">
       {/* Header Section */}
-      <div className="header flex flex-row">
-        <div className="home_title titleText">Home</div>
-        <div>
+      <div className="mainHeaderHeight w-full flex items-center justify-between">
+        <div className="titleText primaryColor1">Home</div>
+        <div className="flex h-fit w-fit items-center justify-end">
           <button
             className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
               ${editMode ? "bg-gray-300 primaryColor2 w-[100px]" 
@@ -53,9 +53,8 @@ export default function Home() {
       </div>
 
       {/* Main Content Section */}
-      <div className="home_main">
-        {/* First Row: Weather and Events Widgets */}
-        <div className="first_row mt-4 mr-2 flex">
+      <div className="flex flex-col h-full w-full overflow-y-auto">
+        <div className="flex flex-wrap background gap-5">
           {/* Weather Widget */}
           <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
             {editMode && (
@@ -140,9 +139,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-
+          
           {/* Events Widget */}
-          <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG ml-10">
+          <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG">
             {editMode && (
               <FiMinus className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" />
             )}
@@ -184,14 +183,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Second Row: Map Container */}
-        <div className="second_row">
-        {editMode && (
-            <FiMinus className="circlecontainer -top-1 -right-1 cursor-pointer z-1000 ml-100" />
-          )}
-          <div className="map_container h-[350px] w-[600px] mt-10 rounded-[40px] overflow-hidden relative z-1">
+          {/* Map Widget */}
+          <div className="relative h-[350px] w-[600px] primaryColor1BG">
+            {editMode && (
+              <FiMinus className="circlecontainer absolute -top-1 -right-1 cursor-pointer z-1000 ml-100" />
+            )}
             <MapContainer 
               center={[53.3498, -6.2603]} // Dublin's coordinates
               zoom={13} 
@@ -206,20 +203,19 @@ export default function Home() {
             </MapContainer>
           </div>
         </div>
-
-        {/* Add/Done Button */}
-        <button
-          id="add_btn"
-          onClick={handleAddButtonClick}
-          className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out
-            ${isAddingWidget ? "bg-gray-300 primaryColor2" : "primaryColor2BG text-white"}`}
-        >
-          {isAddingWidget ? "Done" : "Add"}
-        </button>
-
-        {/* Add Widget Container */}
-        {showAddWidget && <AddWidgetContainer />}
+        <div className='flex w-full mt-auto justify-end items-end p-4'> 
+          {/* Add/Done Button */}
+          <button
+            onClick={handleAddButtonClick}
+            className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out
+              ${isAddingWidget ? "bg-gray-300 primaryColor2" : "primaryColor2BG text-white"}`}
+          >
+            {isAddingWidget ? "Done" : "Add"}
+          </button>
+          {/* Add Widget Container */}
+          {showAddWidget && <AddWidgetContainer />}
+        </div>
       </div>
-    </>
+    </div>
   );
 }

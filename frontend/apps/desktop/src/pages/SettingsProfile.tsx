@@ -51,12 +51,14 @@ interface SettingsProps {
 
     return (
         <div className="h-full w-full flex flex-col">
-            <h2 className="text-5xl mb-10 font-bold mb-6 primaryColor1">
-            <span className="cursor-pointer border-b-5 border-primaryColor1 pb-1" onClick={()=>navigate("/settings/")}>Settings</span> <span> </span>
-            {">"} Profile
-            </h2>
-
-            <div className="h-full w-full space-y-6 flex flex-col flex-1">
+            <div className="mainHeaderHeight w-full flex items-center justify-between">
+                <div className="titleText primaryColor1 flex">
+                    <div className="underline cursor-pointer mr-2" onClick={()=>navigate("/settings/")}>Settings</div>
+                    <div className="mr-2">{">"}</div>
+                    <div>Profile</div>
+                </div>
+            </div>
+            <div className="flex flex-col flex-1 h-full w-full space-y-6">
                 {/* First Name */}
                 <div className="flex items-center primaryGradient rounded-4xl p-4">
                     <label className="w-2/10  pl-10 text-white font-bold">Firstname</label>
