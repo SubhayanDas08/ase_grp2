@@ -1,15 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface SettingsProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
-  }
-  
-  interface Device {
-    id: string;
-    name: string;
-    lastActive: string;
-    status: string;
   }
 
   export default function SettingsProfile({ setUserAuthenticated }: SettingsProps): JSX.Element {
@@ -19,6 +12,18 @@ interface SettingsProps {
     const [phoneNumber, setphoneNumber] = useState<string>("+353 899739832");
 
     const navigate=useNavigate();
+
+
+
+    useEffect(()=>{
+        const fetchUserDetails=async()=>{
+            try {
+                const response=authenticatedGet<UserData>("/")
+            } catch (error) {
+                
+            }
+        }
+    },[]);
 
     const handleSubmit=()=>{
         const userData={
