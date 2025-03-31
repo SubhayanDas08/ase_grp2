@@ -4,6 +4,7 @@ import {
   verifyUserCredentials,
   saveLocationToDatabase,
   getLocationData,
+  getUserById
 } from "../services/databaseService";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -268,3 +269,31 @@ export const getLocationByIp = async (
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const getCurrentUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+
+  try {
+    const userId = (req as any).user?.id;
+    console.log(userId);
+    
+
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const userData = await getUserById(userId);
+
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+    }
+
+    const { password, ...userWithoutPassword } = userData;
+    res.status(200).json(userWithoutPassword);
+  } catch (error) {
+    console.error("Error getting current user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}

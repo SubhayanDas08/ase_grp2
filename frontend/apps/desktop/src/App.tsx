@@ -16,11 +16,16 @@ import Sidebar from "./components/sidebar.tsx";
 import Home from "./pages/Home.tsx";
 import Routing from "./pages/Routing.tsx";
 import Events from "./pages/Events.tsx";
+import AddEvent from "./pages/AddEvent.tsx";
+import ViewEvent from "./pages/ViewEvent.tsx";
 import Traffic from "./pages/Traffic.tsx";
 import Waste from "./pages/Waste.tsx";
 import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
+import SettingsProfile from "./pages/SettingsProfile.tsx";
+import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
+import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [authChecked, setAuthChecked] = useState(false);
@@ -48,10 +53,37 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
         
 export default function App() {
-    // UPDATE THIS BEFORE MERGING WITH MAIN - true to false
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
-    const pageRoutesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize", "/settings"];
-    const pageRouteItemsList: React.ReactElement[] = [<Home />, <Routing />, <Events />, <Traffic />, <Waste />, <Weather />, <FleetSize />, <Settings setUserAuthenticated={setUserAuthenticated} />];
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
+    const pageRoutesList: string[] = [
+      "/home",
+      "/routing",
+      "/events",
+      "/events/add",
+      "/events/view/:id",
+      "/traffic",
+      "/waste",
+      "/weather",
+      "/fleetsize",
+      "/settings",
+      "/settings/profile",
+      "/settings/changepassword",
+      "/settings/report"
+    ];
+    const pageRouteItemsList: React.ReactElement[] = [
+      <Home />,
+      <Routing />,
+      <Events />,
+      <AddEvent />
+      <ViewEvent />,
+      <Traffic />,
+      <Waste />,
+      <Weather />,
+      <FleetSize />,
+      <Settings setUserAuthenticated={setUserAuthenticated} />,
+      <SettingsProfile setUserAuthenticated={setUserAuthenticated} />,
+      <SettingsChangePassword setUserAuthenticated={setUserAuthenticated} />,
+      <ReportAnIssue setUserAuthenticated={setUserAuthenticated} />
+    ];
     
     // Check authentication on app load
     useEffect(() => {
@@ -59,9 +91,8 @@ export default function App() {
         const authenticated = await isAuthenticated();
         setUserAuthenticated(authenticated);
       };
-
-      // UPDATE THIS BEFORE MERGING WITH MAIN - uncomment
-      //checkAuth();
+      
+      checkAuth();
     }, []);
     return (
         <Router>
@@ -83,12 +114,13 @@ export default function App() {
                         <div className="flex flex-col h-full grow ml-[250px] ps-5 pe-5 pb-5">
                             <Routes>
                                 {pageRoutesList.map((route, index) => {
-                                    {/* UPDATE THIS BEFORE MERGING WITH MAIN - BRING BACK <ProtectedRoute> */}
                                     return(
                                         <Route 
                                           path={route}
                                           element={
-                                            pageRouteItemsList[index]
+                                            <ProtectedRoute>
+                                              {pageRouteItemsList[index]}
+                                            </ProtectedRoute>
                                           }
                                           key={index} 
                                         />
@@ -103,6 +135,9 @@ export default function App() {
                     </div>
                 )}
             </div>
-        </Router>
-    );
+          </div>
+        )}
+      </div>
+    </Router>
+  );
 }
