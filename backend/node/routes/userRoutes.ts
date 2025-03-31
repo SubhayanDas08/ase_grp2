@@ -15,5 +15,6 @@ router.post("/login", FElogin);
 router.post("/logout", authenticate(), FElogout);
 router.post("/refresh", FErefreshToken);
 router.get("/locationByIp", authenticate(), getLocationByIp);
+router.get("/get",authenticate(),getCurrentUser);
 
 export default router;

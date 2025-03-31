@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
+
+interface UserData {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone_number?: string;
+}
 import { useNavigate } from "react-router-dom";
+import { authenticatedGet } from "../utils/auth";
 
 interface SettingsProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
@@ -18,11 +26,20 @@ interface SettingsProps {
     useEffect(()=>{
         const fetchUserDetails=async()=>{
             try {
-                const response=authenticatedGet<UserData>("/")
+                const response = await authenticatedGet<UserData>("/user/get");
+                console.log("User response:", response);
+                if (response) {
+                    setFirstName(response.first_name || "N/A");
+                    setLastName(response.last_name || "N/A");
+                    setEmail(response.email || "N/A");
+                    setphoneNumber(response.phone_number || "N/A");
+                }
             } catch (error) {
+                console.error("Failed to fetch user details!", error);
                 
             }
         }
+        fetchUserDetails();
     },[]);
 
     const handleSubmit=()=>{
