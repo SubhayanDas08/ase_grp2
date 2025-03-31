@@ -140,3 +140,24 @@ export const saveRegistrationData = async (
     client?.release();
   }
 };
+
+// Updating Password of a User
+export const updateUserPasswordInDB = async (userId: string, hashedPassword: string): Promise<void> => {
+  let client: PoolClient | undefined;
+
+  try {
+    client = await pool.connect();
+
+    const query = `UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2`;
+    const values = [hashedPassword, userId];
+
+    await client.query(query, values);
+
+    console.log(`Password updated successfully for user ID: ${userId}`);
+  } catch (error) {
+    console.error("Error updating user password:", error);
+    throw error;
+  } finally {
+    client?.release();
+  }
+}

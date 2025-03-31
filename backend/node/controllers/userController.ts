@@ -4,7 +4,8 @@ import {
   verifyUserCredentials,
   saveLocationToDatabase,
   getLocationData,
-  getUserById
+  getUserById,
+  updateUserPasswordInDB
 } from "../services/databaseService";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -297,3 +298,69 @@ export const getCurrentUser = async (
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export const changeUserPassword = async (
+  req: Request,
+  res: Response,): Promise<any> => {
+    try {
+      const userId = (req as any).user?.id;
+      const { oldPassword, newPassword } = req.body;
+  
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+  
+      if (!oldPassword || !newPassword) {
+        return res
+          .status(400)
+          .json({ error: "Old and new passwords are required" });
+      }
+  
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ error: "New password must be at least 8 characters long" });
+      }
+  
+      const user = await getUserById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Old password is incorrect" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await updateUserPasswordInDB(userId, hashedPassword);
+  
+      const userSessionsKey = `user:${userId}:sessions`;
+      const sessionTokens = await redisClient.sMembers(userSessionsKey);
+      for (const token of sessionTokens) {
+        await redisClient.del(`session:${token}`);
+      }
+      await redisClient.del(userSessionsKey);
+  
+      const sessionToken = jwt.sign({ userId }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      const refreshToken = jwt.sign({ userId }, JWT_REFRESH_SECRET, {
+        expiresIn: "180d",
+      });
+  
+      await redisClient.setEx(`session:${sessionToken}`, 3600, String(userId));
+      await redisClient.setEx(`refresh:${refreshToken}`, 15552000, String(userId));
+      await redisClient.sAdd(`user:${userId}:sessions`, sessionToken);
+  
+      return res.status(200).json({
+        message: "Password changed successfully",
+        token: sessionToken,
+        refreshToken,
+      });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
