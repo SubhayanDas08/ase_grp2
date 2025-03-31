@@ -297,3 +297,20 @@
 #road_list_waste {
   color: white;
 }
+
+/* Blur effect for background when modal is open */
+.blur-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* Semi-transparent black */
+  backdrop-filter: blur(10px); /* Blur effect */
+  z-index: 10; /* Ensures it's behind the modal */
+}
+
+.widget-street-option {
+  height: 70px;
+  background-color: var(--primaryColor1);
+}
