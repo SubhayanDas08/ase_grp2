@@ -9,22 +9,19 @@ export const createEvent = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const permission = "manage_events";
+  const { name, event_date, event_time, location, area, description } =
+    req.body;
 
-  if (!req.user?.permissions?.includes(permission)) {
-    console.log(req.user,"user");
-    console.log(req.user?.permissions,"permissions");
-    res
-      .status(403)
-      .json({ error: "You don't have permission to create an event" });
-    return;
-  }
-  const { name, event_date, event_time,location,area,description } = req.body;
-
-  if (!name || !event_date || !event_time || !location || !area || !description) {
+  if (
+    !name ||
+    !event_date ||
+    !event_time ||
+    !location ||
+    !area ||
+    !description
+  ) {
     res.status(400).json({
-      error:
-        "Add all the required details",
+      error: "Add all the required details",
     });
     return;
   }
@@ -48,7 +45,7 @@ export const createEvent = async (
       area,
       description,
       created_by,
-      created_at
+      created_at,
     ]);
     const newEvent = result.rows[0];
 
