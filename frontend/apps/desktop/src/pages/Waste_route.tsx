@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { FiCloudLightning, FiMinus } from "react-icons/fi";
 import { IoClose } from "react-icons/io5"; // Import close icon
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 
 export default function Waste_routes() {
     const [visibleContainers, setVisibleContainers] = useState([true, true]);
@@ -118,7 +118,7 @@ export default function Waste_routes() {
                                 </div>
                             </div>
                             <div className="ml-8 mt-0.5">
-                                <span id="road_list_waste">Anglesea Road</span>
+                                <span id="road_list_waste">Pembroke Road</span>
                             </div>
                         </div>
                         <div className="text-right mr-5 text-white opacity-75 text-xs">
