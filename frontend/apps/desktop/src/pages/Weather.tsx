@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { LatLngTuple, map } from "leaflet";
+import { LatLngTuple } from "leaflet";
 
 import { getStations } from "../../../../shared/utils/weather-map/getStations.ts";
 import { getStationAqi } from "../../../../shared/utils/weather-map/getStationAqi.ts";
