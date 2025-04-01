@@ -149,6 +149,7 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
     const sessionToken = jwt.sign({ userId: userData.id }, JWT_SECRET, {
       expiresIn: "1h",
     });
+    
     const refreshToken = jwt.sign({ userId: userData.id }, JWT_REFRESH_SECRET, {
       expiresIn: "180d",
     });
@@ -286,7 +287,7 @@ export const getCurrentUser = async (
     }
 
     const userData = await getUserById(userId);
-
+    
     if (!userData) {
       res.status(404).json({ error: "User not found" });
     }
@@ -327,6 +328,11 @@ export const changeUserPassword = async (
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
+      
+      if (!user.password) {
+        console.error("Error: User password is undefined");
+        return res.status(500).json({ error: "Internal Server Error1" });
+      }
   
       const isMatch = await bcrypt.compare(oldPassword, user.password);
       if (!isMatch) {
@@ -361,6 +367,6 @@ export const changeUserPassword = async (
       });
     } catch (error) {
       console.error("Error changing password:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: "Internal Server Error2" });
     }
   };

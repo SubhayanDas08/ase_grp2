@@ -29,7 +29,7 @@ export const getUserById = async (userId: string): Promise<any> => {
   try {
     client = await pool.connect();
     const query =
-      "SELECT id, first_name, last_name, email, phone_number, domain FROM users WHERE id = $1";
+      "SELECT id, first_name, last_name, email, phone_number, domain, password FROM users WHERE id = $1";
     const result = await client.query(query, [userId]);
 
     if (result.rows.length > 0) {
@@ -148,7 +148,7 @@ export const updateUserPasswordInDB = async (userId: string, hashedPassword: str
   try {
     client = await pool.connect();
 
-    const query = `UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2`;
+    const query = `UPDATE users SET password = $1 WHERE id = $2`;
     const values = [hashedPassword, userId];
 
     await client.query(query, values);
