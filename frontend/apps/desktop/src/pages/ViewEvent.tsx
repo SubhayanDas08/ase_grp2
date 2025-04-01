@@ -48,10 +48,13 @@ export default function ViewEvent():JSX.Element {
         
     return (
         <div className="w-full h-full">
-                    <div className="flex">
-                    <h2 className="text-5xl mb-10 font-extrabold primaryColor1">
-                    <span className="cursor-pointer border-b-5 border-primaryColor1 pb-0.6" onClick={()=>navigate("/events/")}>Events</span> {">"} View Event</h2>
-                    </div>
+                    <div className="mainHeaderHeight w-full flex items-center justify-between">
+                <div className="titleText primaryColor1 flex">
+                    <div className="underline cursor-pointer mr-2" onClick={()=>navigate("/events/")}>Events</div>
+                    <div className="mr-2">{">"}</div>
+                    <div>View Event</div>
+                </div>
+            </div>
                     <div className="h-full w-full flex flex-col space-y-3">
         
                     {/* Event Name */}
