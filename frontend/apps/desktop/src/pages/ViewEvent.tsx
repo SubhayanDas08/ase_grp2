@@ -36,8 +36,7 @@ export default function ViewEvent():JSX.Element {
     useEffect(()=>{
         const fetchEvent=async()=>{
             try {
-                const response = await authenticatedGet<EventData>(`/events/${id}`);              
-                console.log(response);
+                const response = await authenticatedGet<EventData>(`/events/${id}`);  
                 setEvent(response || null);
             } catch (error) {
                 console.error("Error fetching the event",error);
@@ -82,8 +81,10 @@ export default function ViewEvent():JSX.Element {
                                 <div className="min-w-[50%]">
                                     <h3 className="text-2xl font-extrabold primaryColor1">Time</h3>
                                     <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 textDark">
-                                    {event?.event_time ? new Date(event.event_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "N/A"}
-                                </div>
+                                    {event?.event_time
+                                        ? new Date(`1970-01-01T${event.event_time}Z`).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                                        : "N/A"}
+                                    </div>
                             </div>
                             </div>
         
@@ -91,7 +92,7 @@ export default function ViewEvent():JSX.Element {
                                 {/* Location of Event */}
                                 <div className="min-w-[50%]">
                                     <h3 className="text-2xl font-extrabold primaryColor1">Location</h3>
-                                    <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 h-10 textDark">
+                                    <div className="textFieldBGDark border-gray-100 w-[50%] mt-2 rounded-md px-4 py-2 h-10 textDark overflow-hidden whitespace-nowrap truncate">
                                         {event?.location}
                                     </div>
                                 </div>

@@ -21,7 +21,12 @@ export default function Events2(): JSX.Element {
         const fetchEvents=async ()=>{
             try {
                 const data = await authenticatedGet<Event[]>("/events/");
-                setEvents(data);
+                const sortedEvents = data.sort((a, b) => {
+                    const dateA = new Date(`${a.event_date}T${a.event_time}`);
+                    const dateB = new Date(`${b.event_date}T${b.event_time}`);
+                    return dateB.getTime() - dateA.getTime();
+                });
+                setEvents(sortedEvents);
             } catch (error) {
                 console.error("Error fetching events",error);
             }
@@ -52,9 +57,14 @@ export default function Events2(): JSX.Element {
                         <div className="text-lg font-semibold textLight">{event.name}</div>
                         <div className="textLight">{event.description}</div>
                     </div>
-                    <div className="flex justify-end grow mr-10 font-bold textLight">
-                        {event.event_time}
+                    <div className="flex flex-col items-end grow mr-10 textLight">
+                    <div className="italic">
+                        {new Date(event.event_date).toLocaleDateString([], { year: "numeric", month: "short", day: "numeric" })}
                     </div>
+                    <div className="font-bold">
+                        {event.event_time.slice(0, 5)}
+                    </div>
+                </div>
                 </div>
             ))}
 
