@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { FiCloudLightning, FiMinus } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { useParams } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { useParams, useNavigate } from 'react-router-dom';
 
 export default function Waste_routes() {
     const { routeName } = useParams(); // Get the routeName from the URL params
@@ -20,6 +19,8 @@ export default function Waste_routes() {
     const [isAddingWidget, setIsAddingWidget] = useState(false);
     const [showAddWidget, setShowAddWidget] = useState(false);
     const [recommendations, setRecommendations] = useState(false);
+    const [newStreet, setNewStreet] = useState("");
+    const navigate=useNavigate();
 
     const handleMinusButtonClick = (index: number) => {
         setVisibleContainers(prev => {
@@ -100,36 +101,24 @@ export default function Waste_routes() {
         }
     }, [routeName]);
 
-    const AddWidgetContainer = () => {
-        return (
-          <div className="fixed inset-0 flex justify-center items-center z-50 overflow-y">
-            {/* Blurry Background */}
-            <div className="absolute inset-0 blur-background" onClick={() => setShowAddWidget(false)}></div>
-
-            {/* Modal Content */}
-            <div className="relative p-4 primaryColor2BG shadow-lg rounded-3xl z-10 w-96 max-h-[50vh] overflow-y-auto">
-              {/* Close Button */}
-              <button 
-                className="absolute top-2 right-2 text-black hover:text-gray-500" 
-                onClick={() => setShowAddWidget(false)}
-              >
-                <IoClose size={24} />
-              </button>
-
-              <h2 className="text-lg font-semibold mb-4 text-white">Add Street</h2>
-              <div className="widget-options flex flex-wrap">
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-                <button className="widget-street-option bg-gray-200 p-2 rounded-lg m-2 textDark"></button>
-              </div>
-            </div>
-          </div>
-        );
+    const handleAddStreet = () => {
+        if (newStreet.trim() === "" || !routeDetails) return;
+    
+        const updatedRouteDetails = {
+            ...routeDetails,
+            place_pickup_times: [
+                ...routeDetails.place_pickup_times, 
+                { place: newStreet, pickup_time: "TBD" }
+            ],
+        };
+    
+        setRouteDetails(updatedRouteDetails);
+        setVisibleContainers((prev) => [...prev, true]);
+        setNewStreet("");
+        setShowAddWidget(false);
+        console.debug("Updated Route Details:", updatedRouteDetails);
     };
+    
 
     const handleAddButtonClick = () => {
         setIsAddingWidget(!isAddingWidget);
@@ -140,13 +129,22 @@ export default function Waste_routes() {
         return <div className="w-full mt-10 ml-10">Loading route details...</div>;
     }
 
-    // Calculate estimated time per stop (total duration divided by number of stops)
+    // Calculated estimated time per stop (total duration divided by number of stops)
     const estimatedTimePerStop = Math.round(routeDetails.pickup_duration_min / routeDetails.place_pickup_times.length);
 
     return (
-        <div>
-            <div className='w-full mt-10 ml-10 flex flex-row'>
+        <div className="overflow-y-auto">
+            <div className='w-full ml-10 flex flex-row'>
                 <div>
+                    <div className="w-full flex mt-2">
+                        <div className="titleText primaryColor1 flex">
+                            <div className="underline cursor-pointer mr-2" onClick={()=>navigate("/waste/")}>Waste</div>
+                            <div className="mr-2">{">"}</div>
+                            <div>Waste </div>
+                            <div className='text-white'> .</div>
+                            <div>Route</div>
+                        </div>
+                    </div>
                     <div id="routes_waste_logo2">
                         <FiCloudLightning />
                     </div>
@@ -157,7 +155,7 @@ export default function Waste_routes() {
                         {routeDetails.county}
                     </div>
                 </div>
-                <div className ="mr-10 flex w-full justify-end items-start">
+                <div className ="mr-10 flex w-full justify-end items-start mt-2">
                     <button
                         className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
                         ${recommendations ? "bg-gray-300 primaryColor2 w-[100px]" 
@@ -171,8 +169,8 @@ export default function Waste_routes() {
 
             {routeDetails.place_pickup_times.map((stop, index) => (
                 visibleContainers[index] && (
-                    <div key={index} className="routes_waste flex flex-col justify-between mt-3 w-5xl">
-                        <div className="relative route_waste_container flex flex-row ml-5 w-full justify-between items-center">
+                    <div key={index} className="routes_waste flex flex-col justify-between mt-3 w-full max-w-5xl min-w-[300px] mx-auto">
+                        <div className="relative route_waste_container flex flex-row w-full justify-between items-center">
                             <FiMinus 
                                 className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" 
                                 onClick={() => handleMinusButtonClick(index)}
@@ -187,6 +185,12 @@ export default function Waste_routes() {
                                     <span id="road_list_waste">{stop.place}</span>
                                     <div className="text-xs opacity-75 text-gray-800">Pickup time: {stop.pickup_time}</div>
                                 </div>
+                            </div>
+                            <div className="text-right mr-5 text-white opacity-75 text-xs">
+                                AQI
+                            </div>
+                            <div className="text-right mr-5 text-white opacity-75 text-xs">
+                                Trafic Index
                             </div>
                             <div className="text-right mr-5 text-white opacity-75 text-xs">
                                 est. time: ~{estimatedTimePerStop} mins
@@ -204,8 +208,30 @@ export default function Waste_routes() {
                 >
                     {isAddingWidget ? "Add" : "Add"}
                 </button>
-                {showAddWidget && <AddWidgetContainer />}
+                {showAddWidget}
             </div>
+
+            {showAddWidget && (
+                <div className="fixed inset-0 flex justify-center items-center z-50">
+                    <div className="absolute inset-0 bg-gray-900 opacity-50" onClick={() => setShowAddWidget(false)}></div>
+                    <div className="relative p-4 primaryColor2BG shadow-lg rounded-3xl z-10 w-96">
+                        <button className="absolute top-2 right-2 text-black hover:text-gray-500" onClick={() => setShowAddWidget(false)}>
+                            <IoClose size={24} />
+                        </button>
+                        <h2 className="text-lg text-white font-semibold mb-4">Add Street</h2>
+                        <input
+                            type="text"
+                            value={newStreet}
+                            onChange={(e) => setNewStreet(e.target.value)}
+                            placeholder="Enter street name"
+                            className="w-full p-2 border bg-white rounded-lg mb-4"
+                        />
+                        <button className="px-4 py-2 bg-gray-100 justify-center text-black rounded-lg" onClick={handleAddStreet}>
+                            Add
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
