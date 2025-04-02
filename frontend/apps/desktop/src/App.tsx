@@ -17,6 +17,7 @@ import Home from "./pages/Home.tsx";
 import Routing from "./pages/Routing.tsx";
 import Events from "./pages/Events.tsx";
 import AddEvent from "./pages/AddEvent.tsx";
+import FailteEvents from "./pages/EventsSuggestions.tsx";
 import ViewEvent from "./pages/ViewEvent.tsx";
 import Traffic from "./pages/Traffic.tsx";
 import Waste from "./pages/Waste.tsx";
@@ -67,7 +68,8 @@ export default function App() {
       "/settings",
       "/settings/profile",
       "/settings/changepassword",
-      "/settings/report"
+      "/settings/report",
+      "/events/failte"
     ];
     const pageRouteItemsList: React.ReactElement[] = [
       <Home />,
@@ -82,7 +84,8 @@ export default function App() {
       <Settings setUserAuthenticated={setUserAuthenticated} />,
       <SettingsProfile setUserAuthenticated={setUserAuthenticated} />,
       <SettingsChangePassword setUserAuthenticated={setUserAuthenticated} />,
-      <ReportAnIssue setUserAuthenticated={setUserAuthenticated} />
+      <ReportAnIssue setUserAuthenticated={setUserAuthenticated} />,
+      <FailteEvents />
     ];
     
     // Check authentication on app load
