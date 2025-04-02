@@ -100,14 +100,17 @@ export default function FleetSize(): JSX.Element {
 
 
                 {/* // Recommendation Card */}
-                <div className="flex items-center h-25 mt-20 rounded-3xl primaryGradient hover:cursor-pointer">
+                <div className="flex items-center h-32 mt-20 rounded-3xl primaryGradient hover:cursor-pointer">
                     <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
                         <FaBolt className="text-2l" />
                     </div>
                     <div className="ml-10 flex flex-col">
-                        <div className="text-lg font-semibold textLight">Dublin</div>
+                        <div className="text-2xl font-semibold textLight">Dublin</div>
+                        <div className="mt-1">
+                        <div className="textLight"><span className="textLight font-semibold">Forecasted Number of Passengers for April:</span> 55075</div>
                         <div className="textLight"><span className="textLight font-semibold">Current Fleet Size:</span> 120</div>
                         <div className="textLight"><span className="textLight font-semibold">Recommended Fleet Size for April:</span> 115</div>
+                        </div>
                     </div>
                 </div>
 
