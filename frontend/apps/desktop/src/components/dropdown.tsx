@@ -1,11 +1,12 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import "../styles/App.css";
 
 interface DropdownProps {
   menuTitle: string;
   menuIcon: JSX.Element;
   menuItemTitles: string[];
   menuItemFunctions: (() => void)[];
+  backgroundColor: string;
+  textColor: string;
 }
 
 export default function Dropdown({
@@ -13,11 +14,13 @@ export default function Dropdown({
   menuIcon,
   menuItemTitles,
   menuItemFunctions,
+  backgroundColor,
+  textColor
 }: DropdownProps) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <MenuButton className="bg-blue-500 inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">
+        <MenuButton className={`${backgroundColor} ${textColor} inline-flex w-full justify-center gap-x-1.5 rounded-4xl px-6 py-3 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset cursor-pointer text-nowrap`}>
           {menuTitle}
           {menuIcon}
         </MenuButton>

@@ -9,39 +9,41 @@ export const createEvent = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const permission = "manage_events";
+  const { name, event_date, event_time, location, area, description } =
+    req.body;
 
-  if (!req.user?.permissions?.includes(permission)) {
-    res
-      .status(403)
-      .json({ error: "You don't have permission to create an event" });
-    return;
-  }
-  const { name, start_date, end_date } = req.body;
-
-  if (!name || !start_date || !end_date) {
+  if (
+    !name ||
+    !event_date ||
+    !event_time ||
+    !location ||
+    !area ||
+    !description
+  ) {
     res.status(400).json({
-      error:
-        "Event time or event description or start date or event location is missing",
+      error: "Add all the required details",
     });
     return;
   }
 
-  const created_by = 1;
+  const created_by = req.user?.id;
   const created_at = new Date();
 
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const insertEventQuery = `
-      INSERT INTO public.events (name, start_date, end_date, created_by, created_at)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO public.events (name, event_date, event_time, location, area, description, created_by, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING * ;
     `;
     const result = await client.query(insertEventQuery, [
       name,
-      start_date,
-      end_date,
+      event_date,
+      event_time,
+      location,
+      area,
+      description,
       created_by,
       created_at,
     ]);
@@ -64,7 +66,7 @@ export const createEvent = async (
 
 // Fetch an event by ID
 export const getEventById = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
   const eventId = req.params.id;
@@ -101,12 +103,12 @@ export const getEventById = async (
 
 // Fetch all events
 export const getAllEvents = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
   try {
     const result = await pool.query(
-      "SELECT * FROM public.events ORDER BY start_date",
+      "SELECT * FROM public.events ORDER BY event_date",
     );
     if (result.rows.length == 0)
       res.status(404).json({ error: "No events found" });

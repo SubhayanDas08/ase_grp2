@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "react-leaflet-heatmap-layer": "^2.0.0"
+  }
+}

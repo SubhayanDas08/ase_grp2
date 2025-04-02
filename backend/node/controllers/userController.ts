@@ -4,6 +4,8 @@ import {
   verifyUserCredentials,
   saveLocationToDatabase,
   getLocationData,
+  getUserById,
+  updateUserPasswordInDB
 } from "../services/databaseService";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -20,11 +22,45 @@ export const FEregistrationData = async (
   try {
     const { first_name, last_name, email, password, phone_number } =
       req.body.userData;
+
+    // Check for required fields
     if (!first_name || !last_name || !email || !password || !phone_number) {
       console.error("Error: Missing required user data fields");
       return res
         .status(400)
         .json({ error: "Missing required user data fields" });
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Check if email is already in use
+    try {
+      const existingUser = await verifyUserCredentials(email);
+      if (existingUser) {
+        return res.status(409).json({ error: "Email already in use" });
+      }
+    } catch (error) {
+      // If error is not because of duplicate email, rethrow it
+      if (!(error instanceof Error && error.message.includes("not found"))) {
+        throw error;
+      }
+    }
+
+    // Password strength validation
+    if (password.length < 8) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
+    }
+
+    // Phone number validation (just checking for digits for now)
+    const phoneRegex = /^\d+$/;
+    if (!phoneRegex.test(phone_number)) {
+      return res.status(400).json({ error: "Invalid phone number" });
     }
 
     console.log("Registering User:", {
@@ -82,30 +118,43 @@ export const FEregistrationData = async (
 export const FElogin = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body.userData;
+
+    // Check for required fields
     if (!email || !password) {
       console.error("Error: Missing required credentials");
-      return res.status(400).json({ error: "Missing required credentials" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Check if user exists
     const userData = await verifyUserCredentials(email);
     if (!userData) {
       console.error("Error: User not found");
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
+    // Verify password
     const passwordMatch = await bcrypt.compare(password, userData.password);
     if (!passwordMatch) {
       console.error("Error: Password Mismatch");
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
+    // Generate tokens
     const sessionToken = jwt.sign({ userId: userData.id }, JWT_SECRET, {
       expiresIn: "1h",
     });
+    
     const refreshToken = jwt.sign({ userId: userData.id }, JWT_REFRESH_SECRET, {
       expiresIn: "180d",
     });
 
+    // Store tokens in Redis
     await redisClient.setEx(
       `session:${sessionToken}`,
       3600,
@@ -118,17 +167,18 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
     );
     await redisClient.sAdd(`user:${userData.id}:sessions`, sessionToken);
 
+    // Remove password from user data
     const { password: userPassword, ...userDataWithoutPassword } = userData;
 
     res.status(200).json({
-      message: "Login Successful",
+      message: "Login successful",
       user: userDataWithoutPassword,
       token: sessionToken,
       refreshToken,
     });
   } catch (error) {
     console.error("Internal Server Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Login failed. Please try again later." });
   }
 };
 
@@ -221,3 +271,102 @@ export const getLocationByIp = async (
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const getCurrentUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+
+  try {
+    const userId = (req as any).user?.id;
+    console.log(userId);
+    
+
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const userData = await getUserById(userId);
+    
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+    }
+
+    const { password, ...userWithoutPassword } = userData;
+    res.status(200).json(userWithoutPassword);
+  } catch (error) {
+    console.error("Error getting current user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export const changeUserPassword = async (
+  req: Request,
+  res: Response,): Promise<any> => {
+    try {
+      const userId = (req as any).user?.id;
+      const { oldPassword, newPassword } = req.body;
+  
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+  
+      if (!oldPassword || !newPassword) {
+        return res
+          .status(400)
+          .json({ error: "Old and new passwords are required" });
+      }
+  
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ error: "New password must be at least 8 characters long" });
+      }
+  
+      const user = await getUserById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      if (!user.password) {
+        console.error("Error: User password is undefined");
+        return res.status(500).json({ error: "Internal Server Error1" });
+      }
+  
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Old password is incorrect" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await updateUserPasswordInDB(userId, hashedPassword);
+  
+      const userSessionsKey = `user:${userId}:sessions`;
+      const sessionTokens = await redisClient.sMembers(userSessionsKey);
+      for (const token of sessionTokens) {
+        await redisClient.del(`session:${token}`);
+      }
+      await redisClient.del(userSessionsKey);
+  
+      const sessionToken = jwt.sign({ userId }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      const refreshToken = jwt.sign({ userId }, JWT_REFRESH_SECRET, {
+        expiresIn: "180d",
+      });
+  
+      await redisClient.setEx(`session:${sessionToken}`, 3600, String(userId));
+      await redisClient.setEx(`refresh:${refreshToken}`, 15552000, String(userId));
+      await redisClient.sAdd(`user:${userId}:sessions`, sessionToken);
+  
+      return res.status(200).json({
+        message: "Password changed successfully",
+        token: sessionToken,
+        refreshToken,
+      });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      return res.status(500).json({ error: "Internal Server Error2" });
+    }
+  };
