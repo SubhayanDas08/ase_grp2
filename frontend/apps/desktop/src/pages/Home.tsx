@@ -17,12 +17,12 @@ interface Location {
 }
 
 export default function Home() {
+  // --------------------------------------------------------------------------------------------------------------
   // ---------------------------
   //  State
   // ---------------------------
 
   // Edit mode states
-  const [editMode, setEditMode] = useState(false);
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [isAddingWidget, setIsAddingWidget] = useState(false);
 
@@ -140,7 +140,7 @@ export default function Home() {
       return [...newDisabled, widgetKey];
     });
   };
-
+  
   // Toggle the AddWidgetContainer
   const handleAddButtonClick = () => {
     if (isAddingWidget) {
@@ -149,11 +149,26 @@ export default function Home() {
     setIsAddingWidget(!isAddingWidget);
     setShowAddWidget(!showAddWidget);
   };
-
-  // ---------------------------
-  //  AddWidgetContainer
-  // ---------------------------
   const AddWidgetContainer = () => {
+    return (
+      <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2 flex flex-col bg-red-500 w-1/2 max-h-[80vh] overflow-hidden">
+        {/* Close button */}
+        <div className="flex justify-end">
+          <button className="close_button" onClick={closeBtn}>
+            <IoCloseOutline />
+          </button>
+        </div>
+        <div className="w-full gap-5 overflow-auto">
+          {hiddenWidgetStack.map((widget, index) => (
+            widget
+          ))}
+        </div>
+      </div>
+    );
+  }
+  
+
+  const AddWidgetContainerOLD = () => {
     return (
       <div
         className="add-widget-container p-4 bg-white shadow-lg rounded-lg absolute top-20 right-10 z-10"
@@ -353,316 +368,317 @@ export default function Home() {
       </div>
     );
   };
+  // --------------------------------------------------------------------------------------------------------------
+  const [editMode, setEditMode] = useState(false);
+  const [visibleWidgetStack, setVisibleWidgetStack] = useState<JSX.Element[]>([
+    <div className="h-[200px] w-[400px] bg-blue-500">Widget 1</div>,
+    <div className="h-[200px] w-[400px] bg-blue-200">Widget 2</div>,
+    <div className="h-[200px] w-[400px] bg-blue-800">Widget 3</div>,
+  ]);
+  const [hiddenWidgetStack, setHiddenWidgetStack] = useState<JSX.Element[]>([
+    <div className="h-[200px] w-[400px] bg-red-300">Widget 4</div>,
+  ]);
 
-  // ---------------------------
-  //  Return / Render
-  // ---------------------------
   return (
-    <>
+    <div className="h-full w-full flex flex-col relative">
       {/* Header Section */}
-      <div className="header flex flex-wrap items-center justify-between gap-2 px-4 py-2 sm:px-6 sm:py-3">
-        {/* Home Title */}
-        <div className="home_title flex-shrink-0 whitespace-nowrap text-base sm:text-xl md:text-2xl font-bold">
-          Home
-        </div>
-
-        {/* Edit/Done Button */}
-        <button
-          className={`
-            flex-shrink-0
-            px-4 py-2 
-            rounded-full 
-            font-semibold 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            text-sm sm:text-base
-            ${editMode 
-              ? "bg-gray-300 primaryColor2 w-[80px] sm:w-[100px]" 
-              : "primaryColor2BG text-white w-[80px] sm:w-[100px]"
-            }
-          `}
-          onClick={() => setEditMode(!editMode)}
-        >
-          {editMode ? "Done" : "Edit"}
-        </button>
+      <div className="mainHeaderHeight w-full flex items-center justify-between">
+          <div className="titleText primaryColor1">Home</div>
+          <button
+            className={`
+              flex-shrink-0
+              px-4 py-2 
+              rounded-full 
+              font-semibold 
+              transition-all 
+              duration-300 
+              ease-in-out 
+              text-sm sm:text-base
+              ${editMode 
+                ? "bg-gray-300 primaryColor2 w-[80px] sm:w-[100px]" 
+                : "primaryColor2BG text-white w-[80px] sm:w-[100px]"
+              }
+            `}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? "Done" : "Edit"}
+          </button>
       </div>
-
       {/* Main Content Section */}
-      <div className="home_main ml-20 transition-all duration-300 relative min-h-screen">
-        <div className={`${showAddWidget ? "blur-sm" : ""} pointer-events-auto`}>
-          <div className="widgets-container flex flex-wrap gap-4 mt-4">
-            {/* Weather Widget */}
-            {widgetVisibility.weatherWidget && (
-              <Link to="/weather">
-                <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
-                  {editMode && (
-                    <FiMinus
-                      className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
-                      onClick={(e) => { e.preventDefault();e.stopPropagation(); handleDeleteWidget("weatherWidget"); }}
-                    />
-                  )}
-                  <div className="home_first_row flex flex-row justify-between mt-5">
-                    <div className="ml-5 flex flex-row">
-                      <span className="mt-1">
-                        <FiMapPin />
-                      </span>
-                      <span className="ml-2 text-lg font-semibold">Dublin 1</span>
-                    </div>
-                    <div className="text-sm mr-5">
-                      <span id="mostlycloudy">2 min ago</span>
-                    </div>
+      <div className="flex flex-col h-full w-full overflow-y-auto bg-green-500">
+        {/* Widgets Section */}
+        <div className="flex flex-wrap gap-5 bg-gray-500">
+          {visibleWidgetStack.map((widget, index) => (
+            widget
+          ))}
+        </div>
+        <div className="hidden flex flex-wrap gap-5 bg-red-500">
+          {/* Weather Widget */}
+          {widgetVisibility.weatherWidget && (
+            <Link to="/weather">
+              <div className="relative home_weather h-[350px] w-[600px] primaryColor1BG">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={(e) => { e.preventDefault();e.stopPropagation(); handleDeleteWidget("weatherWidget"); }}
+                  />
+                )}
+                <div className="home_first_row flex flex-row justify-between mt-5">
+                  <div className="ml-5 flex flex-row">
+                    <span className="mt-1">
+                      <FiMapPin />
+                    </span>
+                    <span className="ml-2 text-lg font-semibold">Dublin 1</span>
                   </div>
+                  <div className="text-sm mr-5">
+                    <span id="mostlycloudy">2 min ago</span>
+                  </div>
+                </div>
 
-                  <div className="home_second_row flex flex-row justify-between">
-                    <div className="cloud_container w-1/2 flex flex-row ml-5">
-                      <div className="cloud_firstcolumn mt-5">
-                        <div id="cloud_logo">
-                          <FaCloud />
-                        </div>
-                      </div>
-                      <div className="cloud_secondcolumn ml-10 mt-2 h-5">
-                        <div className="cloud_info_firstrow text-xs">Temperature</div>
-                        <div className="cloud_info_firstrow text-lg mt-2 font-bold">
-                          6°C
-                        </div>
-                        <div className="cloud_info_firstrow mt-2">
-                          <span id="mostlycloudy">Mostly Cloudy</span>
-                        </div>
-                        <div className="cloud_info_firstrow mb-2">
-                          <span id="mostlycloudy">H L</span>
-                        </div>
+                <div className="home_second_row flex flex-row justify-between">
+                  <div className="cloud_container w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FaCloud />
                       </div>
                     </div>
-
-                    <div className="drop_container w-1/2 flex flex-row mr-5">
-                      <div className="cloud_firstcolumn mt-5">
-                        <div id="cloud_logo">
-                          <FaDroplet />
-                        </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2 h-5">
+                      <div className="cloud_info_firstrow text-xs">Temperature</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">
+                        6°C
                       </div>
-                      <div className="cloud_secondcolumn ml-10 mt-2">
-                        <div className="cloud_info_firstrow text-xs">Precipitation</div>
-                        <div className="cloud_info_firstrow text-lg mt-2 font-bold">
-                          0 mm
-                        </div>
-                        <div className="cloud_info_firstrow mt-2">
-                          <span id="mostlycloudy">In last 24 hours</span>
-                        </div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">Mostly Cloudy</span>
+                      </div>
+                      <div className="cloud_info_firstrow mb-2">
+                        <span id="mostlycloudy">H L</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="home_third_row flex flex-row justify-between">
-                    <div className="cloud_container w-1/2 flex flex-row ml-5">
-                      <div className="cloud_firstcolumn mt-5">
-                        <div id="cloud_logo">
-                          <FiSun />
-                        </div>
-                      </div>
-                      <div className="cloud_secondcolumn ml-10 mt-2">
-                        <div className="cloud_info_firstrow text-xs">UV index</div>
-                        <div className="cloud_info_firstrow text-lg mt-2 font-bold">
-                          1
-                        </div>
-                        <div className="cloud_info_firstrow mt-2">
-                          <span id="mostlycloudy">Low for the rest of the day.</span>
-                        </div>
+                  <div className="drop_container w-1/2 flex flex-row mr-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FaDroplet />
                       </div>
                     </div>
-
-                    <div className="drop_container w-1/2 flex flex-row mr-5">
-                      <div className="cloud_firstcolumn mt-5">
-                        <div id="cloud_logo">
-                          <FiCloudRain />
-                        </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="cloud_info_firstrow text-xs">Precipitation</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">
+                        0 mm
                       </div>
-                      <div className="cloud_secondcolumn ml-10 mt-2">
-                        <div className="cloud_info_firstrow text-xs">Humidity</div>
-                        <div className="cloud_info_firstrow text-lg mt-2 font-bold">
-                          88%
-                        </div>
-                        <div className="cloud_info_firstrow mt-2">
-                          <span id="mostlycloudy">The dew point is 4°C right now.</span>
-                        </div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">In last 24 hours</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            )}
 
-            {/* Events Widget */}
-            {widgetVisibility.eventsWidget && (
-              <Link to="/events">
-                <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG">
-                  {editMode && (
-                    <FiMinus
-                      className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
-                      onClick={(e) => { e.preventDefault();e.stopPropagation(); handleDeleteWidget("eventsWidget"); }}
-                    />
-                  )}
-                  <div className="home_first_row flex flex-row justify-between mt-5">
-                    <div className="ml-5 flex flex-row">
-                      <span className="ml-2 text-lg font-semibold">Events</span>
-                    </div>
-                  </div>
-
-                  <div className="home_second_row flex flex-row justify-between">
-                    <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
-                      <div className="cloud_firstcolumn mt-5">
-                        <div id="cloud_logo">
-                          <FaCloud />
-                        </div>
+                <div className="home_third_row flex flex-row justify-between">
+                  <div className="cloud_container w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FiSun />
                       </div>
-                      <div className="cloud_secondcolumn ml-10 mt-2 w-full">
-                        <div className="cloud_info_firstrow text-xs ml-80">
-                          20 mins ago
-                        </div>
-                        <div className="cloud_info_firstrow text-lg mt-2 font-bold">
-                          Lightning strikes in Hamilton Gardens
-                        </div>
-                        <div className="cloud_info_firstrow text-xs">
-                          Burning house, people crying
-                        </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="cloud_info_firstrow text-xs">UV index</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">
+                        1
+                      </div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">Low for the rest of the day.</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="home_third_row flex flex-row justify-between">
-                    <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
-                      <div className="cloud_firstcolumn mt-5">
-                        <div id="cloud_logo">
-                          <FiSun />
-                        </div>
+                  <div className="drop_container w-1/2 flex flex-row mr-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FiCloudRain />
                       </div>
-                      <div className="cloud_secondcolumn ml-10 mt-2">
-                        <div className="event_info_secondrow text-xs ml-[360px]">
-                          15:45
-                        </div>
-                        <div className="event_info_secondrow text-lg mt-2 font-bold">
-                          Chain Reaction Collision
-                        </div>
-                        <div className="cloud_info_firstrow text-xs">
-                          approx. 100 cars and 3 buses involved
-                        </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="cloud_info_firstrow text-xs">Humidity</div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">
+                        88%
+                      </div>
+                      <div className="cloud_info_firstrow mt-2">
+                        <span id="mostlycloudy">The dew point is 4°C right now.</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            )}
+              </div>
+            </Link>
+          )}
+          {/* Events Widget */}
+          {widgetVisibility.eventsWidget && (
+            <Link to="/events">
+              <div className="relative event_weather h-[350px] w-[600px] primaryColor1BG">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={(e) => { e.preventDefault();e.stopPropagation(); handleDeleteWidget("eventsWidget"); }}
+                  />
+                )}
+                <div className="home_first_row flex flex-row justify-between mt-5">
+                  <div className="ml-5 flex flex-row">
+                    <span className="ml-2 text-lg font-semibold">Events</span>
+                  </div>
+                </div>
 
+                <div className="home_second_row flex flex-row justify-between">
+                  <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FaCloud />
+                      </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2 w-full">
+                      <div className="cloud_info_firstrow text-xs ml-80">
+                        20 mins ago
+                      </div>
+                      <div className="cloud_info_firstrow text-lg mt-2 font-bold">
+                        Lightning strikes in Hamilton Gardens
+                      </div>
+                      <div className="cloud_info_firstrow text-xs">
+                        Burning house, people crying
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="home_third_row flex flex-row justify-between">
+                  <div className="event_container h-[120px] w-1/2 flex flex-row ml-5">
+                    <div className="cloud_firstcolumn mt-5">
+                      <div id="cloud_logo">
+                        <FiSun />
+                      </div>
+                    </div>
+                    <div className="cloud_secondcolumn ml-10 mt-2">
+                      <div className="event_info_secondrow text-xs ml-[360px]">
+                        15:45
+                      </div>
+                      <div className="event_info_secondrow text-lg mt-2 font-bold">
+                        Chain Reaction Collision
+                      </div>
+                      <div className="cloud_info_firstrow text-xs">
+                        approx. 100 cars and 3 buses involved
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          )}
           {/* Map Widget */}
-{widgetVisibility.mapWidget && (
-  <Link to="/routing">
-    <div className="relative map_container h-[350px] w-[600px] rounded-[40px] primaryColor1BG">
-      {editMode && (
-        <FiMinus
-          className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
-          onClick={(e) => { 
-            e.preventDefault();
-            e.stopPropagation();
-            handleDeleteWidget("mapWidget");
-          }}
-        />
-      )}
-      <div className="map_inner_container h-full w-full rounded-[40px] overflow-hidden">
-        <MapContainer
-          center={[53.3498, -6.2603]}
-          zoom={13}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Marker position={[53.3498, -6.2603]}>
-            <Popup>Dublin City Center</Popup>
-          </Marker>
-        </MapContainer>
-      </div>
-    </div>
-  </Link>
-)}
+          {widgetVisibility.mapWidget && (
+            <Link to="/routing">
+              <div className="relative map_container h-[350px] w-[600px] rounded-[40px] primaryColor1BG">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={(e) => { 
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDeleteWidget("mapWidget");
+                    }}
+                  />
+                )}
+                <div className="map_inner_container h-full w-full rounded-[40px] overflow-hidden">
+                  <MapContainer
+                    center={[53.3498, -6.2603]}
+                    zoom={13}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[53.3498, -6.2603]}>
+                      <Popup>Dublin City Center</Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              </div>
+            </Link>
+          )}
+          {/* Fleetsize Widget */}
+          {widgetVisibility.fleetsize && (
+            <Link to="/fleetsize">
+              <div className="main_fleet_size relative home_weather min-h-[350px] w-[600px] primaryColor1BG p-4">
+                {editMode && (
+                  <FiMinus
+                    className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
+                    onClick={(e) => { e.preventDefault();e.stopPropagation(); handleDeleteWidget("fleetsize"); }}
+                  />
+                )}
 
+                {/* Header Row */}
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="fleet_size_heading text-lg font-semibold">Fleet Size</h2>
+                  <span id="tfi" className="text-base font-medium">Transport for Ireland (TFI)</span>
+                </div>
 
-            {/* Fleetsize Widget */}
-            {widgetVisibility.fleetsize && (
-              <Link to="/fleetsize">
-                <div className="main_fleet_size relative home_weather min-h-[350px] w-[600px] primaryColor1BG p-4">
-                  {editMode && (
-                    <FiMinus
-                      className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000"
-                      onClick={(e) => { e.preventDefault();e.stopPropagation(); handleDeleteWidget("fleetsize"); }}
-                    />
-                  )}
-
-                  {/* Header Row */}
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="fleet_size_heading text-lg font-semibold">Fleet Size</h2>
-                    <span id="tfi" className="text-base font-medium">Transport for Ireland (TFI)</span>
-                  </div>
-
-                  {/* 1) Add more buses to Borris */}
-                  <div className="add_more rounded-md p-3 mb-3 flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span id="attention_cloud_logo"><FiCloudRain/></span>
-                        <span className="text-white font-semibold">
-                          Add more buses to Borris
-                        </span>
-                      </div>
-                      <span className="attention_needed inline-block mt-1 text-xs px-2 py-1 bg-yellow-300 text-black rounded">
-                        Attention needed
-                      </span>
-                    </div>
-                    <span className="attention_time text-xs text-white">2 min ago</span>
-                  </div>
-
-                  {/* 2) Exceptional high demand in City Centre */}
-                  <div className="exceptional_high_demand rounded-md p-3 mb-3 flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center gap-2">
-                      <span id="attention_cloud_logo"> <AiOutlineThunderbolt/></span>
-                        <span className="text-white font-semibold">
-                          Exceptional high demand in City Centre
-                        </span>
-                      </div>
-                      <span className="suggestion_needed inline-block mt-1 text-xs px-2 py-1 bg-green-300 text-black rounded">
-                        Suggestion
-                      </span>
-                    </div>
-                    <span className="attention_time text-xs text-white">2 min ago</span>
-                  </div>
-
-                  {/* Past Recommendations */}
+                {/* 1) Add more buses to Borris */}
+                <div className="add_more rounded-md p-3 mb-3 flex justify-between items-start">
                   <div>
-                    <div className="past_recom">
-                      <span id="past_recom_logo"><MdOutlineKeyboardArrowDown/></span>
-                    <h3 className="past_recom_heading text-sm font-semibold mb-2">Past recommendations</h3>
+                    <div className="flex items-center gap-2">
+                      <span id="attention_cloud_logo"><FiCloudRain/></span>
+                      <span className="text-white font-semibold">
+                        Add more buses to Borris
+                      </span>
                     </div>
-                    <div className="double_chain rounded-md p-3 flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-2">
-                        <span id="attention_cloud_logo"><AiOutlineThunderbolt/></span> 
-                          <span className="text-white font-semibold">
-                            Double Chain Reaction Collision
-                          </span>
-                        </div>
-                        <span className="action_criticial inline-block mt-1 text-xs px-2 py-1 bg-red-500 text-white rounded">
-                          Critical Action
+                    <span className="attention_needed inline-block mt-1 text-xs px-2 py-1 bg-yellow-300 text-black rounded">
+                      Attention needed
+                    </span>
+                  </div>
+                  <span className="attention_time text-xs text-white">2 min ago</span>
+                </div>
+
+                {/* 2) Exceptional high demand in City Centre */}
+                <div className="exceptional_high_demand rounded-md p-3 mb-3 flex justify-between items-start">
+                  <div>
+                    <div className="flex items-center gap-2">
+                    <span id="attention_cloud_logo"> <AiOutlineThunderbolt/></span>
+                      <span className="text-white font-semibold">
+                        Exceptional high demand in City Centre
+                      </span>
+                    </div>
+                    <span className="suggestion_needed inline-block mt-1 text-xs px-2 py-1 bg-green-300 text-black rounded">
+                      Suggestion
+                    </span>
+                  </div>
+                  <span className="attention_time text-xs text-white">2 min ago</span>
+                </div>
+
+                {/* Past Recommendations */}
+                <div>
+                  <div className="past_recom">
+                    <span id="past_recom_logo"><MdOutlineKeyboardArrowDown/></span>
+                  <h3 className="past_recom_heading text-sm font-semibold mb-2">Past recommendations</h3>
+                  </div>
+                  <div className="double_chain rounded-md p-3 flex justify-between items-start">
+                    <div>
+                      <div className="flex items-center gap-2">
+                      <span id="attention_cloud_logo"><AiOutlineThunderbolt/></span> 
+                        <span className="text-white font-semibold">
+                          Double Chain Reaction Collision
                         </span>
                       </div>
-                      <div className="flex flex-col items-end text-xs text-white">
-                        <span id="critical_time">23/01/25</span>
-                        <span>15:45</span>
-                      </div>
+                      <span className="action_criticial inline-block mt-1 text-xs px-2 py-1 bg-red-500 text-white rounded">
+                        Critical Action
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-end text-xs text-white">
+                      <span id="critical_time">23/01/25</span>
+                      <span>15:45</span>
                     </div>
                   </div>
                 </div>
-              </Link>
-            )}
-
-            {/* Dynamically Added Widgets (unlimited) */}
-            {widgets.map((widget) => (
+              </div>
+            </Link>
+          )}
+          {/* Dynamically Added Widgets (unlimited) */}
+          {widgets.map((widget) => (
               <div
                 key={widget.id}
                 className="relative home_weather h-[350px] w-[600px] primaryColor1BG"
@@ -682,26 +698,23 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+          ))}
         </div>
-
-        {/* Add/Done Button */}
-        {editMode && (
-          <div className="btn_add flex justify-end mt-8 mb-8">
+        {/* Add Widget Button */}
+        <div className='flex w-full mt-auto justify-end items-end p-4 bg-yellow-500'>
+          {/* Add/Done Button */}
+          {editMode == true && showAddWidget == false && (
             <button
               onClick={handleAddButtonClick}
-              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
-                ${isAddingWidget ? "primaryColor2BG text-white" : "primaryColor2BG text-white"}`}
+              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out primaryColor2BG text-white"
             >
               Add
             </button>
-          </div>
-        )}
-
-        {/* Add Widget Container */}
-        {showAddWidget && <AddWidgetContainer />}
+          )}
+          {/* Add Widget Container */}
+          {showAddWidget && <AddWidgetContainer />}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
