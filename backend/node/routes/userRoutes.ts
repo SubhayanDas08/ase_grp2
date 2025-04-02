@@ -1,9 +1,22 @@
-import express, { Router } from 'express'
-import { FEregistrationData, FElogin, getLocationByIp } from '../controllers/userController'
-const router: Router = express.Router()
+import express, { Router } from "express";
+import {
+  FEregistrationData,
+  FElogin,
+  FElogout,
+  FErefreshToken,
+  getLocationByIp,
+  getCurrentUser,
+  changeUserPassword
+} from "../controllers/userController";
+import { authenticate } from "../middleware/authenticate";
+const router: Router = express.Router();
 
-router.post('/getRegistrationData', FEregistrationData)
-router.post('/login', FElogin);
-router.get('/locationByIp', getLocationByIp)
+router.post("/getRegistrationData", FEregistrationData);
+router.post("/login", FElogin);
+router.post("/logout", authenticate(), FElogout);
+router.post("/refresh", FErefreshToken);
+router.get("/locationByIp", authenticate(), getLocationByIp);
+router.get("/get",authenticate(),getCurrentUser);
+router.post("/changePassword",authenticate(),changeUserPassword);
 
-export default router
+export default router;

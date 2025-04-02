@@ -4,6 +4,7 @@ import { Pool } from 'pg';
 import locationRoutes from './routes/locationRoutes';
 import eventsRoutes from './routes/eventRoutes';
 import userRoutes from './routes/userRoutes';
+import weatherRoutes from "./routes/weatherRoutes";
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -16,7 +17,7 @@ import {
 
 // Load environment variables
 const envPath = path.resolve(__dirname, '.env');
-console.log('Loading .env from:', envPath);
+// console.log("Loading .env from:", envPath);
 
 dotenv.config({ path: envPath });
 
@@ -61,6 +62,7 @@ app.use((req, res, next) => {
 app.use('/locations', locationRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
+app.use('/weather', weatherRoutes);
 
 // 5. Expose /metrics endpoint for Prometheus to scrape
 app.get('/metrics', async (req, res) => {

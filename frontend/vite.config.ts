@@ -1,12 +1,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from '@tailwindcss/vite'
+import dotenv from 'dotenv';
 
-// @ts-expect-error process is a nodejs global
+// Load environment variables from .env file
+dotenv.config();
+
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [react()],
+  root: "apps/desktop",
+  plugins: [
+    react(),
+    tailwindcss()
+  ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
@@ -30,3 +38,6 @@ export default defineConfig(async () => ({
     },
   },
 }));
+
+console.log(host);
+

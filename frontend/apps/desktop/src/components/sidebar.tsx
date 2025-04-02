@@ -3,46 +3,35 @@ import sidebarLogo from "../assets/sidebarLogo.svg";
 import { FiHome, FiMap, FiList, FiTrash2, FiCloudDrizzle, FiTruck, FiSettings } from "react-icons/fi";
 import { RiTrafficLightFill } from "react-icons/ri";
 
+import "../styles/Components.css";
+
 export default function Sidebar() {
+    const routesList: string[] = ["/", "/routing", "/events", "/traffic", "/waste", "/weather", "/fleetsize"];
+    const sidebarTitlesList: string[] = ["Home", "Routes", "Events", "Traffic", "Waste", "Weather", "Fleet Size"];
+    const sidebarIconsList: React.ReactElement[] = [<FiHome />, <FiMap />, <FiList />, <RiTrafficLightFill />, <FiTrash2 />, <FiCloudDrizzle />, <FiTruck />];
+
     return(
-        <div className="sidebarContainer primaryColor2BG textLight">
-            <div className="h-24 flex justify-center items-center">
-                <img src={sidebarLogo} alt="Logo" className="h-1/2"/>
+       <div className="flex flex-col h-full w-full primaryColor1BG sidebarText textLight pb-5 cursor-default overflow-y-auto">
+            <div className="mainHeaderHeight sidebarHeader">
+                <img src={sidebarLogo} alt="Logo" className="h-2/3"/>
+                <div className="ml-2">CityManager</div>
             </div>
-            <div className="h-full flex flex-col pt-24 relative">
-                <Link to="/" className="sidebarItems">
-                    <FiHome className="sidebarIcons" />
-                    <div className="sidebarText">Home</div>
-                </Link>
-                <Link to="/routes" className="sidebarItems">
-                    <FiMap className="sidebarIcons" />
-                    <div className="sidebarText">Routes</div>
-                </Link>
-                <Link to="/events" className="sidebarItems">
-                    <FiList className="sidebarIcons" />
-                    <div className="sidebarText">Events</div>
-                </Link>
-                <Link to="/traffic" className="sidebarItems">
-                    <RiTrafficLightFill className="sidebarIcons" />
-                    <div className="sidebarText">Traffic</div>
-                </Link>
-                <Link to="/waste" className="sidebarItems">
-                    <FiTrash2 className="sidebarIcons" />
-                    <div className="sidebarText">Waste</div>
-                </Link>
-                <Link to="/weather" className="sidebarItems">
-                    <FiCloudDrizzle className="sidebarIcons" />
-                    <div className="sidebarText">Weather</div>
-                </Link>
-                <Link to="/fleetsize" className="sidebarItems">
-                    <FiTruck className="sidebarIcons" />
-                    <div className="sidebarText">Fleet Size</div>
-                </Link>
-                <Link to="/settings" className="sidebarItems">
-                    <FiSettings className="sidebarIcons" />
-                    <div className="sidebarText">Settings</div>
-                </Link>
+            <div className="w-full h-full flex flex-col pt-5 font-normal">
+                {routesList.map((route, index) => {
+                    return(
+                        <Link to={route} key={index} className="sidebarItem">
+                            <div className="iconContainer primaryColor2">{sidebarIconsList[index]}</div>
+                            <div className="ml-5">{sidebarTitlesList[index]}</div>
+                        </Link>
+                    );
+                })}
+                <div className="mt-auto">
+                    <Link to="/settings" className="sidebarItem">
+                        <div className="iconContainer primaryColor2"><FiSettings /></div>
+                        <div className="ml-5">Settings</div>
+                    </Link>
+                </div>
             </div>
-        </div>
+       </div>
     )
 }
