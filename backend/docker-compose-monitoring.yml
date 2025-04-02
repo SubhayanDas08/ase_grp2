@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus           # Prometheus configuration files
+      - prom_data:/prometheus                   # Persistent storage for Prometheus data
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"                            # Expose Grafana on host port 3001
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - grafana_data:/var/lib/grafana           # Persistent storage for Grafana dashboards and settings
+      - ./grafana:/etc/grafana/provisioning     # Optional: provisioning files (datasources, dashboards, etc.)
+
+volumes:
+  prom_data:
+  grafana_data:
