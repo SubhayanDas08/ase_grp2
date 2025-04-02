@@ -323,3 +323,10 @@
   font-size: 30px;
 }
 
+.index_waste{
+  width:68px;
+  height:68px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--primaryColor1);
+}

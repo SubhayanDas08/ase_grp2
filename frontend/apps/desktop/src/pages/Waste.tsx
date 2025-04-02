@@ -92,7 +92,7 @@ export default function Waste() {
             <div>
                 <div className="mainHeaderHeight header w-full flex items-center justify-between">
                     <div className="home_title titleText primaryColor1">Waste</div>
-                    <div>
+                    {/*<div>
                     <button
                         className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
                         ${recommendations ? "bg-gray-300 primaryColor2 w-[200px]" 
@@ -101,7 +101,7 @@ export default function Waste() {
                     >
                         {recommendations ? "Done" : "Recommendations"}
                     </button>
-                    </div>
+                    </div>*/}
                 </div>
                 <div className=''>
                     {/* Day Selector */}
@@ -135,18 +135,18 @@ export default function Waste() {
                 {filteredRoutes.map((route, index) => (
                     <Link key={index} to={`/wasteroutes/${route.route_name}`} 
                         className="route_waste_container flex flex-row justify-between items-center 
-                                lg:w-full min-w-[300px] overflow-hidden">
+                                lg:w-full min-w-[100px] overflow-hidden">
                         
                         <div className="flex flex-row overflow-hidden">
                             <div className="routes_waste_logo mt-0.5">
                                 <HiOutlineLightningBolt className="text-white text-2xl" />
                             </div>
 
-                            <div className="cloud_secondcolumn ml-4 flex flex-col overflow-hidden">
+                            <div className="cloud_secondcolumn ml-4 flex flex-col flex-wrap">
                                 <div className="text-lg font-bold text-white">{route.route_name}</div>
 
                                 {/* Ensure pickup details display fully until overflow naturally hides excess */}
-                                <div className="cloud_info_firstrow text-gray-300 flex-1 overflow-hidden whitespace-nowrap">
+                                <div className="cloud_info_firstrow text-gray-300 flex-1 overflow-x-auto whitespace-nowrap">
                                     {route.county} -{" "}
                                     {route.place_pickup_times.map((item:any, idx:any) => (
                                         <span key={idx}>

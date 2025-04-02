@@ -21,15 +21,7 @@ export default function Waste_routes() {
     const [recommendations, setRecommendations] = useState(false);
     const [newStreet, setNewStreet] = useState("");
     const navigate=useNavigate();
-
-    const handleMinusButtonClick = (index: number) => {
-        setVisibleContainers(prev => {
-            const newVisibility = [...prev];
-            newVisibility[index] = !newVisibility[index];
-            return newVisibility;
-        });
-    };
-
+    
     const mockData = [
         {
             route_name: "Route B",
@@ -118,12 +110,6 @@ export default function Waste_routes() {
         setShowAddWidget(false);
         console.debug("Updated Route Details:", updatedRouteDetails);
     };
-    
-
-    const handleAddButtonClick = () => {
-        setIsAddingWidget(!isAddingWidget);
-        setShowAddWidget(!showAddWidget);
-    };
 
     if (!routeDetails) {
         return <div className="w-full mt-10 ml-10">Loading route details...</div>;
@@ -155,26 +141,12 @@ export default function Waste_routes() {
                         {routeDetails.county}
                     </div>
                 </div>
-                <div className ="mr-10 flex w-full justify-end items-start mt-2">
-                    <button
-                        className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out 
-                        ${recommendations ? "bg-gray-300 primaryColor2 w-[100px]" 
-                                    : "errorBG text-white w-[100px]"}`}
-                        onClick={() => setRecommendations(!recommendations)}
-                    >
-                        {recommendations ? "Done" : "Delete"}
-                    </button>
-                </div>
             </div>
 
             {routeDetails.place_pickup_times.map((stop, index) => (
                 visibleContainers[index] && (
-                    <div key={index} className="routes_waste flex flex-col justify-between mt-3 w-full max-w-5xl min-w-[300px] mx-auto">
+                    <div key={index} className="routes_waste flex flex-col justify-between mt-3 w-full max-w-5xl min-w-[500px] mx-auto">
                         <div className="relative route_waste_container flex flex-row w-full justify-between items-center">
-                            <FiMinus 
-                                className="circlecontainer absolute -top-2 -right-1 cursor-pointer z-1000" 
-                                onClick={() => handleMinusButtonClick(index)}
-                            />
                             <div className="flex flex-row items-center">
                                 <div className="">
                                     <div id="routes_waste_logo">
@@ -186,11 +158,21 @@ export default function Waste_routes() {
                                     <div className="text-xs opacity-75 text-gray-800">Pickup time: {stop.pickup_time}</div>
                                 </div>
                             </div>
-                            <div className="text-right mr-5 text-white opacity-75 text-xs">
-                                AQI
+                            <div className="index_waste text-white">
+                                <div className="ml-6 mt-2 text-xs">
+                                    AQI
+                                </div>
+                                <div className="ml-7.5 font-bold text-lg">
+                                    1
+                                </div>
                             </div>
-                            <div className="text-right mr-5 text-white opacity-75 text-xs">
-                                Trafic Index
+                            <div className="index_waste text-white">
+                            <div className="mt-2 text-xs text-center">
+                                    Traffic Index
+                                </div>
+                                <div className="ml-7.5 font-bold text-lg">
+                                    1
+                                </div>
                             </div>
                             <div className="text-right mr-5 text-white opacity-75 text-xs">
                                 est. time: ~{estimatedTimePerStop} mins
@@ -199,17 +181,6 @@ export default function Waste_routes() {
                     </div>
                 )
             ))}
-
-            <div className='flex w-full grow justify-end items-end mt-4'> 
-                <button
-                    onClick={handleAddButtonClick}
-                    className={`px-6 py-2 h-12 rounded-full font-semibold transition-all duration-300 ease-in-out
-                        ${isAddingWidget ? "primaryColor2BG text-white" : "primaryColor2BG text-white"}`}
-                >
-                    {isAddingWidget ? "Add" : "Add"}
-                </button>
-                {showAddWidget}
-            </div>
 
             {showAddWidget && (
                 <div className="fixed inset-0 flex justify-center items-center z-50">
