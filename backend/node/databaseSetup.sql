@@ -34,6 +34,17 @@ CREATE TABLE IF NOT EXISTS domain_access (
     CONSTRAINT fk_domain_access_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS trash_pickup (
+    id INTEGER,
+    route_id TEXT,
+    route_name TEXT,
+    county TEXT,
+    pickup_day TEXT,
+    pickup_duration_min INTEGER,
+    num_stops INTEGER,
+    place_pickup_times JSONB
+);
+
 -- CREATE TABLE IF NOT EXISTS events (
 --     id SERIAL PRIMARY KEY,
 --     name VARCHAR(255) NOT NULL,
