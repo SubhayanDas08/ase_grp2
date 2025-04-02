@@ -5,9 +5,10 @@ import { logout } from "../utils/auth";
 
 interface SettingsProps {
     setUserAuthenticated: (userAuthenticated: any) => void;
+    onLogout: () => void;
   }
 
-export default function Settings({setUserAuthenticated}:SettingsProps): JSX.Element {
+export default function Settings({setUserAuthenticated, onLogout}:SettingsProps): JSX.Element {
     const navigate=useNavigate();
 
     return(
@@ -60,6 +61,7 @@ export default function Settings({setUserAuthenticated}:SettingsProps): JSX.Elem
                     onClick={()=>{
                         logout();
                         setUserAuthenticated(false);
+                        onLogout();
                         navigate("/login");
                         }
                     }>
