@@ -53,7 +53,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
         
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
     const pageRoutesList: string[] = [
       "/home",
       "/routing",
@@ -92,7 +92,7 @@ export default function App() {
         setUserAuthenticated(authenticated);
       };
       
-      checkAuth();
+      //checkAuth();
     }, []);
     return (
         <Router>
@@ -117,11 +117,7 @@ export default function App() {
                             return(
                                 <Route 
                                   path={route}
-                                  element={
-                                    <ProtectedRoute>
-                                      {pageRouteItemsList[index]}
-                                    </ProtectedRoute>
-                                  }
+                                  element={pageRouteItemsList[index]}
                                   key={index} 
                                 />
                             );
