@@ -60,7 +60,11 @@ export default function App() {
       component: <Routing />,
       permission: "view_efficient_routes",
     },
-    { path: "/events", component: <Events />, permission: "view_events" },
+    {
+      path: "/events",
+      component: <Events permissions={permissions} />,
+      permission: "view_events",
+    },
     {
       path: "/events/add",
       component: <AddEvent />,
@@ -68,7 +72,7 @@ export default function App() {
     },
     {
       path: "/events/view/:id",
-      component: <ViewEvent />,
+      component: <ViewEvent permissions={permissions} />,
       permission: "view_events",
     },
     {
