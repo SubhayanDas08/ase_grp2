@@ -21,7 +21,21 @@ export default function Events2(): JSX.Element {
         const fetchEvents=async ()=>{
             try {
                 const data = await authenticatedGet<Event[]>("/events/");
-                const sortedEvents = data.sort((a, b) => {
+                const now = new Date(); 
+                console.log(now);
+                
+
+                const upcomingEvents = data.filter((event) => {
+                    const normalizedDate = event.event_date.includes("T")
+                    ? event.event_date.split("T")[0]
+                    : event.event_date;
+            
+                const combinedDateTime = `${normalizedDate}T${event.event_time}`;            
+                const eventDateTime = new Date(combinedDateTime);
+                return eventDateTime >= now;
+                 });
+
+                const sortedEvents = upcomingEvents.sort((a, b) => {
                     const dateA = new Date(`${a.event_date}T${a.event_time}`);
                     const dateB = new Date(`${b.event_date}T${b.event_time}`);
                     return dateB.getTime() - dateA.getTime();
