@@ -1,7 +1,8 @@
-import { FaBolt } from "react-icons/fa";
+import { FaBolt, FaMapMarkerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { authenticatedGet } from "../utils/auth";
 import { useEffect, useState } from "react";
+
 
 interface Event {
     id: number;
@@ -62,7 +63,7 @@ export default function Events2(): JSX.Element {
             <div className="h-full w-full flex flex-col space-y-3">
             {events.map((event) => (
                 // Event Card
-                <div key={event.id} className="flex items-center h-20 rounded-3xl primaryGradient hover:cursor-pointer"
+                <div key={event.id} className="flex items-center h-24 rounded-3xl primaryGradient hover:cursor-pointer"
                 onClick={()=>navigate(`/events/view/${event.id}`)}>
                     <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
                         <FaBolt className="text-2l" />
@@ -70,6 +71,10 @@ export default function Events2(): JSX.Element {
                     <div className="ml-10 flex flex-col">
                         <div className="text-lg font-semibold textLight">{event.name}</div>
                         <div className="textLight">{event.description}</div>
+                        <div className="text-sm mt-2 textLight italic flex items-center"> 
+                        <FaMapMarkerAlt className="mr-2 text-base" /> {/* Location icon */}
+                        {event.location}
+                        </div>
                     </div>
                     <div className="flex flex-col items-end grow mr-10 textLight">
                     <div className="italic">
