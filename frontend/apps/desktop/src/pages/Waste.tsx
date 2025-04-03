@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { authenticatedGet, authenticatedPost } from "../utils/auth";
+import { authenticatedPost } from "../utils/auth";
 
 export default function Waste() {
   const [routes, setRoutes] = useState<any[]>([]);
-  const [recommendations, setRecommendations] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string>("");
   const [selectedCounty, setSelectedCounty] = useState<string>("");
   const [searchTriggered, setSearchTriggered] = useState(false);
@@ -180,12 +179,15 @@ export default function Waste() {
 
       <div className="routes_waste flex flex-col justify-between">
         {routes.map((route, index) => (
-          <Link
-            key={index}
-            to={`/wasteroutes/${route.route_name}`}
-            className="route_waste_container flex flex-row justify-between items-center
-                                lg:w-full min-w-[100px] overflow-hidden"
-          >
+            <Link
+                key={index}
+                state= {{ data : {county: route.county, pickup_day: route.pickup_day, data: route} }}
+                to={ `/wasteroutes/${route.route_name}`}
+                className="route_waste_container flex flex-row justify-between items-center
+                                            lg:w-full min-w-[100px] overflow-hidden"
+             > 
+          
+
             <div className="flex flex-row overflow-hidden">
               <div className="routes_waste_logo mt-0.5">
                 <HiOutlineLightningBolt className="text-white text-2xl" />
