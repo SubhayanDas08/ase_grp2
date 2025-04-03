@@ -18,7 +18,7 @@ import Settings from "./pages/Settings.tsx";
 
 
 export default function App() {
-    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(false);
+    const [userAuthenticated, setUserAuthenticated] = useState<Boolean>(true);
     return (
         <Router>
             <div className="flex h-screen"> 
