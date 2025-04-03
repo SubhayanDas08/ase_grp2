@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { IoCloseOutline } from "react-icons/io5";
+import { IoCloseOutline, IoAdd, IoRemove } from "react-icons/io5";
 
 import { WeatherWidget, EventsWidget, RoutesWidget } from "../components/HomeWidgets";
 
@@ -9,10 +9,10 @@ export default function Home() {
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [visibleWidgetStack, setVisibleWidgetStack] = useState<JSX.Element[]>([
     <WeatherWidget />,
-    <EventsWidget />,
-    <RoutesWidget />,
+    <EventsWidget />
   ]);
   const [hiddenWidgetStack, setHiddenWidgetStack] = useState<JSX.Element[]>([
+    <RoutesWidget />
   ]);
 
   const closeBtn = () => setShowAddWidget(false);
@@ -33,10 +33,13 @@ export default function Home() {
 
   const AddWidgetContainer = () => {
     return (
-      <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2 flex flex-col primaryColor2BG w-1/2 max-h-[80%] min-h-[25%] overflow-hidden z-50">
-        {/* Close button */}
-        <div className="flex justify-end">
-          <button className="close_button cursor-pointer" onClick={closeBtn}>
+      <div 
+        className="absolute top-[130px] left-1/2 transform -translate-x-1/2 flex flex-col primaryColor2BG w-5/8 max-h-[80%] min-h-[25%] overflow-hidden z-50 p-5 shadow-2xl"
+        style={{borderRadius: "var(--cornerRadius)"}}
+      >
+        <div className="flex justify-between mb-5">
+          <div className="textLight titleText">Add Widgets</div>
+          <button className="widgetButton" onClick={closeBtn}>
             <IoCloseOutline />
           </button>
         </div>
@@ -44,10 +47,10 @@ export default function Home() {
           {hiddenWidgetStack.map((widget, index) => (
             <div key={index} className="relative">
               <button
-                className="absolute top-2 right-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
+                className="absolute right-0 widgetButton"
                 onClick={() => handleAddWidget(index)}
               >
-                +
+                <IoAdd />
               </button>
               <div className="pointer-events-none">{widget}</div>
             </div>
@@ -94,10 +97,10 @@ export default function Home() {
             <div key={index} className="relative">
               {editMode && (
                 <button
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
+                  className="absolute right-0 widgetButton"
                   onClick={() => handleRemoveWidget(index)}
                 >
-                  −
+                  <IoRemove />
                 </button>
               )}
               <div className={editMode ? "pointer-events-none" : ""}>{widget}</div>
@@ -116,7 +119,12 @@ export default function Home() {
             </button>
           )}
           {/* Add Widget Container */}
-          {showAddWidget && <AddWidgetContainer />}
+          {showAddWidget && (
+            <>
+              <div className="backgroundBlur"></div>
+              <AddWidgetContainer />
+            </>
+          )}
         </div>
       </div>
     </div>
