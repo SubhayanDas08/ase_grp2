@@ -9,69 +9,6 @@ export default function Waste() {
   const [selectedCounty, setSelectedCounty] = useState<string>("");
   const [searchTriggered, setSearchTriggered] = useState(false);
 
-  const mockData = [
-    {
-      route_name: "Route B",
-      county: "Mayo",
-      pickup_day: "Saturday",
-      pickup_duration_min: 93,
-      num_stops: 19,
-      place_pickup_times: [
-        { place: "Ballintubber", pickup_time: "13:30" },
-        { place: "Lecanvey", pickup_time: "13:45" },
-        { place: "Belderrig", pickup_time: "13:58" },
-        { place: "Claremorris", pickup_time: "14:10" },
-        { place: "Westport", pickup_time: "14:21" },
-      ],
-    },
-    {
-      route_name: "Route C",
-      county: "Kerry",
-      pickup_day: "Monday",
-      pickup_duration_min: 64,
-      num_stops: 19,
-      place_pickup_times: [
-        { place: "Annascaul", pickup_time: "11:00" },
-        { place: "Tarbert", pickup_time: "11:08" },
-        { place: "Lixnaw", pickup_time: "11:17" },
-        { place: "Waterville", pickup_time: "11:25" },
-        { place: "Blennerville", pickup_time: "11:33" },
-      ],
-    },
-    {
-      route_name: "Route D",
-      county: "Kerry",
-      pickup_day: "Monday",
-      pickup_duration_min: 64,
-      num_stops: 20,
-      place_pickup_times: [
-        { place: "Annascaul", pickup_time: "11:00" },
-        { place: "Tarbert", pickup_time: "11:08" },
-        { place: "Lixnaw", pickup_time: "11:17" },
-        { place: "Waterville", pickup_time: "11:25" },
-        { place: "Blennerville", pickup_time: "11:33" },
-      ],
-    },
-    {
-      route_name: "Route C",
-      county: "Kerry",
-      pickup_day: "Tuesday",
-      pickup_duration_min: 89,
-      num_stops: 19,
-      place_pickup_times: [
-        { place: "Annascaul", pickup_time: "11:00" },
-        { place: "Tarbert", pickup_time: "11:14" },
-        { place: "Lixnaw", pickup_time: "11:22" },
-        { place: "Waterville", pickup_time: "11:28" },
-        { place: "Blennerville", pickup_time: "11:33" },
-      ],
-    },
-  ];
-
-  useEffect(() => {
-    setRoutes(mockData);
-  }, []);
-
   const handleDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDay(e.target.value);
     setSearchTriggered(false);
@@ -82,14 +19,8 @@ export default function Waste() {
     setSearchTriggered(false);
   };
 
-  const filteredRoutes = searchTriggered
-    ? routes.filter(
-        (route) =>
-          route.pickup_day === selectedDay && route.county === selectedCounty,
-      )
-    : [];
-
   const onClickSearch = async () => {
+    console.log("hello", selectedCounty, selectedDay)
     // fetch data from the server
     const data = await authenticatedPost<Event[]>(
       "/trashPickup/getRouteDetails",
@@ -112,16 +43,6 @@ export default function Waste() {
       <div>
         <div className="mainHeaderHeight header w-full flex items-center justify-between">
           <div className="home_title titleText primaryColor1">Waste</div>
-          {/*<div>
-                    <button
-                        className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out
-                        ${recommendations ? "bg-gray-300 primaryColor2 w-[200px]"
-                                    : "primaryColor2BG text-white w-[200px]"}`}
-                        onClick={() => setRecommendations(!recommendations)}
-                    >
-                        {recommendations ? "Done" : "Recommendations"}
-                    </button>
-                    </div>*/}
         </div>
         <div className="">
           {/* Day Selector */}
@@ -189,7 +110,7 @@ export default function Waste() {
           
 
             <div className="flex flex-row overflow-hidden">
-              <div className="routes_waste_logo mt-0.5">
+              <div className="routes_waste_logo mt-3">
                 <HiOutlineLightningBolt className="text-white text-2xl" />
               </div>
 
