@@ -35,3 +35,39 @@
   justify-content: center;
   align-items: center;
 }
+
+/* HomeWidget */
+.widgetContainer {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  width: 560px;
+  @apply pb-5 ps-5 pe-5;
+  background-color: var(--primaryColor1);
+  border-radius: var(--cornerRadius);
+  color: var(--textLight);
+  cursor: pointer;
+}
+
+.widgetContainerItemContainer {
+  display: flex;
+  justify-content: center;
+  background-color: var(--primaryColor2);
+  border-radius: var(--cornerRadius);
+  @apply pe-5;
+}
+
+.widgetTitle {
+  font-size: 20px;
+}
+
+.widgetTitleSecondary {
+  font-size: 12px;
+  color: #ffffff95;
+}
+
+.widgetIcons {
+  color: var(--primaryColor1);
+  width: 60%;
+  height: 60%;
+}

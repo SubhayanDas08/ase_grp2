@@ -2,16 +2,17 @@ import { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { IoCloseOutline } from "react-icons/io5";
 
+import { WeatherWidget, EventsWidget, RoutesWidget } from "../components/HomeWidgets";
+
 export default function Home() {
   const [editMode, setEditMode] = useState(false);
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [visibleWidgetStack, setVisibleWidgetStack] = useState<JSX.Element[]>([
-    <div className="h-[200px] w-[400px] bg-blue-500">Widget 1</div>,
-    <div className="h-[200px] w-[400px] bg-blue-200">Widget 2</div>,
-    <div className="h-[200px] w-[400px] bg-blue-800">Widget 3</div>,
+    <WeatherWidget />,
+    <EventsWidget />,
+    <RoutesWidget />,
   ]);
   const [hiddenWidgetStack, setHiddenWidgetStack] = useState<JSX.Element[]>([
-    <div className="h-[200px] w-[400px] bg-red-300">Widget 4</div>,
   ]);
 
   const closeBtn = () => setShowAddWidget(false);
@@ -32,7 +33,7 @@ export default function Home() {
 
   const AddWidgetContainer = () => {
     return (
-      <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2 flex flex-col primaryColor1BG w-1/2 max-h-[80%] min-h-[25%] overflow-hidden z-10">
+      <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2 flex flex-col primaryColor2BG w-1/2 max-h-[80%] min-h-[25%] overflow-hidden z-50">
         {/* Close button */}
         <div className="flex justify-end">
           <button className="close_button cursor-pointer" onClick={closeBtn}>
@@ -48,7 +49,7 @@ export default function Home() {
               >
                 +
               </button>
-              {widget}
+              <div className="pointer-events-none">{widget}</div>
             </div>
           ))}
         </div>
@@ -77,15 +78,18 @@ export default function Home() {
                 : "primaryColor2BG text-white w-[80px] sm:w-[100px]"
               }
             `}
-            onClick={() => setEditMode(!editMode)}
+            onClick={() => {
+              setEditMode(!editMode);
+              setShowAddWidget(false);
+            }}
           >
             {editMode ? "Done" : "Edit"}
           </button>
       </div>
       {/* Main Content Section */}
-      <div className="flex flex-col h-full w-full overflow-y-auto bg-green-500">
+      <div className="flex flex-col h-full w-full overflow-y-auto">
         {/* Widgets Section */}
-        <div className="flex flex-wrap gap-5 bg-gray-500">
+        <div className="flex flex-wrap gap-5">
           {visibleWidgetStack.map((widget, index) => (
             <div key={index} className="relative">
               {editMode && (
@@ -96,12 +100,12 @@ export default function Home() {
                   −
                 </button>
               )}
-              {widget}
+              <div className={editMode ? "pointer-events-none" : ""}>{widget}</div>
             </div>
           ))}
         </div>
         {/* Add Widget Button */}
-        <div className='flex w-full mt-auto justify-end items-end p-4 bg-yellow-500'>
+        <div className='flex w-full mt-auto justify-end items-end p-4'>
           {/* Add button only shown when editing and not displaying add widget container */}
           {editMode && !showAddWidget && (
             <button
