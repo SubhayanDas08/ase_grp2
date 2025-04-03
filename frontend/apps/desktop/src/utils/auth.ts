@@ -33,6 +33,28 @@ export async function clearAuthTokens(): Promise<void> {
   await store.save();
 }
 
+async function savePermissions(permissions: string[]): Promise<void> {
+  const store = await getStore();
+  await store.set("permissions", permissions);
+  await store.save();
+}
+
+export async function checkPermission(permission: string): Promise<boolean> {
+  const store = await getStore();
+  const permissions = (await store.get("permissions")) as string[];
+  return permissions.includes(permission);
+}
+
+export async function getPermissions(): Promise<string[]> {
+  const store = await getStore();
+  return (await store.get("permissions")) as string[];
+}
+
+async function clearStore(): Promise<void> {
+  const store = await getStore();
+  await store.clear();
+}
+
 export async function login(
   userData: any,
 ): Promise<{ success: boolean; message: string }> {
@@ -43,6 +65,7 @@ export async function login(
 
     const accessToken = response.data.token;
     const refreshToken = response.data.refreshToken;
+    const permissions = response.data.permissions;
 
     // Save the tokens with both expiration times
     await saveAuthTokens({
@@ -51,6 +74,9 @@ export async function login(
       accessTokenExpiresAt: Date.now() + 60 * 60 * 1000, // 1 hour
       refreshTokenExpiresAt: Date.now() + 180 * 24 * 60 * 60 * 1000, // 180 days
     });
+
+    // Save the permissions
+    await savePermissions(permissions);
 
     return {
       success: true,
@@ -104,6 +130,8 @@ export async function refreshToken(): Promise<boolean> {
       refreshToken: tokens.refreshToken,
     });
 
+    const permissions = response.data.permissions;
+
     // Save the new tokens
     await saveAuthTokens({
       accessToken: response.data.token,
@@ -111,6 +139,9 @@ export async function refreshToken(): Promise<boolean> {
       accessTokenExpiresAt: Date.now() + 60 * 60 * 1000, // 1 hour
       refreshTokenExpiresAt: tokens.refreshTokenExpiresAt, // Keep old refresh expiry
     });
+
+    // Save the permissions
+    await savePermissions(permissions);
 
     return true;
   } catch (error) {
@@ -155,6 +186,8 @@ export async function register(
       },
     );
 
+    const permissions = response.data.permissions;
+
     // If registration successful and tokens are returned
     if (response.data.token && response.data.refreshToken) {
       await saveAuthTokens({
@@ -164,6 +197,9 @@ export async function register(
         refreshTokenExpiresAt: Date.now() + 180 * 24 * 60 * 60 * 1000, // 180 days
       });
     }
+
+    // Save the permissions
+    await savePermissions(permissions);
 
     return {
       success: true,
@@ -203,25 +239,20 @@ export async function register(
 export async function authenticatedRequest<T>(
   url: string,
   config: AxiosRequestConfig = {},
+  existingTokens?: AuthTokens,
 ): Promise<T> {
-  const tokens = await getAuthTokens();
+  const currentTokens = existingTokens || (await getAuthTokens());
 
-  if (!tokens) {
+  if (!currentTokens) {
     throw new Error("Authentication required");
   }
 
   // Check if tokens are expired and refresh if needed
-  if (Date.now() >= tokens.accessTokenExpiresAt) {
+  if (Date.now() >= currentTokens.accessTokenExpiresAt) {
     const refreshSuccess = await refreshToken();
     if (!refreshSuccess) {
       throw new Error("Authentication expired");
     }
-  }
-
-  // Get the latest tokens
-  const currentTokens = await getAuthTokens();
-  if (!currentTokens) {
-    throw new Error("Authentication required");
   }
 
   // Create headers with authorization
@@ -290,26 +321,47 @@ export async function authenticatedPost<T>(
   url: string,
   data?: any,
   config: AxiosRequestConfig = {},
+  tokens?: AuthTokens,
 ): Promise<T> {
-  return authenticatedRequest<T>(url, {
-    ...config,
-    method: "POST",
-    data,
-  });
+  return authenticatedRequest<T>(
+    url,
+    {
+      ...config,
+      method: "POST",
+      data,
+    },
+    tokens,
+  );
+}
+
+// Convenience wrapper for DELETE requests
+export async function authenticatedDelete<T>(
+  url: string,
+  config: AxiosRequestConfig = {},
+): Promise<T> {
+  return authenticatedRequest<T>(url, { ...config, method: "DELETE" });
 }
 
 export async function logout(): Promise<void> {
   try {
     // Use the authenticatedPost function which will automatically
     // add the bearer token and handle any auth issues
-    await authenticatedPost("/user/logout", {
-      refreshToken: (await getAuthTokens())?.refreshToken,
-    });
+    const authTokens = await getAuthTokens();
+    if (authTokens) {
+      await authenticatedPost(
+        "/user/logout",
+        {
+          refreshToken: authTokens.refreshToken,
+        },
+        {},
+        authTokens,
+      );
+    }
   } catch (error) {
     console.error("Logout error:", error);
     // Continue with local logout even if server logout fails
   }
 
   // Always clear local tokens regardless of server response
-  await clearAuthTokens();
+  await clearStore();
 }

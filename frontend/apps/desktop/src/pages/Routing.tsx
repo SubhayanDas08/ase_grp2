@@ -20,8 +20,13 @@ export default function Routing() {
     }, [location]);
 
     return (
-        <div className="h-full relative shadow-xl">
-            <MapVisual defaultLocation={location} setLocation={setLocation} />
+        <div className="h-full w-full flex flex-col">
+            <div className="mainHeaderHeight w-full flex items-center justify-between">
+                <div className="titleText primaryColor1">Routes</div>
+            </div>
+            <div className="h-full w-full">
+                <MapVisual defaultLocation={location} setLocation={setLocation} />
+            </div>
         </div>
     );
 }

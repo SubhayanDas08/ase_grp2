@@ -1,205 +1,106 @@
-import { useState, useEffect } from 'react';
-import { useReactTable, ColumnDef, getCoreRowModel, flexRender} from '@tanstack/react-table';
-import { FiPlus, FiRotateCw } from "react-icons/fi";
+import { FaBolt, FaMapMarkerAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { authenticatedGet } from "../utils/auth";
+import { useEffect, useState } from "react";
 
-import { sampleData, Data } from '../data/DataFormat';
-import EventCard from '../../../../shared/components/weather-map/EventCard';
-import '../../../../shared/styles/EventCard.module.css';
+interface Event {
+  id: number;
+  name: string;
+  event_date: string;
+  event_time: string;
+  location: string;
+  area: string;
+  description: string;
+}
 
-export default function Events() {
-    const [data, setData] = useState<Data[]>([]);
-    const [refreshKey, setRefreshKey] = useState(false);  // Can be any datatype, just used to trigger a refresh
-    const [showPopup, setshowPopup] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        start_date: '',
-        end_date: '',
-    });
+interface EventProps {
+  permissions: string[];
+}
 
-    const columns: ColumnDef<Data>[] = [
-      { accessorKey: 'id', header: 'ID' },
-      { accessorKey: 'name', header: 'Name' },
-      { accessorKey: 'start_date', header: 'Start Date' },
-      { accessorKey: 'end_date', header: 'End Date' }
-    ];
-    
-    const table = useReactTable({
-      data: data,
-      columns,
-      getCoreRowModel: getCoreRowModel(),
-    });
+export default function Events2({ permissions }: EventProps): JSX.Element {
+  const navigate = useNavigate();
+  const [events, setEvents] = useState<Event[]>([]);
 
-    useEffect(() => {
-      const fetchData = async () => {
-          fetch('http://57.153.210.131:3000/events')
-          .then(response => response.json())
-          .then(data => setData(data))
-          .then(() => console.log("Data refresh"))
-          .catch(error => console.error("Error: ", error));
-      };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const data = await authenticatedGet<Event[]>("/events/");
+        const now = new Date();
+        console.log(now);
 
-      fetchData();
-    }, [refreshKey]);
+        const upcomingEvents = data.filter((event) => {
+          const normalizedDate = event.event_date.includes("T")
+            ? event.event_date.split("T")[0]
+            : event.event_date;
 
-    const displayPopup = () => {
-      setshowPopup(true);
+          const combinedDateTime = `${normalizedDate}T${event.event_time}`;
+          const eventDateTime = new Date(combinedDateTime);
+          return eventDateTime >= now;
+        });
+
+        const sortedEvents = upcomingEvents.sort((a, b) => {
+          const dateA = new Date(`${a.event_date}T${a.event_time}`);
+          const dateB = new Date(`${b.event_date}T${b.event_time}`);
+          return dateB.getTime() - dateA.getTime();
+        });
+        setEvents(sortedEvents);
+      } catch (error) {
+        console.error("Error fetching events", error);
+      }
     };
+    fetchEvents();
+  }, []);
 
-    const handleClose = () => {
-        setshowPopup(false);
-        setFormData({ name: '', start_date: '', end_date: '' });
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });  // Spread operator to create a shallow copy, then appends the new value
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('http://57.153.210.131:3000/events', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                setshowPopup(false);
-                setFormData({ name: '', start_date: '', end_date: '' });
-            } else {
-                console.error("Failed to create event");
-            }
-        } catch (error) {
-            console.error("Error submitting form: ", error);
-        }
-    };
-
-    const refreshTable = () => {
-      setRefreshKey(!refreshKey);
-    };
-
-    // return(
-    //   <div className="relative contentContainer ps-10 textColourDark flex flex-col bg-green-500">
-    //       <table className='w-full'>
-    //           <thead className='text-xl'>
-    //               {table.getHeaderGroups().map((headerGroup) => (
-    //                   <tr key={headerGroup.id}>
-    //                   {headerGroup.headers.map((header) => (
-    //                       <th key={header.id} className='text-center'>
-    //                       {flexRender(header.column.columnDef.header, header.getContext())}
-    //                       </th>
-    //                   ))}
-    //                   </tr>
-    //               ))}
-    //           </thead>
-    //           <tbody>
-    //               {table.getRowModel().rows.map((row) => (
-    //                   <tr key={row.id} className='hover:text-gray-500 cursor-pointer'>
-    //                   {row.getVisibleCells().map((cell) => (
-    //                       <td key={cell.id} className='text-center'>
-    //                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    //                       </td>
-    //                   ))}
-    //                   </tr>
-    //               ))}
-    //           </tbody>
-    //       </table>
-
-
-    //         <div>
-    //         <EventCard
-    //             eventTitle="Lightning strike in Hamilton Gardens"
-    //             eventDescription="Burning houses, People crying"
-    //             eventTime="16:00"
-    //         />
-    //         <EventCard
-    //             eventTitle="Chain Reaction Collision"
-    //             eventDescription="approx. 100 cars and 3 buses involved"
-    //             eventTime="17:00"
-    //         />
-    //         </div>
-
-    //       <div className='w-full h-10 flex justify-center gap-10 mt-5 overflow-hidden'>
-    //           <button className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 textColourLight' onClick={displayPopup}>
-    //             <FiPlus />
-    //           </button>
-    //           <button className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 textColourLight' onClick={refreshTable}>
-    //             <FiRotateCw />
-    //           </button>
-    //       </div>
-    //       {showPopup && (
-    //             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-    //                 <div className="bg-white p-5 rounded shadow-lg w-96">
-    //                     <h2 className="text-lg font-bold mb-4">Add New Event</h2>
-    //                     <form onSubmit={handleSubmit}>
-    //                         <div className="mb-4">
-    //                             <label className="block text-sm font-medium">Name</label>
-    //                             <input
-    //                                 type="text"
-    //                                 name="name"
-    //                                 value={formData.name}
-    //                                 onChange={handleInputChange}
-    //                                 className="w-full border px-2 py-1 rounded"
-    //                                 required
-    //                             />
-    //                         </div>
-    //                         <div className="mb-4">
-    //                             <label className="block text-sm font-medium">Start Date</label>
-    //                             <input
-    //                                 type="date"
-    //                                 name="start_date"
-    //                                 value={formData.start_date}
-    //                                 onChange={handleInputChange}
-    //                                 className="w-full border px-2 py-1 rounded"
-    //                                 required
-    //                             />
-    //                         </div>
-    //                         <div className="mb-4">
-    //                             <label className="block text-sm font-medium">End Date</label>
-    //                             <input
-    //                                 type="date"
-    //                                 name="end_date"
-    //                                 value={formData.end_date}
-    //                                 onChange={handleInputChange}
-    //                                 className="w-full border px-2 py-1 rounded"
-    //                                 required
-    //                             />
-    //                         </div>
-    //                         <div className="flex justify-end gap-2">
-    //                             <button
-    //                                 type="button"
-    //                                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-    //                                 onClick={handleClose}
-    //                             >
-    //                                 Cancel
-    //                             </button>
-    //                             <button
-    //                                 type="submit"
-    //                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-    //                             >
-    //                                 Save
-    //                             </button>
-    //                         </div>
-    //                     </form>
-    //                 </div>
-    //             </div>
-    //         )}
-    //   </div>
-    // )
-
-    return(
-        <div>
-              <EventCard
-                  eventTitle="Lightning strike in Hamilton Gardens"
-                  eventDescription="Burning houses, People crying"
-                  eventTime="16:00"
-              />
-              <EventCard
-                  eventTitle="Chain Reaction Collision"
-                  eventDescription="approx. 100 cars and 3 buses involved"
-                  eventTime="17:00"
-              />
+  return (
+    <div className="w-full h-full flex flex-col">
+      <div className="mainHeaderHeight w-full flex items-center justify-between">
+        <div className="titleText primaryColor1">Events</div>
+        <div className="flex h-fit w-fit items-center justify-end">
+          {permissions.includes("manage_events") && (
+            <div
+              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 ease-in-out primaryColor2BG text-white cursor-pointer"
+              onClick={() => navigate("/events/add")}
+            >
+              Add Event
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="h-full w-full flex flex-col space-y-3">
+        {events.map((event) => (
+          // Event Card
+          <div
+            key={event.id}
+            className="flex items-center h-24 rounded-3xl primaryGradient hover:cursor-pointer"
+            onClick={() => navigate(`/events/view/${event.id}`)}
+          >
+            <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
+              <FaBolt className="text-2l" />
+            </div>
+            <div className="ml-10 flex flex-col">
+              <div className="text-lg font-semibold textLight">
+                {event.name}
               </div>
-      )
+              <div className="textLight">{event.description}</div>
+              <div className="text-sm mt-2 textLight italic flex items-center">
+                <FaMapMarkerAlt className="mr-2 text-base" />{" "}
+                {/* Location icon */}
+                {event.location}
+              </div>
+            </div>
+            <div className="flex flex-col items-end grow mr-10 textLight">
+              <div className="italic">
+                {new Date(event.event_date).toLocaleDateString([], {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </div>
+              <div className="font-bold">{event.event_time.slice(0, 5)}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

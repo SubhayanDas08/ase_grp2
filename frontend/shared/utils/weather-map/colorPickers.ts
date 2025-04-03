@@ -15,3 +15,32 @@ export const getColorByAqi = (aqi: number) => {
     return "#FF0000";
   }; 
 
+  export const getColorByWind = (speed: number) => {
+    if (isNaN(speed)) return "gray";
+    if (speed < 10) return "green";
+    if (speed < 25) return "orange";
+    return "red";
+  }
+  
+  export const getColorByHumidity = (h: number) => {
+    if (isNaN(h)) return "gray";
+    if (h < 30) return "orange";
+    if (h <= 60) return "green";
+    return "blue";
+  }
+  
+  export const getColorByPrecip = (p: number) => {
+    if (isNaN(p)) return "gray";
+    if (p === 0) return "lightgray";
+    if (p < 2) return "lightblue";
+    return "blue";
+  }
+  
+  export const getColorByUv = (uv: number) => {
+    if (isNaN(uv)) return "gray";
+    if (uv < 3) return "green";
+    if (uv < 6) return "yellow";
+    if (uv < 8) return "orange";
+    return "red";
+  }
+  

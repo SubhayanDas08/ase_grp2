@@ -5,8 +5,16 @@ import locationRoutes from './routes/locationRoutes';
 import eventsRoutes from './routes/eventRoutes';
 import userRoutes from './routes/userRoutes';
 import weatherRoutes from "./routes/weatherRoutes";
+import trashPickupRoutes from "./routes/trashPickupRoutes";
 import dotenv from 'dotenv';
 import path from 'path';
+
+// 1. Import prom-client
+import {
+  collectDefaultMetrics,
+  register,
+  Histogram
+} from 'prom-client';
 
 // Load environment variables
 const envPath = path.resolve(__dirname, '.env');
@@ -14,18 +22,55 @@ const envPath = path.resolve(__dirname, '.env');
 
 dotenv.config({ path: envPath });
 
-
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
+// 2. Start collecting default metrics
+collectDefaultMetrics();
+
+// 3. Create a custom histogram to track HTTP request durations
+const httpRequestDurationMs = new Histogram({
+  name: 'http_request_duration_ms',
+  help: 'Duration of HTTP requests in ms',
+  // "method", "route", "status_code" can be used as labels in Grafana queries
+  labelNames: ['method', 'route', 'status_code'],
+  // Buckets for response time in milliseconds
+  buckets: [50, 100, 200, 300, 400, 500]
+});
+
+// 4. Middleware to measure each request's duration
+app.use((req, res, next) => {
+  // Start the timer
+  const end = httpRequestDurationMs.startTimer();
+
+  res.on('finish', () => {
+    // Stop the timer, record labels
+    end({
+      method: req.method,
+      // route might be undefined if no matching route; fallback to req.path
+      route: req.route?.path || req.path,
+      status_code: res.statusCode
+    });
+  });
+
+  next();
+});
+
 // Routes
 app.use('/locations', locationRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
 app.use('/weather', weatherRoutes);
+app.use('/trashPickup', trashPickupRoutes);
+
+// 5. Expose /metrics endpoint for Prometheus to scrape
+app.get('/metrics', async (req, res) => {
+  res.setHeader('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
 
 // PostgreSQL connection pool
 export const pool = new Pool({
@@ -34,8 +79,6 @@ export const pool = new Pool({
   database: process.env.PG_DATABASE || 'postgres',
   user: process.env.PG_USER || 'postgres',
   password: process.env.PG_PASSWORD || 'postgres',
-  // idleTimeoutMillis: 30000, // Closes idle clients after 30 sec
-  // connectionTimeoutMillis: 5000, // Timeout for new connections (5 sec)
 });
 
 // Test PostgreSQL connection
@@ -55,4 +98,3 @@ console.log('PG_USER:', process.env.PG_USER);
 console.log('PG_DATABASE:', process.env.PG_DATABASE);
 console.log('PG_PASSWORD:', process.env.PG_PASSWORD ? '****' : 'Not Set');
 console.log('REDIS_HOST:', process.env.REDIS_HOST);
-
