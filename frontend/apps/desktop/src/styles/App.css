@@ -74,6 +74,10 @@
   cursor: pointer;
   z-index: 40;
 }
+.widgetButton:hover {
+  background-color: var(--gradient1);
+  scale: 1.015;
+}
 
 .backgroundBlur {
   position: fixed;
