@@ -29,3 +29,4 @@ services:
 volumes:
   prom_data:
   grafana_data:
+
