@@ -24,7 +24,6 @@ function markerDataDisplay(station: any, weatherDatatype: string) {
           <>
             <p>Temperature: {station.weatherData.temp_c}°C</p>
             <p>Feels Like: {station.weatherData.feelslike_c}°C</p>
-            <p>Dewpoint: {station.weatherData.dewpoint_c}°C</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
@@ -39,6 +38,7 @@ function markerDataDisplay(station: any, weatherDatatype: string) {
         return (
           <>
             <p>Humidity: {station.weatherData.humidity}%</p>
+            <p>Dewpoint: {station.weatherData.dewpoint_c}°C</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
