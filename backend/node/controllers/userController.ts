@@ -6,6 +6,7 @@ import {
   getLocationData,
   getUserById,
   updateUserPasswordInDB,
+  updateUserFirstAndLastNameInDB,
 } from "../services/databaseService";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -379,6 +380,33 @@ export const changeUserPassword = async (
   } catch (error) {
     console.error("Error changing password:", error);
     return res.status(500).json({ error: "Internal Server Error2" });
+  }
+};
+
+export const updateFirstAndLastName = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  try {
+    const userId = (req as any).user?.id;
+    const { firstName, lastName } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if (!firstName || !lastName) {
+      return res
+        .status(400)
+        .json({ error: "First name and last name are required" });
+    }
+
+    await updateUserFirstAndLastNameInDB(userId, firstName, lastName);
+
+    res.status(200).json({ message: "Name updated successfully" });
+  } catch (error) {
+    console.error("Error updating name:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
