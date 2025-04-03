@@ -72,6 +72,7 @@
   border-radius: 50%;
   font-size: 35px;
   cursor: pointer;
+  z-index: 40;
 }
 
 .backgroundBlur {

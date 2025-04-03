@@ -42,7 +42,6 @@
   flex-direction: column;
   height: 300px;
   width: 560px;
-  @apply pb-5 ps-5 pe-5;
   background-color: var(--primaryColor1);
   border-radius: var(--cornerRadius);
   color: var(--textLight);

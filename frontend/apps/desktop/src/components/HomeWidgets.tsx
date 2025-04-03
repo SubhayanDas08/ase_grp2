@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { MapContainer, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 import { FiCloud, FiDroplet, FiSun, FiCloudRain, FiMapPin, FiCloudLightning, FiZap } from "react-icons/fi";
 
@@ -32,7 +34,7 @@ export function WeatherWidget() {
     ];
 
     return (
-        <Link to="/weather" className="widgetContainer">
+        <Link to="/weather" className="widgetContainer pb-5 ps-5 pe-5">
             <div className="flex h-[20%] justify-between items-center">
                 <div className="flex items-center">
                     <FiMapPin />
@@ -77,7 +79,7 @@ export function EventsWidget() {
         },
     ];
     return (
-        <Link to="/events" className="widgetContainer">
+        <Link to="/events" className="widgetContainer pb-5 ps-5 pe-5">
             <div className="flex h-[20%] justify-between items-center">
                 <div className="flex items-center">
                     <div className="ms-2 widgetTitle">Events</div>
@@ -106,9 +108,20 @@ export function EventsWidget() {
 }
 
 export function RoutesWidget() {
+    const position: [number, number] = [53.3498, -6.2603];
+
     return (
         <Link to="/routing" className="widgetContainer">
-            Map
+             <MapContainer
+                center={position}
+                zoom={13}
+                style={{ height: '100%', width: '100%', borderRadius: "var(--cornerRadius)", zIndex: 0 }}
+            >
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+            </MapContainer>
         </Link>
     )
 }
