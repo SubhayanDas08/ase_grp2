@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=grafana
+      - GF_SECURITY_ADMIN_PASSWORD=sustainablecitymanagement
     volumes:
       - grafana_data:/var/lib/grafana           # Persistent storage for Grafana dashboards and settings
       - ./grafana:/etc/grafana/provisioning     # Optional: provisioning files (datasources, dashboards, etc.)

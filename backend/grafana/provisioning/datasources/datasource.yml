@@ -1,0 +1,11 @@
+# filepath: /home/user/monitoring/grafana/provisioning/datasources/datasource.yml
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://10.154.0.5:9090  # URL of your Prometheus server
+    isDefault: true
+    version: 1
+    editable: true
