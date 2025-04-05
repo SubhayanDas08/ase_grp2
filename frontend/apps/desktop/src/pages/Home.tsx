@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import { IoCloseOutline, IoAdd, IoRemove } from "react-icons/io5";
 
@@ -7,26 +7,26 @@ import { WeatherWidget, EventsWidget, RoutesWidget } from "../components/HomeWid
 export default function Home() {
   const [editMode, setEditMode] = useState(false);
   const [showAddWidget, setShowAddWidget] = useState(false);
-  const [visibleWidgetStack, setVisibleWidgetStack] = useState<JSX.Element[]>([
-    <WeatherWidget />,
-    <EventsWidget />
-  ]);
-  const [hiddenWidgetStack, setHiddenWidgetStack] = useState<JSX.Element[]>([
-    <RoutesWidget />
-  ]);
+  const widgetDictionary: Record<string, JSX.Element> = {
+    weather: <WeatherWidget />,
+    events: <EventsWidget />,
+    routes: <RoutesWidget />
+  };
+  const [visibleWidgets, setVisibleWidgets] = useState<string[]>(["weather", "events"]);
+  const [hiddenWidgets, setHiddenWidgets] = useState<string[]>(["routes"]);
 
   const closeBtn = () => setShowAddWidget(false);
 
   const handleAddWidget = (index: number) => {
-    const widgetToAdd = hiddenWidgetStack[index];
-    setHiddenWidgetStack(prev => prev.filter((_, i) => i !== index));
-    setVisibleWidgetStack(prev => [...prev, widgetToAdd]);
+    const widgetToAdd = hiddenWidgets[index];
+    setHiddenWidgets(prev => prev.filter((_, i) => i !== index));
+    setVisibleWidgets(prev => [...prev, widgetToAdd]);
   };
   
   const handleRemoveWidget = (index: number) => {
-    const widgetToRemove = visibleWidgetStack[index];
-    setVisibleWidgetStack(prev => prev.filter((_, i) => i !== index));
-    setHiddenWidgetStack(prev => [...prev, widgetToRemove]);
+    const widgetToRemove = visibleWidgets[index];
+    setVisibleWidgets(prev => prev.filter((_, i) => i !== index));
+    setHiddenWidgets(prev => [...prev, widgetToRemove]);
   };
   
   const handleAddButtonClick = () => setShowAddWidget(!showAddWidget);
@@ -44,7 +44,7 @@ export default function Home() {
           </button>
         </div>
         <div className="flex w-full gap-5 overflow-auto flex-wrap justify-around">
-          {hiddenWidgetStack.map((widget, index) => (
+          {hiddenWidgets.map((key, index) => (
             <div key={index} className="relative">
               <button
                 className="absolute right-0 widgetButton"
@@ -52,13 +52,28 @@ export default function Home() {
               >
                 <IoAdd />
               </button>
-              <div className="pointer-events-none">{widget}</div>
+              <div className="pointer-events-none">{widgetDictionary[key]}</div>
             </div>
           ))}
         </div>
       </div>
     );
   }
+
+  useEffect(() => {
+    const savedVisible = localStorage.getItem("visibleWidgets");
+    const savedHidden = localStorage.getItem("hiddenWidgets");
+  
+    if (savedVisible && savedHidden) {
+      setVisibleWidgets(JSON.parse(savedVisible));
+      setHiddenWidgets(JSON.parse(savedHidden));
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem("visibleWidgets", JSON.stringify(visibleWidgets));
+    localStorage.setItem("hiddenWidgets", JSON.stringify(hiddenWidgets));
+  }, [visibleWidgets, hiddenWidgets]);
 
   return (
     <div className="h-full w-full flex flex-col relative">
@@ -93,7 +108,7 @@ export default function Home() {
       <div className="flex flex-col h-full w-full overflow-y-auto">
         {/* Widgets Section */}
         <div className="flex flex-wrap gap-5">
-          {visibleWidgetStack.map((widget, index) => (
+          {visibleWidgets.map((key, index) => (
             <div key={index} className="relative">
               {editMode && (
                 <button
@@ -103,7 +118,7 @@ export default function Home() {
                   <IoRemove />
                 </button>
               )}
-              <div className={editMode ? "pointer-events-none" : ""}>{widget}</div>
+              <div className={editMode ? "pointer-events-none" : ""}>{widgetDictionary[key]}</div>
             </div>
           ))}
         </div>
