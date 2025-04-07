@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LoadScript } from "@react-google-maps/api";
@@ -8,7 +8,6 @@ import { LoadScript } from "@react-google-maps/api";
 const GOOGLE_MAPS_API_KEY = "AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY";
 
 // Point this to your FastAPI endpoint
-// e.g., if your FastAPI server is on port 8000:
 const API_URL = "http://127.0.0.1:8000/predict/trafficCongestion";
 
 // Define a type for the data returned from the API
@@ -18,30 +17,22 @@ type TrafficPoint = {
   congestionIndex: number;
 };
 
+// Get current date and month
+const currentDate = new Date();
+const currentDay = String(currentDate.getDate());
+const currentMonthName = currentDate.toLocaleString("default", { month: "long" });
+
 export default function Traffic() {
-  // State to hold the returned traffic data (or null if not fetched)
   const [trafficPoint, setTrafficPoint] = useState<TrafficPoint | null>(null);
-
-  // State for selected coordinates from the location search
   const [selectedCoords, setSelectedCoords] = useState<[number, number] | null>(null);
-
-  // Default map center (Dublin, Ireland as an example)
   const [mapCenter, setMapCenter] = useState<[number, number]>([53.3498, -6.2603]);
-
-  // Date, Month, Year, Time states (customize as needed)
-  const [selectedDate, setSelectedDate] = useState("1");
-  const [selectedMonth, setSelectedMonth] = useState("January");
-  // If you want a year selector, add it. For now, it's static or unused.
+  const [selectedDate, setSelectedDate] = useState(currentDay);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
   const [selectedYear] = useState("2025");
   const [selectedTime, setSelectedTime] = useState("00:00");
-
-  // For displaying any errors (e.g., if user tries to fetch without selecting a location)
   const [error, setError] = useState("");
-
-  // Reference to the input field for Google Autocomplete
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Mapping month names to month numbers for the API payload
   const monthNameToNumber: { [key: string]: number } = {
     January: 1,
     February: 2,
@@ -57,24 +48,20 @@ export default function Traffic() {
     December: 12,
   };
 
-  // Fetch traffic data from the FastAPI backend
   const fetchTrafficDataFromAPI = async () => {
     if (!selectedCoords) {
       setError("Please select a location first.");
       return;
     }
 
-    // Destructure the selected latitude/longitude
     const [lat, lng] = selectedCoords;
 
-    // Build the payload according to what your API expects
     const payload = {
       latitude: lat,
       longitude: lng,
       hour: parseInt(selectedTime.split(":")[0]),
       month: monthNameToNumber[selectedMonth],
       day: parseInt(selectedDate),
-      // year: parseInt(selectedYear) // If needed by your backend
     };
 
     try {
@@ -91,7 +78,6 @@ export default function Traffic() {
       }
 
       const data = await response.json();
-      // Expecting something like { "congestion_index": [0 or 1 or 2, ...] }
       const index = data.congestion_index?.[0] ?? 0;
 
       setTrafficPoint({
@@ -107,19 +93,15 @@ export default function Traffic() {
     }
   };
 
-  // Set up Google Maps Autocomplete once Google is available
   useEffect(() => {
     const timeout = setTimeout(() => {
-      // If google is not loaded or input ref is null, return
       if (!inputRef.current || !window.google) return;
 
-      // Create the Google Maps Autocomplete
       const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current!, {
-        componentRestrictions: { country: "IE" }, // Or remove if you want worldwide
+        componentRestrictions: { country: "IE" },
         fields: ["geometry"],
       });
 
-      // Listen for "place_changed" event
       autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
         if (place.geometry?.location) {
@@ -128,7 +110,7 @@ export default function Traffic() {
 
           setMapCenter([lat, lng]);
           setSelectedCoords([lat, lng]);
-          setTrafficPoint(null); // Clear any old traffic data
+          setTrafficPoint(null);
           setError("");
         }
       });
@@ -137,8 +119,6 @@ export default function Traffic() {
     return () => clearTimeout(timeout);
   }, []);
 
-  // Return a color for each congestion index
-  // 0 => lightgreen, 1 => green, 2 => yellow, 3 => orange, 4 => red
   function getColorForIndex(index: number): string {
     switch (index) {
       case 0:
@@ -152,11 +132,10 @@ export default function Traffic() {
       case 4:
         return "red";
       default:
-        return "gray"; // fallback
+        return "gray";
     }
   }
 
-  // NEW FUNCTION: Map index to descriptive text
   function getDescriptionForIndex(index: number): string {
     switch (index) {
       case 0:
@@ -174,7 +153,6 @@ export default function Traffic() {
     }
   }
 
-  // Leaflet custom icon: small colored circle
   function getCircularIcon(color: string) {
     return L.divIcon({
       html: `<div style="
@@ -189,14 +167,21 @@ export default function Traffic() {
     });
   }
 
+  // Component to fly to the new location
+  function FlyToLocation({ lat, lng }: { lat: number; lng: number }) {
+    const map = useMap();
+    useEffect(() => {
+      map.flyTo([lat, lng], 15, { duration: 1.5 });
+    }, [lat, lng, map]);
+    return null;
+  }
+
   return (
     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
       <div>
         <h2 className="text-2xl font-bold mb-4">Traffic</h2>
 
-        {/* Controls for searching location, date, time, etc. */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
-          {/* Autocomplete input */}
           <input
             ref={inputRef}
             type="text"
@@ -204,7 +189,6 @@ export default function Traffic() {
             className="w-60 p-2 border border-gray-300 rounded-md bg-white text-black"
           />
 
-          {/* Day selector (1-31) */}
           <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
             {[...Array(31)].map((_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -213,7 +197,6 @@ export default function Traffic() {
             ))}
           </select>
 
-          {/* Month selector */}
           <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
             {Object.keys(monthNameToNumber).map((month) => (
               <option key={month} value={month}>
@@ -222,7 +205,6 @@ export default function Traffic() {
             ))}
           </select>
 
-          {/* Time selector (00:00 to 23:00) */}
           <select value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)}>
             {[...Array(24)].map((_, h) => {
               const time = `${String(h).padStart(2, "0")}:00`;
@@ -234,7 +216,6 @@ export default function Traffic() {
             })}
           </select>
 
-          {/* "Go" button to trigger the fetch */}
           <button
             onClick={fetchTrafficDataFromAPI}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -242,19 +223,17 @@ export default function Traffic() {
             Go
           </button>
 
-          {/* Error display */}
           {error && <div style={{ color: "red", fontWeight: "bold" }}>{error}</div>}
         </div>
 
-        {/* Map Container */}
         <div style={{ width: "100%", height: "700px", marginTop: "1rem" }}>
           <MapContainer center={mapCenter} zoom={15} style={{ width: "100%", height: "100%", borderRadius: "25px" }}>
-            {/* Basic openstreetmap tiles */}
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-            {/* If we have traffic data, show Circle + Marker */}
             {trafficPoint && (
               <>
+                <FlyToLocation lat={trafficPoint.lat} lng={trafficPoint.lng} />
+
                 <Circle
                   center={[trafficPoint.lat, trafficPoint.lng]}
                   radius={300}
@@ -271,7 +250,6 @@ export default function Traffic() {
                   zIndexOffset={1000}
                 >
                   <Popup>
-                    {/* Display the date, time, and descriptive congestion */}
                     <div>
                       <p>
                         <strong>Date:</strong> {selectedDate} {selectedMonth}, {selectedYear}
