@@ -145,7 +145,7 @@ export default function Routing() {
         if (!startLocation || !endLocation) return;
 
         try {
-            const url = `https://graphhopper.com/api/1/route?point=${startLocation[0]},${startLocation[1]}&point=${endLocation[0]},${endLocation[1]}&profile=${transportMode}&locale=en&points_encoded=false&algorithm=alternative_route&alternative_route_max_paths=3&key=${import.meta.env.APP_VITE_GRAPHHOPPER_API_KEY}`;
+            const url = `https://graphhopper.com/api/1/route?point=${startLocation[0]},${startLocation[1]}&point=${endLocation[0]},${endLocation[1]}&profile=${transportMode}&locale=en&points_encoded=false&algorithm=alternative_route&alternative_route_max_paths=3&key=${import.meta.env.VITE_GRAPHHOPPER_API_KEY}`;
             const response = await axios.get(url);
             const paths: GraphHopperPath[] = response.data.paths;
 
