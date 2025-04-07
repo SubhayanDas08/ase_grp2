@@ -4,6 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Signup from './Components/Signup';
 import Login from './Components/Login';
+import homePage from './Components/homePage';
+import Menu from './Components/Menu';
+import MapVisual from './Components/MapVisual';
+import Traffic from './Components/Traffic';
 
 export default function App() {
  
@@ -24,6 +28,34 @@ export default function App() {
          <Stack.Screen
           name="Login"
           component={Login}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+        <Stack.Screen
+          name="homePage"
+          component={homePage}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+            <Stack.Screen
+          name="Menu"
+          component={Menu}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+        <Stack.Screen
+          name="MapVisual"
+          component={MapVisual}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+        <Stack.Screen
+          name="Traffic"
+          component={Traffic}
           options={{
             headerShown: false, // Hide the header for Signup
           }}
