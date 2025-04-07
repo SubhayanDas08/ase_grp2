@@ -21,6 +21,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env                                   # Load environment variables from .env
+    environment:
+      - GF_SERVER_ROOT_URL=https://city-management.walter-wm.de/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
     volumes:
       - grafana_data:/var/lib/grafana           # Persistent storage for Grafana dashboards and settings
       - ./grafana:/etc/grafana/provisioning     # Optional provisioning files (datasources, dashboards, etc.)
