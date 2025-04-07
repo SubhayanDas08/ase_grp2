@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import FetchUserLocation from "../utils/fetchUserLocation.ts";
 import UpdateMapView from "../utils/updateMapView.ts";
 import Select, { SingleValue } from "react-select";
@@ -106,6 +105,15 @@ const LocationSearch = ({ label, onSelect }: LocationSearchProps) => {
     );
 };
 
+// Component to fly to the new location
+const FlyToLocation = ({ lat, lng }: { lat: number; lng: number }) => {
+    const map = useMap();
+    useEffect(() => {
+        map.flyTo([lat, lng], 14, { duration: 1.5 });
+    }, [lat, lng, map]);
+    return null;
+}
+
 export default function Routing() {
     const [position, setPosition] = useState<[number, number] | null>();
     const [startLocation, setStartLocation] = useState<[number, number] | null>(null);
@@ -204,11 +212,13 @@ export default function Routing() {
                     )}
                     {startLocation && (
                         <Marker position={startLocation}>
+                            <FlyToLocation lat={startLocation[0]} lng={startLocation[1]} />
                             <Popup>Start Location</Popup>
                         </Marker>
                     )}
                     {endLocation && (
                         <Marker position={endLocation}>
+                            <FlyToLocation lat={endLocation[0]} lng={endLocation[1]} />
                             <Popup>End Location</Popup>
                         </Marker>
                     )}
