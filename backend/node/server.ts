@@ -8,6 +8,7 @@ import weatherRoutes from "./routes/weatherRoutes";
 import trashPickupRoutes from "./routes/trashPickupRoutes";
 import dotenv from 'dotenv';
 import path from 'path';
+import { trackApiMetrics } from './middleware/apiMetrics';
 
 // 1. Import prom-client
 import {
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use(trackApiMetrics);
 app.use('/locations', locationRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
