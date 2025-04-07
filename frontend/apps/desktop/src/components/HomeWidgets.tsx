@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { FiCloud, FiDroplet, FiSun, FiCloudRain, FiMapPin, FiCloudLightning, FiZap } from "react-icons/fi";
+import { FiCloud, FiDroplet, FiSun, FiCloudRain, FiMapPin } from "react-icons/fi";
+import { FaBolt } from "react-icons/fa";
 
 import { getWeatherDetails } from "../../../../shared/utils/weather-map/getWeatherDetails.ts";
 import FetchUserLocation from "../utils/fetchUserLocation.ts";
 import UpdateMapView from "../utils/updateMapView.ts";
+import { authenticatedGet } from "../utils/auth.ts";
 
 export function WeatherWidget() {
     const [userCity, setUserCity] = useState<string>("");
@@ -125,47 +127,77 @@ export function WeatherWidget() {
 }
 
 export function EventsWidget() {
-    const widgetContentItems = [
-        {
-            title: "Lightning strike in Hamilton Gardens",
-            time: "20 min ago",
-            secondaryInfo: "Burning houses, People crying",
-            icon: <FiCloudLightning className="widgetIcons" />
-        },
-        {
-            title: "Chain Reaction Collision",
-            time: "15:45",
-            secondaryInfo: "approx. 100 cars and 3 buses involved",
-            icon: <FiZap className="widgetIcons" />
-        },
-    ];
-    return (
+    interface Event {
+        id: string;
+        name: string;
+        event_time:string;
+        event_date: string;
+        location: string;
+    }
+    
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+              const data = await authenticatedGet<Event[]>("/events/");
+              setEvents(data);
+            } catch (error) {
+              console.error("Error fetching events:", error);
+            } finally {
+              setLoading(false);
+            }
+          };
+      
+          fetchEvents();
+        }, []);
+
+        const widgetContentItems = events.map((event) => ({
+            title: event.name,
+            secondaryInfo: event.location,
+            time: `${new Date(event.event_date).toLocaleDateString()} ${event.event_time.slice(0, 5)}`,
+            icon: <FaBolt className="widgetIcons"/>,
+          }));
+    
+      if (loading) return <p>Loading events...</p>;
+    
+      return (
         <Link to="/events" className="widgetContainer pb-5 ps-5 pe-5">
-            <div className="flex h-[20%] justify-between items-center">
-                <div className="flex items-center">
-                    <div className="ms-2 widgetTitle">Events</div>
-                </div>
+          <div className="flex h-[20%] justify-between items-center">
+            <div className="flex items-center">
+              <div className="ms-2 widgetTitle">Events</div>
             </div>
-            <div className="grid grid-cols-1 gap-5 h-[80%]">
-                {widgetContentItems.map((item, index) => (
-                    <div key={index} className="widgetContainerItemContainer">
-                        <div className="w-24 flex justify-center items-center">
-                            <div className="h-16 w-16 flex items-center justify-center rounded-full bg-white">
-                                {item.icon}
-                            </div>
-                        </div>
-                        <div className="flex flex-col flex-1 pt-2 justify-center">
-                            <div className="widgetTitle font-bold">{item.title}</div>
-                            <div className="flex justify-between">
-                                <div className="widgetTitleSecondary">{item.secondaryInfo}</div>
-                                <div className="widgetTitleSecondary">{item.time}</div>
-                            </div>
-                        </div>
+          </div>
+          <div className="grid grid-cols-1 gap-5 h-[80%] overflow-y-auto pr-2">
+            {loading ? (
+              <div className="widgetTitleSecondary">Loading...</div>
+            ) : widgetContentItems.length === 0 ? (
+              <div className="widgetTitleSecondary">No upcoming events</div>
+            ) : (
+              widgetContentItems.map((item, index) => (
+                <div key={index} className="widgetContainerItemContainer h-22">
+                  <div className="w-24 flex justify-center items-center">
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-white"
+                    >
+                      {item.icon}
                     </div>
-                ))}
-            </div>
+                  </div>
+                  <div className="flex flex-col flex-1 justify-center">
+                    <div className="widgetTitle font-bold">{item.title}</div>
+                    <div className="flex justify-between">
+                      <div className="widgetTitleSecondary ">{item.secondaryInfo.length > 20
+                        ? item.secondaryInfo.slice(0, 45) + "..."
+                        : item.secondaryInfo}</div>
+                      <div className="widgetTitleSecondary font-semibold">{item.time}</div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </Link>
-    );
+      );
 }
 
 export function RoutesWidget() {
