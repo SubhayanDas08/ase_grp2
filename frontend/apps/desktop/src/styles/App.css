@@ -103,3 +103,17 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+/* Routing */
+.routeSelectButton {
+  width: 100%;
+  color: var(--textLight);
+  background-color: var(--primaryColor1);
+  border-radius: var(--cornerRadius);
+  @apply py-2;
+  cursor: pointer;
+}
+.routeSelectButton:hover {
+  background-color: var(--primaryColor2);
+  scale: 1.015;
+}
