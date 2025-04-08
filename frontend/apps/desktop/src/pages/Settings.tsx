@@ -48,7 +48,8 @@ export default function Settings({setUserAuthenticated, onLogout}:SettingsProps)
                     </div>
 
                     {/* About */}
-                    <div className="flex items-center primaryGradient rounded-3xl h-20 hover:cursor-pointer">
+                    <div className="flex items-center primaryGradient rounded-3xl h-20 hover:cursor-pointer"
+                    onClick={()=>navigate("/settings/about")}>
                     <div className="w-14 h-14 ml-5 flex items-center justify-center rounded-full bg-white text-primaryColor2">
                             <FaInfoCircle className="text-2xl" />
                         </div>
