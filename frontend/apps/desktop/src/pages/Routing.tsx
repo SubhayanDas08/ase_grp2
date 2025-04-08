@@ -33,13 +33,14 @@ const TRANSPORT_OPTIONS: TransportOption[] = [
     { value: "car", label: "Car" },
     { value: "bike", label: "Bike" },
     { value: "foot", label: "Walking" },
+    { value: "bus", label: "Public Transport" }
 ];
 
 const LocationSearch = ({ label, onSelect }: LocationSearchProps) => {
     const [query, setQuery] = useState<string>("");
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
-    const fetchSuggestions = async (input: string) => {
+    const fetchLocationFormSuggestions = async (input: string) => {
         if (!input) return;
         try {
             const response = await axios.get(
@@ -81,11 +82,11 @@ const LocationSearch = ({ label, onSelect }: LocationSearchProps) => {
             <input
                 type="text"
                 className="w-full p-2 border rounded mt-1"
-                placeholder="Search location..."
+                placeholder={label.startsWith("Start") ? "Current location" : "Search location..."}
                 value={query}
                 onChange={(e) => {
                     setQuery(e.target.value);
-                    fetchSuggestions(e.target.value);
+                    fetchLocationFormSuggestions(e.target.value);
                 }}
             />
             {suggestions.length > 0 && (
@@ -135,6 +136,7 @@ export default function Routing() {
                     const isValidLon = typeof lon === "number" && lon >= -180 && lon <= 180;
                     if (isValidLat && isValidLon) {
                         setPosition([lat, lon]);
+                        setStartLocation([lat, lon]);
                     } else {
                         setPosition(null);
                     }
