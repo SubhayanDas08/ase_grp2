@@ -25,6 +25,7 @@ import SettingsProfile from "./pages/SettingsProfile.tsx";
 import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
 import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 import { useAuth } from "./utils/useAuth.ts";
+import About from "./pages/About.tsx";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { userAuthenticated, loading } = useAuth();
@@ -124,6 +125,11 @@ export default function App() {
       component: <ReportAnIssue setUserAuthenticated={setUserAuthenticated} />,
       permission: "",
     },
+    {
+      path: "/settings/about",
+      component: <About setUserAuthenticated={setUserAuthenticated} />,
+      permission: "",
+    }
   ];
 
   if (loading) {
