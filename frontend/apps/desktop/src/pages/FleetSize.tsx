@@ -14,7 +14,15 @@ export default function FleetSize(): JSX.Element {
     const [year, setYear] = useState("");
     const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
     const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-    const [dialogue, setDialogue] = useState<string>(""); // New state for dialogue
+    const [dialogue, setDialogue] = useState<string>(""); 
+    const currentFleetSizes: Record<string, number> = {
+        "Dublin Bus": 501,
+        "Cork city": 115,
+        "Galway city": 52,
+        "Limerick city": 33,
+        "Waterford city": 10,
+    };
+    
 
     useEffect(() => {
         const getDaysAndYear = (monthName: string) => {
@@ -150,7 +158,7 @@ export default function FleetSize(): JSX.Element {
                     {recommendations.map((rec, index) => (
                         <div
                             key={index}
-                            className="flex items-center h-20 rounded-3xl primaryGradient hover:cursor-pointer"
+                            className="flex items-center h-25 rounded-3xl primaryGradient hover:cursor-pointer"
                         >
                             <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
                                 <FaBolt className="text-2l" />
@@ -159,6 +167,10 @@ export default function FleetSize(): JSX.Element {
                                 <div className="text-lg font-semibold textLight">
                                     {rec["Bus City Services"]}
                                 </div>
+                                <div className="textLight">
+                                <span className="textLight font-semibold">Current Fleet Size:</span>{" "}
+                                {currentFleetSizes[rec["Bus City Services"]] || "N/A"}
+                            </div>
                                 <div className="textLight">
                                     <span className="textLight font-semibold">Recommended Fleet Size:</span>{" "}
                                     {rec["Recommended Buses"]}
