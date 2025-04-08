@@ -22,7 +22,7 @@ interface SettingsProps {
                 </div>
             </div>
             <div className="italic">
-            This application was developed by Team 2 as part of the Advanced Software Engineering module. It focuses on building smart, data-driven solutions to support sustainable urban living.
+            This application has been developed by Team 2 as part of the Advanced Software Engineering module. It focuses on building smart, sustainable and data-driven solutions to support sustainable urban living in Dublin.
             <div className="mt-5">
             Team Members:
             <ul className="list-disc ml-6 mt-2">
