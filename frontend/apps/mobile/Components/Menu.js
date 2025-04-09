@@ -11,10 +11,10 @@ import { Ionicons } from "@expo/vector-icons";
 const Menu = ({ navigation }) => {
   const menuItems = [
     { title: "Home", icon: "home-outline", screen: "homePage" },
-    { title: "Map", icon: "map-outline", screen: "MapVisual" }, // ✅ updated here
+    { title: "Map", icon: "map-outline", screen: "MapVisual" },
     { title: "Events", icon: "list-outline", screen: "Events" },
     { title: "Traffic", icon: "bus-outline", screen: "Traffic" },
-    { title: "Waste Management", icon: "trash-outline", screen: "Waste" },
+    { title: "Efficient Routes", icon: "navigate-outline", screen: "EfficientRoutes" }, // ✅ updated
     { title: "Settings", icon: "settings-outline", screen: "Settings" },
   ];
 

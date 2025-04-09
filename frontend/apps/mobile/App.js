@@ -8,6 +8,10 @@ import homePage from './Components/homePage';
 import Menu from './Components/Menu';
 import MapVisual from './Components/MapVisual';
 import Traffic from './Components/Traffic';
+import Settings from './Components/Settings';
+import UserProfile from './Components/UserProfile';
+import ReportIssue from './Components/ReportIssue';
+import EfficientRoutes from './Components/EfficientRoutes';
 
 export default function App() {
  
@@ -56,6 +60,34 @@ export default function App() {
         <Stack.Screen
           name="Traffic"
           component={Traffic}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={Settings}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+         <Stack.Screen
+          name="ReportIssue"
+          component={ReportIssue}
+          options={{
+            headerShown: false, // Hide the header for Signup
+          }}
+        />
+         <Stack.Screen
+          name="EfficientRoutes"
+          component={EfficientRoutes}
           options={{
             headerShown: false, // Hide the header for Signup
           }}
