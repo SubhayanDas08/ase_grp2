@@ -8,7 +8,7 @@ import { LoadScript } from "@react-google-maps/api";
 const GOOGLE_MAPS_API_KEY = "AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY";
 
 // Point this to your FastAPI endpoint
-const API_URL = "http://127.0.0.1:8000/predict/trafficCongestion";
+const API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion";
 
 // Define a type for the data returned from the API
 type TrafficPoint = {
