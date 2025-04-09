@@ -22,37 +22,37 @@ function markerDataDisplay(station: any, weatherDatatype: string) {
       case "temp":
         return (
           <>
-            <p>Temperature: {station.weatherData.temp_c || "N/A"}°C</p>
-            <p>Feels Like: {station.weatherData.feelslike_c || "N/A"}°C</p>
-            <p>Dewpoint: {station.weatherData.dewpoint_c || "N/A"}°C</p>
+            <p>Temperature: {station.weatherData.temp_c}°C</p>
+            <p>Feels Like: {station.weatherData.feelslike_c}°C</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
       case "wind_kph":
         return (
           <>
-            <p>Wind Speed: {station.weatherData.wind_kph || "N/A"} km/h</p>
+            <p>Wind Speed: {station.weatherData.wind_kph} km/h</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
       case "humidity":
         return (
           <>
-            <p>Humidity: {station.weatherData.humidity || "N/A"}%</p>
+            <p>Humidity: {station.weatherData.humidity}%</p>
+            <p>Dewpoint: {station.weatherData.dewpoint_c}°C</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
       case "precip_mm":
         return (
           <>
-            <p>Precipitation: {station.weatherData.precip_mm || "N/A"} mm</p>
+            <p>Precipitation: {station.weatherData.precip_mm} mm</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
       case "uv":
         return (
           <>
-            <p>UV Index: {station.weatherData.uv || "N/A"}</p>
+            <p>UV Index: {station.weatherData.uv}</p>
             <p>Lat: {station.lat}, Lon: {station.lon}</p>
           </>
       );
