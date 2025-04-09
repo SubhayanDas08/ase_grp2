@@ -29,7 +29,7 @@ export const getUserById = async (userId: string): Promise<any> => {
   try {
     client = await pool.connect();
     const query =
-      "SELECT id, first_name, last_name, email, phone_number, domain FROM users WHERE id = $1";
+      "SELECT id, first_name, last_name, email, phone_number, domain, password FROM users WHERE id = $1";
     const result = await client.query(query, [userId]);
 
     if (result.rows.length > 0) {
@@ -135,6 +135,78 @@ export const saveRegistrationData = async (
     return savedUser;
   } catch (error) {
     console.error("Error saving user data:", error);
+    throw error;
+  } finally {
+    client?.release();
+  }
+};
+
+// Updating Password of a User
+export const updateUserPasswordInDB = async (
+  userId: string,
+  hashedPassword: string,
+): Promise<void> => {
+  let client: PoolClient | undefined;
+
+  try {
+    client = await pool.connect();
+
+    const query = `UPDATE users SET password = $1 WHERE id = $2`;
+    const values = [hashedPassword, userId];
+
+    await client.query(query, values);
+
+    console.log(`Password updated successfully for user ID: ${userId}`);
+  } catch (error) {
+    console.error("Error updating user password:", error);
+    throw error;
+  } finally {
+    client?.release();
+  }
+};
+
+export const fetchRouteDetails = async (
+  county: string,
+  pickup_day: string,
+): Promise<any> => {
+  let client: PoolClient | undefined;
+
+  try {
+    client = await pool.connect();
+    const query = `SELECT * FROM trash_pickup WHERE county = $1 AND pickup_day = $2`;
+    const result = await client.query(query, [county, pickup_day]);
+
+    if (result.rows.length > 0) {
+      return result.rows;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching route details:", error);
+    throw error;
+  } finally {
+    client?.release();
+  }
+};
+
+export const updateUserFirstAndLastNameInDB = async (
+  userId: string,
+  firstName: string,
+  lastName: string,
+): Promise<void> => {
+  let client: PoolClient | undefined;
+
+  try {
+    client = await pool.connect();
+
+    const query = `UPDATE users SET first_name = $1, last_name = $2 WHERE id = $3`;
+    const values = [firstName, lastName, userId];
+
+    await client.query(query, values);
+
+    console.log(`Name updated successfully for user ID: ${userId}`);
+  } catch (error) {
+    console.error("Error updating user name:", error);
     throw error;
   } finally {
     client?.release();
