@@ -39,9 +39,7 @@ export default function LocationSearch ({ label, onSelect, setLocationData }: Lo
                 location.status.success &&
                 location.coordinate &&
                 location.coordinate.latitude &&
-                location.coordinate.longitude &&
-                location.id &&
-                location.type
+                location.coordinate.longitude
             );
 
             const mappedSuggestions: Suggestion[] = validLocations.map((place: any) => ({

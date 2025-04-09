@@ -37,6 +37,49 @@ interface locationData {
     lon: number;
 }
 
+const locationNameFromCoordinates = async (lat: number, lon: number) => {
+    try {
+        const apiUrl = 'https://api-lts.transportforireland.ie/lts/lts/v1/public/reverseLocationLookup';
+
+        const requestBody = {
+            "coord": {
+                "longitude": lon,
+                "latitude": lat,
+                "pixel": [
+                    170.55027141873433,
+                    440.6569131791863
+                ]
+            },
+            "type": [
+                "AIR_PORT",
+                "BUS_STOP",
+                "COACH_STOP",
+                "FERRY_PORT",
+                "TRAIN_STATION",
+                "TRAM_STOP",
+                "TRAM_STOP_AREA",
+                "UNDERGROUND_STOP",
+                "ADDRESS",
+                "COORDINATE",
+                "LOCALITY",
+                "POINT_OF_INTEREST",
+                "STREET"
+            ],
+            "language": "en"
+        };
+        
+        const response = await axios.post(apiUrl, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Ocp-Apim-Subscription-Key': import.meta.env.VITE_PUBLIC_TRANSPORT_API_KEY
+            }
+        });
+        return response.data.name;
+    } catch (error) {
+        console.error("Error fetching location name:", error);
+    }
+};
+
 const fetchLocationDetailsFromName = async (name: string) => {
     try {
         const response = await axios.get(
@@ -88,49 +131,6 @@ export default function Routing() {
     const [showRoutePopup, setShowRoutePopup] = useState<boolean>(false);
 
     useEffect(() => {
-        const locationNameFromCoordinates = async (lat: number, lon: number) => {
-            try {
-                const apiUrl = 'https://api-lts.transportforireland.ie/lts/lts/v1/public/reverseLocationLookup';
-        
-                const requestBody = {
-                    "coord": {
-                        "longitude": lon,
-                        "latitude": lat,
-                        "pixel": [
-                            170.55027141873433,
-                            440.6569131791863
-                        ]
-                    },
-                    "type": [
-                        "AIR_PORT",
-                        "BUS_STOP",
-                        "COACH_STOP",
-                        "FERRY_PORT",
-                        "TRAIN_STATION",
-                        "TRAM_STOP",
-                        "TRAM_STOP_AREA",
-                        "UNDERGROUND_STOP",
-                        "ADDRESS",
-                        "COORDINATE",
-                        "LOCALITY",
-                        "POINT_OF_INTEREST",
-                        "STREET"
-                    ],
-                    "language": "en"
-                };
-                
-                const response = await axios.post(apiUrl, requestBody, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Ocp-Apim-Subscription-Key': import.meta.env.VITE_PUBLIC_TRANSPORT_API_KEY
-                    }
-                });
-                return response.data.name;
-            } catch (error) {
-                console.error("Error fetching location name:", error);
-            }
-        };
-
         const fetchLocation = async () => {
             try {
                 const userLocationData = await FetchUserLocation();
@@ -141,10 +141,33 @@ export default function Routing() {
                     if (isValidLat && isValidLon) {
                         setPosition([lat, lon]);
                         setStartLocation([lat, lon]);
-                        //const locationName = await locationNameFromCoordinates(lat, lon);
-                        //fetchLocationDetailsFromName(locationName).then((response) => {
-                            //console.log("Location details:", response.data);
-                        //});
+                        // Get the name of the current location using reverse lookup:
+                        const locationName = await locationNameFromCoordinates(lat, lon);
+                        // Call your lookup function with the name
+                        fetchLocationDetailsFromName(locationName).then((response) => {
+                            // Assuming response.data is an array of locations,
+                            // select the first one from the list and update state.
+                            if (response && response.data && response.data.length > 0) {
+                                const firstLocation = response.data[0];
+                                setStartLocationData({
+                                    id: firstLocation.id || "",
+                                    name: firstLocation.name || locationName,
+                                    type: firstLocation.type || "",
+                                    lat: firstLocation.coordinate.latitude || lat,
+                                    lon: firstLocation.coordinate.longitude || lon,
+                                });
+                            } else {
+                                console.warn("No valid location details found, using default location info");
+                                // Fallback: set default details using the reverse lookup name and user's coordinates.
+                                setStartLocationData({
+                                    id: "",
+                                    name: locationName,
+                                    type: "",
+                                    lat,
+                                    lon,
+                                });
+                            }
+                        });
                     } else {
                         setPosition(null);
                     }
@@ -206,14 +229,15 @@ export default function Routing() {
                       "type": endLocationData.type
                     },
                     "via": null
-                  };
-                  const response = await axios.post(apiUrl, requestBody, {
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Ocp-Apim-Subscription-Key': import.meta.env.VITE_PUBLIC_TRANSPORT_API_KEY
-                    }
-                  });
-                  const { stops, routes, descriptions, legDurations } = processTFIJourneys(response.data);
+                };
+                const response = await axios.post(apiUrl, requestBody, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Ocp-Apim-Subscription-Key': import.meta.env.VITE_PUBLIC_TRANSPORT_API_KEY
+                }
+                });
+                console.log(response.data);
+                //const { stops, routes, descriptions, legDurations } = processTFIJourneys(response.data);
 
             } else {
                 const url = `https://graphhopper.com/api/1/route?point=${startLocation[0]},${startLocation[1]}&point=${endLocation[0]},${endLocation[1]}&profile=${transportMode}&locale=en&points_encoded=false&algorithm=alternative_route&alternative_route_max_paths=3&key=${import.meta.env.VITE_GRAPHHOPPER_API_KEY}`;
