@@ -6,24 +6,15 @@ import UpdateMapView from "../utils/updateMapView.ts";
 import Select, { SingleValue } from "react-select";
 import axios from "axios";
 
-interface LocationSearchProps {
-    label: string;
-    onSelect: (value: [number, number]) => void;
-    setLocationData: (data: {
-        id: string;
-        name: string;
-        type: string;
-        lat: number;
-        lon: number;
-    }) => void;
-}
+import LocationSearch from "../components/locationSearch.tsx";
+import processTFIJourneys from "../components/processTFIJourneys.tsx";
 
-interface Suggestion {
-    label: string;
-    value: [number, number];
-    id: string;
-    type: string;
-}
+const TRANSPORT_OPTIONS: TransportOption[] = [
+    { value: "car", label: "Car" },
+    { value: "bike", label: "Bike" },
+    { value: "foot", label: "Walking" },
+    { value: "bus", label: "Public Transport" }
+];
 
 interface TransportOption {
     value: string;
@@ -38,12 +29,13 @@ interface GraphHopperPath {
     time: number;
 }
 
-const TRANSPORT_OPTIONS: TransportOption[] = [
-    { value: "car", label: "Car" },
-    { value: "bike", label: "Bike" },
-    { value: "foot", label: "Walking" },
-    { value: "bus", label: "Public Transport" }
-];
+interface locationData {
+    id: string;
+    name: string;
+    type: string;
+    lat: number;
+    lon: number;
+}
 
 const fetchLocationDetailsFromName = async (name: string) => {
     try {
@@ -61,86 +53,6 @@ const fetchLocationDetailsFromName = async (name: string) => {
     }
 }
 
-
-const LocationSearch = ({ label, onSelect, setLocationData }: LocationSearchProps) => {
-    const [query, setQuery] = useState<string>("");
-    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-
-    const fetchLocationFormSuggestions = async (input: string) => {
-        if (!input) return;
-        try {
-            const response = await axios.get(
-                `https://api-lts.transportforireland.ie/lts/lts/v1/public/locationLookup?query=${input}&language=en`,
-                {
-                    headers: {
-                        'Ocp-Apim-Subscription-Key': import.meta.env.VITE_ROUTES_SEARCH_KEY
-                    }
-                }
-            );
-            const validLocations = response.data.filter((location: any) =>
-                location.status.success &&
-                location.coordinate &&
-                location.coordinate.latitude &&
-                location.coordinate.longitude &&
-                location.id &&
-                location.type
-            );
-
-            const mappedSuggestions: Suggestion[] = validLocations.map((place: any) => ({
-                label: place.name,
-                value: [place.coordinate.latitude, place.coordinate.longitude],
-                id: place.id,
-                type: place.type
-            }));
-            setSuggestions(mappedSuggestions);
-        } catch (error) {
-            console.error("Error fetching suggestions:", error);
-        }
-    };
-
-    const handleSelect = (location: Suggestion) => {
-        setLocationData({
-            id: location.id,
-            name: location.label,
-            type: location.type,
-            lat: location.value[0],
-            lon: location.value[1]
-        });
-        onSelect(location.value);
-        setQuery(location.label);
-        setSuggestions([]);
-    };
-
-    return (
-        <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700">{label}</label>
-            <input
-                type="text"
-                className="w-full p-2 border rounded mt-1"
-                placeholder={label.startsWith("Start") ? "Current location" : "Search location..."}
-                value={query}
-                onChange={(e) => {
-                    setQuery(e.target.value);
-                    fetchLocationFormSuggestions(e.target.value);
-                }}
-            />
-            {suggestions.length > 0 && (
-                <ul className="border mt-1 rounded bg-white max-h-48 overflow-y-auto z-20 relative">
-                    {suggestions.map((suggestion, index) => (
-                        <li
-                            key={index}
-                            className="p-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleSelect(suggestion)}
-                        >
-                            {suggestion.label}
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
-};
-
 // Component to fly to the new location
 const FlyToLocation = ({ lat, lng }: { lat: number; lng: number }) => {
     const map = useMap();
@@ -148,14 +60,6 @@ const FlyToLocation = ({ lat, lng }: { lat: number; lng: number }) => {
         map.flyTo([lat, lng], 14, { duration: 1.5 });
     }, [lat, lng, map]);
     return null;
-}
-
-interface locationData {
-    id: string;
-    name: string;
-    type: string;
-    lat: number;
-    lon: number;
 }
 
 export default function Routing() {
@@ -259,7 +163,6 @@ export default function Routing() {
         if (!startLocation || !endLocation) return;
 
         try {
-            console.log(transportMode);
             if(transportMode === "bus") {
                 const apiUrl = 'https://api-lts.transportforireland.ie/lts/lts/v1/public/planJourney';
                 const currentDate = new Date().toISOString();
@@ -310,7 +213,8 @@ export default function Routing() {
                       'Ocp-Apim-Subscription-Key': import.meta.env.VITE_PUBLIC_TRANSPORT_API_KEY
                     }
                   });
-                  console.log(response.data);
+                  const { stops, routes, descriptions, legDurations } = processTFIJourneys(response.data);
+
             } else {
                 const url = `https://graphhopper.com/api/1/route?point=${startLocation[0]},${startLocation[1]}&point=${endLocation[0]},${endLocation[1]}&profile=${transportMode}&locale=en&points_encoded=false&algorithm=alternative_route&alternative_route_max_paths=3&key=${import.meta.env.VITE_GRAPHHOPPER_API_KEY}`;
                 const response = await axios.get(url);
