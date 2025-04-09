@@ -34,6 +34,17 @@ CREATE TABLE IF NOT EXISTS domain_access (
     CONSTRAINT fk_domain_access_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS trash_pickup (
+    id INTEGER,
+    route_id TEXT,
+    route_name TEXT,
+    county TEXT,
+    pickup_day TEXT,
+    pickup_duration_min INTEGER,
+    num_stops INTEGER,
+    place_pickup_times JSONB
+);
+
 -- CREATE TABLE IF NOT EXISTS events (
 --     id SERIAL PRIMARY KEY,
 --     name VARCHAR(255) NOT NULL,
@@ -60,6 +71,24 @@ id SERIAL PRIMARY KEY,
 -- ================================
 -- Insert Roles
 -- ================================
+
+
+-- Import data from CSV docker cp ./Dataset5.csv postgres_db:/Dataset5.csv
+
+
+COPY trash_pickup(
+    id,
+    route_id,
+    route_name,
+    county,
+    pickup_day,
+    pickup_duration_min,
+    num_stops,
+    place_pickup_times
+)
+FROM '/Dataset5.csv'
+DELIMITER ','
+CSV HEADER;
 
 INSERT INTO roles (name) VALUES 
 ('City Manager'), 
@@ -210,3 +239,5 @@ VALUES
     'Transport strategy planning workshop',
     (SELECT id FROM users WHERE email = 'jane.smith@tfi.ie')
   );
+
+  

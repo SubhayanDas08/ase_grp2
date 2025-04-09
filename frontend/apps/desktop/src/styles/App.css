@@ -117,3 +117,9 @@
   background-color: var(--primaryColor2);
   scale: 1.015;
 }
+
+.traffic_options{
+  display: flex;
+  flex-direction: row;
+  flex-wrap:wrap;
+}
