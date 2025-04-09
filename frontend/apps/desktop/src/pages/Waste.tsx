@@ -30,7 +30,6 @@ export default function Waste() {
       },
     );
 
-    // TODO: handle data
     console.log("data: ", data);
     setRoutes(data);
 
