@@ -57,10 +57,10 @@ interface Coordinate {
       const journeyStops: ProcessedStop[] = [];
       const journeyLegDurations: number[] = [];
       let description: string = '';
-      console.log(journey);
+      //console.log(journey);
       journey.legs.forEach((leg, index) => {
         // Duration calculation 
-        console.log(leg);
+        //console.log(leg);
         const durationMatch = leg.duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
         const hours = parseInt(durationMatch?.[1] || '0');
         const minutes = parseInt(durationMatch?.[2] || '0');
@@ -107,7 +107,7 @@ interface Coordinate {
         journeyLegDurations.push(parseFloat(totalMinutes));
       });
   
-      console.log("Start At", journey.legs[0].origin.departure);
+      //console.log("Start At", journey.legs[0].origin.departure);
       // Get departure time from first leg's origin
   
       const departureTime = journey.legs[0].origin.departure
@@ -118,7 +118,7 @@ interface Coordinate {
             timeZone: 'Europe/Dublin'
           })
         : 'N/A';
-      console.log("Departure Time", departureTime);
+      //console.log("Departure Time", departureTime);
   
       // Calculate total time for this journey
       const totalTime = journeyLegDurations.reduce((acc, time) => acc + time, 0).toFixed(1);
