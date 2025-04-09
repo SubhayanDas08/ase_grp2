@@ -26,6 +26,7 @@ import SettingsProfile from "./pages/SettingsProfile.tsx";
 import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
 import ReportAnIssue from "./pages/ReportAnIssue.tsx";
 import { useAuth } from "./utils/useAuth.ts";
+import About from "./pages/About.tsx";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { userAuthenticated, loading } = useAuth();
@@ -87,6 +88,11 @@ export default function App() {
       permission: "get_trash_pickup_recommendation",
     },
     {
+      path: "/wasteroutes/:routeName",
+      component: <WasteRoutes />,
+      permission: "get_trash_pickup_recommendation",
+    },
+    {
       path: "/weather",
       component: <Weather />,
       permission: "view_weather_AQI",
@@ -126,9 +132,9 @@ export default function App() {
       permission: "",
     },
     {
-      path: "/wasteroutes/:routeName",
-      component: <WasteRoutes />,
-      permission: "get_trash_pickup_recommendation",
+      path: "/settings/about",
+      component: <About setUserAuthenticated={setUserAuthenticated} />,
+      permission: "",
     }
   ];
 
