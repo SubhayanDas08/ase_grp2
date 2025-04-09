@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { LoadScript } from "@react-google-maps/api";
 
 // Replace with your own actual Google Maps API key or .env variable
-const GOOGLE_MAPS_API_KEY = "AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 // Point this to your FastAPI endpoint
 const API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion";
@@ -178,55 +178,57 @@ export default function Traffic() {
 
   return (
     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Traffic</h2>
+      <div className="h-full w-full flex flex-col">
+        {/* Header Section */}
+        <div className="mainHeaderHeight w-full flex items-center justify-between">
+            <div className="titleText primaryColor1">Traffic</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search Location"
+                className="w-60 p-2 border border-gray-300 rounded-md bg-white text-black"
+              />
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Search Location"
-            className="w-60 p-2 border border-gray-300 rounded-md bg-white text-black"
-          />
+              <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
+                {[...Array(31)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
 
-          <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
-            {[...Array(31)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
+              <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                {Object.keys(monthNameToNumber).map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
 
-          <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
-            {Object.keys(monthNameToNumber).map((month) => (
-              <option key={month} value={month}>
-                {month}
-              </option>
-            ))}
-          </select>
+              <select value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)}>
+                {[...Array(24)].map((_, h) => {
+                  const time = `${String(h).padStart(2, "0")}:00`;
+                  return (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  );
+                })}
+              </select>
 
-          <select value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)}>
-            {[...Array(24)].map((_, h) => {
-              const time = `${String(h).padStart(2, "0")}:00`;
-              return (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              );
-            })}
-          </select>
+              <button
+                onClick={fetchTrafficDataFromAPI}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+              >
+                Go
+              </button>
 
-          <button
-            onClick={fetchTrafficDataFromAPI}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Go
-          </button>
-
-          {error && <div style={{ color: "red", fontWeight: "bold" }}>{error}</div>}
+              {error && <div style={{ color: "red", fontWeight: "bold" }}>{error}</div>}
+            </div>
         </div>
 
-        <div style={{ width: "100%", height: "700px", marginTop: "1rem" }}>
+        <div className="flex flex-col h-full w-full overflow-y-auto">
           <MapContainer center={mapCenter} zoom={15} style={{ width: "100%", height: "100%", borderRadius: "25px" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
