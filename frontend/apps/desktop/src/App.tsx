@@ -21,6 +21,7 @@ import Waste from "./pages/Waste.tsx";
 import Weather from "./pages/Weather.tsx";
 import FleetSize from "./pages/FleetSize.tsx";
 import Settings from "./pages/Settings.tsx";
+import WasteRoutes from "./pages/Waste_route.tsx";
 import SettingsProfile from "./pages/SettingsProfile.tsx";
 import SettingsChangePassword from "./pages/SettingsChangePassword.tsx";
 import ReportAnIssue from "./pages/ReportAnIssue.tsx";
@@ -84,6 +85,11 @@ export default function App() {
     {
       path: "/waste",
       component: <Waste />,
+      permission: "get_trash_pickup_recommendation",
+    },
+    {
+      path: "/wasteroutes/:routeName",
+      component: <WasteRoutes />,
       permission: "get_trash_pickup_recommendation",
     },
     {
