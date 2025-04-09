@@ -17,15 +17,15 @@ export default function Waste_routes() {
 
     return (
         <div className="overflow-y-auto">
-            <div className='w-full ml-10 flex flex-row'>
+            <div className='w-full flex flex-row'>
                 <div>
-                    <div className="w-full flex mt-2">
-                        <div className="titleText primaryColor1 flex">
-                            <div className="underline cursor-pointer mr-2" onClick={() => navigate("/waste/")}>Waste</div>
-                            <div className="mr-2">{">"}</div>
-                            <div>Waste </div>
-                            <div className='text-white'> .</div>
-                            <div>Route</div>
+                    <div className="w-full flex">
+                        <div className="mainHeaderHeight w-full flex items-center justify-between">
+                            <div className="titleText primaryColor1 flex">
+                                <div className="underline cursor-pointer mr-2" onClick={()=>navigate("/waste/")}>Waste</div>
+                                <div className="mr-2">{">"}</div>
+                                <div>Waste Route</div>
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-row justify-between">
