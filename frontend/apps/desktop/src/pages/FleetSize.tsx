@@ -139,7 +139,7 @@ export default function FleetSize(): JSX.Element {
 
                 <div>
                     <button
-                        className="flex items-center justify-center mt-5 h-10 w-60 font-extrabold rounded-2xl textLight primaryGradient hover:cursor-pointer"
+                        className="flex items-center justify-center mt-5 h-10 w-60 font-extrabold rounded-2xl textLight primaryGradient cursor-pointer"
                         onClick={fetchRecommendations}
                     >
                         View Recommendation
@@ -158,7 +158,7 @@ export default function FleetSize(): JSX.Element {
                     {recommendations.map((rec, index) => (
                         <div
                             key={index}
-                            className="flex items-center h-25 rounded-3xl primaryGradient hover:cursor-pointer"
+                            className="flex items-center h-25 rounded-3xl primaryGradient"
                         >
                             <div className="h-14 w-14 ml-5 flex items-center justify-center rounded-full bg-white">
                                 <FaBolt className="text-2l" />

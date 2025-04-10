@@ -168,19 +168,6 @@ export default function CreateAccount({ setUserAuthenticated }: RegisterProps) {
               </button>
             </div>
           </div>
-          <div className="text-center h-1/4">
-            <div className="h-2/5 flex justify-center items-center secondaryColor">
-              Or
-            </div>
-            <div className="h-3/5 flex justify-center items-center">
-              <button className="loginGoogleRegistrationButton flex flex-row justify-center items-center">
-                <div>
-                  <img src={GoogleLogo} alt="GoogleLogo" />
-                </div>
-                <span className="ml-2">Log In with Google</span>
-              </button>
-            </div>
-          </div>
           <div className="text-center h-1/6 miniText">
             <span className="secondaryColor">Already have an account?</span>
             <Link to="/" className="primaryColor1 ml-1 hover:underline">

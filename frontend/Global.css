@@ -64,6 +64,9 @@ body {
 .primaryColor2BG {
   background-color: var(--primaryColor2);
 }
+.errorBG{
+  background-color: var(--error);
+}
 .primaryColor2 {
   color: var(--primaryColor2);
 }
