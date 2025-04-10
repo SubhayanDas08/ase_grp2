@@ -5,7 +5,8 @@ import {
   saveLocationToDatabase,
   getLocationData,
   getUserById,
-  updateUserPasswordInDB
+  updateUserPasswordInDB,
+  updateUserFirstAndLastNameInDB,
 } from "../services/databaseService";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -103,11 +104,14 @@ export const FEregistrationData = async (
 
     const { password: _, ...userDataWithoutPassword } = savedUser;
 
+    const permissions = await getPermissions(userDataWithoutPassword.domain);
+
     res.status(200).json({
       message: "User registered and logged in successfully",
       user: userDataWithoutPassword,
       token: sessionToken,
       refreshToken,
+      permissions,
     });
   } catch (error) {
     console.error("Internal Server Error:", error);
@@ -149,7 +153,7 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
     const sessionToken = jwt.sign({ userId: userData.id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    
+
     const refreshToken = jwt.sign({ userId: userData.id }, JWT_REFRESH_SECRET, {
       expiresIn: "180d",
     });
@@ -170,11 +174,14 @@ export const FElogin = async (req: Request, res: Response): Promise<any> => {
     // Remove password from user data
     const { password: userPassword, ...userDataWithoutPassword } = userData;
 
+    const permissions = await getPermissions(userDataWithoutPassword.domain);
+
     res.status(200).json({
       message: "Login successful",
       user: userDataWithoutPassword,
       token: sessionToken,
       refreshToken,
+      permissions,
     });
   } catch (error) {
     console.error("Internal Server Error:", error);
@@ -251,7 +258,9 @@ export const FErefreshToken = async (
     await redisClient.setEx(`session:${newSessionToken}`, 3600, userId);
     await redisClient.sAdd(`user:${userId}:sessions`, newSessionToken);
 
-    res.status(200).json({ token: newSessionToken });
+    const permissions = await getPermissions((req as any).user.domain);
+
+    res.status(200).json({ token: newSessionToken, permissions });
   } catch (error) {
     console.error("Error refreshing token:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -276,18 +285,16 @@ export const getCurrentUser = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-
   try {
     const userId = (req as any).user?.id;
     console.log(userId);
-    
 
     if (!userId) {
       res.status(401).json({ error: "Unauthorized" });
     }
 
     const userData = await getUserById(userId);
-    
+
     if (!userData) {
       res.status(404).json({ error: "User not found" });
     }
@@ -298,75 +305,116 @@ export const getCurrentUser = async (
     console.error("Error getting current user:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 export const changeUserPassword = async (
   req: Request,
-  res: Response,): Promise<any> => {
-    try {
-      const userId = (req as any).user?.id;
-      const { oldPassword, newPassword } = req.body;
-  
-      if (!userId) {
-        return res.status(401).json({ error: "Unauthorized" });
-      }
-  
-      if (!oldPassword || !newPassword) {
-        return res
-          .status(400)
-          .json({ error: "Old and new passwords are required" });
-      }
-  
-      if (newPassword.length < 8) {
-        return res
-          .status(400)
-          .json({ error: "New password must be at least 8 characters long" });
-      }
-  
-      const user = await getUserById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      
-      if (!user.password) {
-        console.error("Error: User password is undefined");
-        return res.status(500).json({ error: "Internal Server Error1" });
-      }
-  
-      const isMatch = await bcrypt.compare(oldPassword, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ error: "Old password is incorrect" });
-      }
-  
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await updateUserPasswordInDB(userId, hashedPassword);
-  
-      const userSessionsKey = `user:${userId}:sessions`;
-      const sessionTokens = await redisClient.sMembers(userSessionsKey);
-      for (const token of sessionTokens) {
-        await redisClient.del(`session:${token}`);
-      }
-      await redisClient.del(userSessionsKey);
-  
-      const sessionToken = jwt.sign({ userId }, JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      const refreshToken = jwt.sign({ userId }, JWT_REFRESH_SECRET, {
-        expiresIn: "180d",
-      });
-  
-      await redisClient.setEx(`session:${sessionToken}`, 3600, String(userId));
-      await redisClient.setEx(`refresh:${refreshToken}`, 15552000, String(userId));
-      await redisClient.sAdd(`user:${userId}:sessions`, sessionToken);
-  
-      return res.status(200).json({
-        message: "Password changed successfully",
-        token: sessionToken,
-        refreshToken,
-      });
-    } catch (error) {
-      console.error("Error changing password:", error);
-      return res.status(500).json({ error: "Internal Server Error2" });
+  res: Response,
+): Promise<any> => {
+  try {
+    const userId = (req as any).user?.id;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
-  };
+
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ error: "Old and new passwords are required" });
+    }
+
+    if (newPassword.length < 8) {
+      return res
+        .status(400)
+        .json({ error: "New password must be at least 8 characters long" });
+    }
+
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!user.password) {
+      console.error("Error: User password is undefined");
+      return res.status(500).json({ error: "Internal Server Error1" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Old password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await updateUserPasswordInDB(userId, hashedPassword);
+
+    const userSessionsKey = `user:${userId}:sessions`;
+    const sessionTokens = await redisClient.sMembers(userSessionsKey);
+    for (const token of sessionTokens) {
+      await redisClient.del(`session:${token}`);
+    }
+    await redisClient.del(userSessionsKey);
+
+    const sessionToken = jwt.sign({ userId }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    const refreshToken = jwt.sign({ userId }, JWT_REFRESH_SECRET, {
+      expiresIn: "180d",
+    });
+
+    await redisClient.setEx(`session:${sessionToken}`, 3600, String(userId));
+    await redisClient.setEx(
+      `refresh:${refreshToken}`,
+      15552000,
+      String(userId),
+    );
+    await redisClient.sAdd(`user:${userId}:sessions`, sessionToken);
+
+    return res.status(200).json({
+      message: "Password changed successfully",
+      token: sessionToken,
+      refreshToken,
+    });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return res.status(500).json({ error: "Internal Server Error2" });
+  }
+};
+
+export const updateFirstAndLastName = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  try {
+    const userId = (req as any).user?.id;
+    const { firstName, lastName } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if (!firstName || !lastName) {
+      return res
+        .status(400)
+        .json({ error: "First name and last name are required" });
+    }
+
+    await updateUserFirstAndLastNameInDB(userId, firstName, lastName);
+
+    res.status(200).json({ message: "Name updated successfully" });
+  } catch (error) {
+    console.error("Error updating name:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// get permissions from redis
+const getPermissions = async (domain: string): Promise<string[]> => {
+  let permissions = await redisClient.sMembers(`permissions:${domain}`);
+  if (permissions.length === 0) {
+    permissions = await redisClient.sMembers("permissions:generalpublic");
+  }
+  return permissions;
+};

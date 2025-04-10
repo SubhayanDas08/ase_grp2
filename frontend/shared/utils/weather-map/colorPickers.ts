@@ -31,9 +31,9 @@ export const getColorByAqi = (aqi: number) => {
   
   export const getColorByPrecip = (p: number) => {
     if (isNaN(p)) return "gray";
-    if (p === 0) return "lightgray";
-    if (p < 2) return "lightblue";
-    return "blue";
+    if (p === 0) return "lightblue";
+    if (p < 2) return "blue";
+    return "darkblue";
   }
   
   export const getColorByUv = (uv: number) => {

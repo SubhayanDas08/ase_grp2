@@ -8,6 +8,7 @@ import weatherRoutes from "./routes/weatherRoutes";
 import trashPickupRoutes from "./routes/trashPickupRoutes";
 import dotenv from 'dotenv';
 import path from 'path';
+import { trackApiMetrics } from './middleware/apiMetrics';
 
 // 1. Import prom-client
 import {
@@ -22,7 +23,7 @@ const envPath = path.resolve(__dirname, '.env');
 
 dotenv.config({ path: envPath });
 
-const app = express();
+export const app = express();
 
 // Middleware
 app.use(cors());
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use(trackApiMetrics);
 app.use('/locations', locationRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
@@ -87,10 +89,22 @@ pool.connect()
   .catch((error) => console.error('PostgreSQL Connection Error:', error.message));
 
 // Start the server
-const PORT: number = parseInt(process.env.PORT || '3000', 10);
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// const PORT: number = parseInt(process.env.PORT || '3000', 10);
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+
+if (require.main === module) {
+  // Test PostgreSQL connection
+  pool.connect()
+    .then(() => console.log('PostgreSQL Connected Successfully'))
+    .catch((error) => console.error('PostgreSQL Connection Error:', error.message));
+
+  // Start the server
+  const PORT: number = parseInt(process.env.PORT || '3000', 10);
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 
 console.log('Checking Environment Variables:');
 console.log('PG_HOST:', process.env.PG_HOST);
@@ -98,3 +112,5 @@ console.log('PG_USER:', process.env.PG_USER);
 console.log('PG_DATABASE:', process.env.PG_DATABASE);
 console.log('PG_PASSWORD:', process.env.PG_PASSWORD ? '****' : 'Not Set');
 console.log('REDIS_HOST:', process.env.REDIS_HOST);
+
+}

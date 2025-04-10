@@ -19,12 +19,14 @@ services:
     ports:
       - "3001:3000"                            # Expose Grafana on host port 3001
     restart: unless-stopped
+    env_file:
+      - .env                                   # Load environment variables from .env
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=grafana
+      - GF_SERVER_ROOT_URL=https://city-management.walter-wm.de/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
     volumes:
       - grafana_data:/var/lib/grafana           # Persistent storage for Grafana dashboards and settings
-      - ./grafana:/etc/grafana/provisioning     # Optional: provisioning files (datasources, dashboards, etc.)
+      - ./grafana:/etc/grafana/provisioning     # Optional provisioning files (datasources, dashboards, etc.)
 
 volumes:
   prom_data:

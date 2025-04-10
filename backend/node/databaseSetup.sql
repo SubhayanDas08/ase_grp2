@@ -72,6 +72,24 @@ id SERIAL PRIMARY KEY,
 -- Insert Roles
 -- ================================
 
+
+-- Import data from CSV docker cp ./Dataset5.csv postgres_db:/Dataset5.csv
+
+
+COPY trash_pickup(
+    id,
+    route_id,
+    route_name,
+    county,
+    pickup_day,
+    pickup_duration_min,
+    num_stops,
+    place_pickup_times
+)
+FROM '/Dataset5.csv'
+DELIMITER ','
+CSV HEADER;
+
 INSERT INTO roles (name) VALUES 
 ('City Manager'), 
 ('General Public'),
@@ -221,3 +239,5 @@ VALUES
     'Transport strategy planning workshop',
     (SELECT id FROM users WHERE email = 'jane.smith@tfi.ie')
   );
+
+  
