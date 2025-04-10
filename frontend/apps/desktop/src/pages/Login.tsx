@@ -5,7 +5,6 @@ import { login } from "../utils/auth";
 
 import Logo from "../assets/Logo.svg";
 import FullLogo from "../assets/FullLogo.svg";
-import GoogleLogo from "../assets/GoogleLogo.svg";
 
 interface LoginProps {
   setUserAuthenticated: (userAuthenticated: any) => void;
@@ -113,19 +112,6 @@ export default function Login({ setUserAuthenticated }: LoginProps) {
             <div className="flex justify-center items-center h-1/3 ">
               <button className="loginRegistrationButton" onClick={handleLogin}>
                 Log In
-              </button>
-            </div>
-          </div>
-          <div className="text-center h-1/4">
-            <div className="h-1/3 flex justify-center items-center secondaryColor">
-              Or
-            </div>
-            <div className="h-2/3 flex justify-center items-center">
-              <button className="loginGoogleRegistrationButton flex flex-row justify-center items-center">
-                <div>
-                  <img src={GoogleLogo} alt="GoogleLogo" />
-                </div>
-                <span className="ml-2">Log In with Google</span>
               </button>
             </div>
           </div>
