@@ -252,13 +252,19 @@ export const FErefreshToken = async (
       return res.status(401).json({ error: "Invalid refresh token" });
     }
 
+    // Retrieve user data from the database using the userId
+    const user = await getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     const newSessionToken = jwt.sign({ userId }, JWT_SECRET, {
       expiresIn: "1h",
     });
     await redisClient.setEx(`session:${newSessionToken}`, 3600, userId);
     await redisClient.sAdd(`user:${userId}:sessions`, newSessionToken);
 
-    const permissions = await getPermissions((req as any).user.domain);
+    const permissions = await getPermissions(user.domain);
 
     res.status(200).json({ token: newSessionToken, permissions });
   } catch (error) {
