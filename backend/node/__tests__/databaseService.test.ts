@@ -1,6 +1,11 @@
 import * as db from '../services/databaseService';
 import bcrypt from 'bcrypt';
 
+beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('hashedPassword'),
 }));
@@ -178,3 +183,8 @@ describe('Database Service', () => {
     ).rejects.toThrow('name update failed');
   });
 });
+
+afterAll(() => {
+    (console.log as jest.Mock).mockRestore();
+    (console.error as jest.Mock).mockRestore();
+  });
