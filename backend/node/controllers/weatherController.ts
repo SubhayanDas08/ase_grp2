@@ -45,7 +45,7 @@ export const getStationAqi = async (req: Request, res: Response): Promise<void> 
 
     res.status(200).json({ aqi: data.aqi, city: data.city.name });
   } catch (error) {
-    console.error("Error in fetching AQI of stations:", error);
+    // console.error("Error in fetching AQI of stations:", error);
     res.status(500).json({ error: "Error in fetching AQI of stations" });
   }
 };
@@ -89,7 +89,7 @@ export const getStations = async (req: Request, res: Response): Promise<void> =>
 
     res.status(200).json({ stations });
   } catch (error) {
-    console.error("Error in fetching stations:", error);
+    // console.error("Error in fetching stations:", error);
     res.status(500).json({ error: "Error in fetching stations of the bound coordinates" });
   }
 };
@@ -136,7 +136,7 @@ export const getWeatherDetails = async (req: Request, res: Response): Promise<vo
     });
   } catch (error) {
     const err = error as any;
-    console.error("Error in fetching weather details:", err);
+    // console.error("Error in fetching weather details:", err);
     // If the error response indicates a 400 Bad Request from the API,
     // return an error message indicating invalid coordinates.
     if (err.response && err.response.status === 400) {
