@@ -40,6 +40,24 @@ describe('User Controller', () => {
       await userController.FEregistrationData(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
+
+    it('should return 409 if email already in use', async () => {
+        (databaseService.verifyUserCredentials as jest.Mock).mockResolvedValue(true);
+        const req = {
+          body: {
+            userData: {
+              first_name: 'Test',
+              last_name: 'User',
+              email: 'existing@example.com',
+              password: 'securepass123',
+              phone_number: '1234567890',
+            },
+          },
+        } as Partial<Request>;
+        const res = mockRes();
+        await userController.FEregistrationData(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(409);
+      });
   });
 
   describe('FElogin', () => {
@@ -57,6 +75,74 @@ describe('User Controller', () => {
       await userController.FElogin(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(401);
     });
+
+    it('should return 401 if password mismatch', async () => {
+        (databaseService.verifyUserCredentials as jest.Mock).mockResolvedValue({ password: 'hashedpass' });
+        (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      
+        const req = {
+          body: { userData: { email: 'test@example.com', password: 'wrong' } },
+        } as Partial<Request>;
+        const res = mockRes();
+      
+        await userController.FElogin(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(401);
+      });
+
+      it('should return 401 if refresh token is blacklisted', async () => {
+        (redisClient.sIsMember as jest.Mock).mockResolvedValue(true);
+        const req = { body: { refreshToken: 'blacklisted' } } as Partial<Request>;
+        const res = mockRes();
+      
+        await userController.FErefreshToken(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(401);
+      });
+
+      it('should return 400 if old password does not match', async () => {
+        (databaseService.getUserById as jest.Mock).mockResolvedValue({ password: 'hashed' });
+        (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      
+        const req = {
+          user: { id: 1 },
+          body: { oldPassword: 'wrong', newPassword: 'newpassword123' },
+        } as unknown as Request;
+        const res = mockRes();
+      
+        await userController.changeUserPassword(req, res as Response);
+        expect(res.status).toHaveBeenCalledWith(400);
+      });
+
+      it('should return 400 if first or last name is missing', async () => {
+        const req = {
+          user: { id: 1 },
+          body: { firstName: '', lastName: '' },
+        } as unknown as Request;
+        const res = mockRes();
+      
+        await userController.updateFirstAndLastName(req, res as Response);
+        expect(res.status).toHaveBeenCalledWith(400);
+      });
+
+      it('should return 404 if user not found', async () => {
+        (databaseService.getUserById as jest.Mock).mockResolvedValue(null);
+        const req = { user: { id: 123 } } as unknown as Request;
+        const res = mockRes();
+      
+        await userController.getCurrentUser(req, res as Response);
+        expect(res.status).toHaveBeenCalledWith(404);
+      });
+
+      it('should return IP address from headers or socket', async () => {
+        const req = {
+          headers: { 'x-real-ip': '192.168.1.1' },
+          socket: { remoteAddress: '127.0.0.1' },
+        } as unknown as Request;
+        const res = mockRes();
+      
+        await userController.getLocationByIp(req, res as Response);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ data: '192.168.1.1' });
+      });
   });
 
   describe('FElogout', () => {
