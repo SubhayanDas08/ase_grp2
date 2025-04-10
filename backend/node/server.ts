@@ -83,34 +83,21 @@ export const pool = new Pool({
   password: process.env.PG_PASSWORD || 'postgres',
 });
 
-// Test PostgreSQL connection
-pool.connect()
-  .then(() => console.log('PostgreSQL Connected Successfully'))
-  .catch((error) => console.error('PostgreSQL Connection Error:', error.message));
-
-// Start the server
-// const PORT: number = parseInt(process.env.PORT || '3000', 10);
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-
-if (require.main === module) {
-  // Test PostgreSQL connection
+// Start server and DB connection only if not in test environment
+if (require.main === module && process.env.NODE_ENV !== 'test') {
   pool.connect()
     .then(() => console.log('PostgreSQL Connected Successfully'))
     .catch((error) => console.error('PostgreSQL Connection Error:', error.message));
 
-  // Start the server
   const PORT: number = parseInt(process.env.PORT || '3000', 10);
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 
-console.log('Checking Environment Variables:');
-console.log('PG_HOST:', process.env.PG_HOST);
-console.log('PG_USER:', process.env.PG_USER);
-console.log('PG_DATABASE:', process.env.PG_DATABASE);
-console.log('PG_PASSWORD:', process.env.PG_PASSWORD ? '****' : 'Not Set');
-console.log('REDIS_HOST:', process.env.REDIS_HOST);
-
+  console.log('Checking Environment Variables:');
+  console.log('PG_HOST:', process.env.PG_HOST);
+  console.log('PG_USER:', process.env.PG_USER);
+  console.log('PG_DATABASE:', process.env.PG_DATABASE);
+  console.log('PG_PASSWORD:', process.env.PG_PASSWORD ? '****' : 'Not Set');
+  console.log('REDIS_HOST:', process.env.REDIS_HOST);
 }

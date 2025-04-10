@@ -142,9 +142,6 @@ describe("getEventById", () => {
   });
 });
 
-
-
-
 describe("getAllEvents", () => {
     it("returns 404 if no events exist", async () => {
       (pool.query as jest.Mock).mockResolvedValue({ rows: [] });
@@ -168,7 +165,6 @@ describe("getAllEvents", () => {
       expect(res.json).toHaveBeenCalledWith(events);
     });
   });
-
 
   describe("updateEvent", () => {
     it("returns 404 if event not found", async () => {
@@ -208,7 +204,6 @@ describe("getAllEvents", () => {
     });
   });
 
-
   describe("deleteEvent", () => {
     it("returns 404 if event not found", async () => {
       (pool.query as jest.Mock).mockResolvedValue({ rows: [] });
@@ -240,3 +235,13 @@ describe("getAllEvents", () => {
       expect(res.json).toHaveBeenCalledWith(event);
     });
   });
+
+  afterAll(() => {
+    jest.clearAllMocks(); // optional, if not already done per test
+  });
+
+
+afterAll(async () => {
+  await redisClient.quit?.(); // if using ioredis or redis v4+
+  await pool.end?.();         // closes PostgreSQL pool if it's still open
+});
