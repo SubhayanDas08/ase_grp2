@@ -22,11 +22,15 @@ import json
 from dotenv import load_dotenv
 import os
 from fastapi.middleware.cors import CORSMiddleware
+import datetime
+import ast
+
 
 load_dotenv()
 
 # Store the OpenAI API key in a variable
 OPENROUTER_API_KEY = os.getenv("OPENAI_API_KEY")
+AQI_API_KEY = os.getenv("AQI_API_KEY")
 
 class CongestionRequest(BaseModel):
     """
@@ -66,6 +70,11 @@ class WeatherRequest(BaseModel):
 class FleetRequest(BaseModel):
     month: int
 
+class AQIandTrafficCongestion(BaseModel):
+    place: str
+
+class TrashPickupRecommendation(BaseModel):
+    route_id: str
 
 class ModelHost:
     """
@@ -107,6 +116,17 @@ class ModelHost:
         # ---------------------------
         self.fleet_df = pd.read_csv("./data/fleet_recommendation/Monthly_Data.csv")
         self.fleet_df['Passenger-to-Bus Ratio'] = self.fleet_df['Number of passengers'] / self.fleet_df['Number of buses']
+
+        # ---------------------------
+        # Trash Pickup Recommendation Setup
+        # ---------------------------
+        self.trashpickuproutes = pd.read_csv("./data/trash_pickup_recommendation/routes.csv")
+        self.trashpickupcoordinates = pd.read_csv("./data/trash_pickup_recommendation/place_coordinates.csv")
+        # self.AQI_API_KEY = "00e612fd4594faaa7e45419be809639c"
+        # self.OPENROUTER_API_KEY = "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"
+        self.TRAFFIC_API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion"
+        self.AQI_API_URL_TEMPLATE = "http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
+
 
     def get_params(self, query_params: dict):
         """
@@ -166,7 +186,6 @@ class ModelHost:
 
         return city_totals[['Bus City Services', 'Scaled Recommended Buses']]
     
-
 
     def generate_dialogue_recommendations(self, recommendations, month_input): 
         # List of month names to map month numbers
@@ -378,6 +397,166 @@ class ModelHost:
 
         return (recommendations, dialogue_response)
 
+    def get_traffic_congestion(self, lat, lon):
+        now = datetime.datetime.now()
+        payload = {
+            "latitude": lat,
+            "longitude": lon,
+            "hour": now.hour,
+            "month": now.month,
+            "day": now.day
+        }
+        try:
+            response = requests.post(self.TRAFFIC_API_URL, json=payload)
+            response.raise_for_status()
+            return response.json().get("congestion_index", [1])[0]  # Default value set to 1
+        except (requests.RequestException, KeyError, IndexError) as e:
+            print(f"[Traffic] Error fetching congestion for ({lat}, {lon}): {e}")
+            return 1  # Default value in case of error
+    
+    def get_air_pollution(self, lat, lon):
+        url = self.AQI_API_URL_TEMPLATE.format(lat=lat, lon=lon, api_key=AQI_API_KEY)
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            return response.json()["list"][0]["main"]["aqi"]
+        except (requests.RequestException, KeyError, IndexError) as e:
+            print(f"[AQI] Error fetching AQI for ({lat}, {lon}): {e}")
+            return 1
+
+    def get_AQI_TC(self, place_name):
+        match = self.trashpickupcoordinates[self.trashpickupcoordinates["Place Name"] == place_name]
+        lat = match.iloc[0]["Latitude"]
+        lon = match.iloc[0]["Longitude"]
+        
+        tc = self.get_traffic_congestion(lat, lon)
+        aqi = self.get_air_pollution(lat, lon)
+
+        return (tc, aqi)
+    
+    def get_list_of_AQI_TC(self, route_id):
+        
+        row = self.trashpickuproutes[self.trashpickuproutes["route_id"] == route_id]
+
+        results = []
+
+        pickup_data = row.iloc[0].get("place_pickup_times")
+        if isinstance(pickup_data, str):
+            pickup_data = ast.literal_eval(pickup_data)
+
+        for entry in pickup_data:
+            place = entry.get("place")
+            pickup_time = entry.get("pickup_time")
+            match = self.trashpickupcoordinates[self.trashpickupcoordinates["Place Name"] == place]
+            lat = match.iloc[0]["Latitude"]
+            lon = match.iloc[0]["Longitude"]
+            
+            if lat is None or lon is None:
+                results.append({
+                    "Place": place,
+                    "Pickup Time": pickup_time,
+                    "Error": "Coordinates not found"
+                })
+                continue
+            
+            aqi, congestion = self.get_AQI_TC(place)
+
+            results.append({
+                "place": place,
+                "aqi": aqi,
+                "tc": congestion
+            })
+
+        return results
+    
+    def collect_route_data(self, row):
+        results = []
+
+        pickup_data = row.iloc[0].get("place_pickup_times")
+        if isinstance(pickup_data, str):
+            pickup_data = ast.literal_eval(pickup_data)
+
+        for entry in pickup_data:
+            place = entry.get("place")
+            pickup_time = entry.get("pickup_time")
+            match = self.trashpickupcoordinates[self.trashpickupcoordinates["Place Name"] == place]
+            lat = match.iloc[0]["Latitude"]
+            lon = match.iloc[0]["Longitude"]
+            
+            if lat is None or lon is None:
+                results.append({
+                    "Place": place,
+                    "Pickup Time": pickup_time,
+                    "Error": "Coordinates not found"
+                })
+                continue
+            
+            aqi, congestion = self.get_AQI_TC(place)
+
+            results.append({
+                "Place": place,
+                "Pickup Time": pickup_time,
+                "AQI": aqi,
+                "Traffic Congestion": congestion
+            })
+
+        return results
+    
+    def analyze_pickup_route(self, results):
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=OPENROUTER_API_KEY
+        )
+
+        dialogue = (
+            "You are a route optimization assistant for waste management. "
+            "You are given a list of pickup places along with their AQI (Air Quality Index) and Traffic Congestion level.\n"
+            "- AQI scale: 1 (Good) to 5 (Very Poor)\n"
+            "- Traffic Congestion: 1 (Smooth) to 5 (Heavily Congested)\n\n"
+            "Your task:\n"
+            "1. Determine if the pickup route is acceptable as-is.\n"
+            "2. If not, list places that should be avoided and explain why.\n"
+            "3. Provide a summary at the beginning.\n\n"
+            "Here is the data:\n"
+        )
+
+        for item in results:
+            if "Error" in item:
+                dialogue += f"- {item['Place']}: Error - {item['Error']}\n"
+            else:
+                dialogue += f"- {item['Place']}: AQI = {item['AQI']}, Traffic Congestion = {item['Traffic Congestion']}\n"
+
+        messages = [
+            {"role": "system", "content": "You are an expert in environmental route optimization."},
+            {"role": "user", "content": dialogue}
+        ]
+
+        try:
+            completion = client.chat.completions.create(
+                model="meta-llama/llama-3-8b-instruct",
+                extra_body={
+                    "models": [
+                        "meta-llama/llama-3-8b-instruct",
+                        "openai/gpt-4o",
+                        "gryphe/mythomax-l2-13b"
+                    ]
+                },
+                messages=messages
+            )
+            print("\n===== Route Analysis =====\n")
+            print(completion.choices[0].message.content)
+            return completion.choices[0].message.content
+        except Exception as e:
+            print("Error fetching response from OpenRouter:", e)
+
+    def get_trash_pickup_recommendation(self, id):
+
+        # Get row by ID
+        row = self.trashpickuproutes[self.trashpickuproutes["route_id"] == id]
+        results = self.collect_route_data(row)
+        recommendation = self.analyze_pickup_route(results)
+
+        return recommendation
 
 
 # Create the FastAPI application.
@@ -496,6 +675,40 @@ async def get_fleet_size_recommendations(request: FleetRequest):
     except Exception as e:
         print(f"Error during getting recommendations: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@app.post("/recommend/trashpickup")
+async def get_trash_pickup_recommendations_API(request: TrashPickupRecommendation):
+    try:
+        # Convert the request Pydantic model to a dictionary for the model host.
+        id = request.route_id
+        recommendation = model_host.get_trash_pickup_recommendation(id)
+        
+
+        print("Recommendations:", recommendation)
+
+        return {
+            "recommendations": recommendation
+        }
+
+    except Exception as e:
+        print(f"Error during getting recommendations: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/predict/AQI_TC")
+async def get_AQI_TC_API(request: TrashPickupRecommendation):
+    try:
+        route_id = str(request.route_id)
+        
+        route_with_AQI_TC = model_host.get_list_of_AQI_TC(route_id)
+
+        return route_with_AQI_TC
+
+    except Exception as e:
+        print(f"Error during getting AQI and Traffic Congestion: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 
 # For development/debugging:
