@@ -8,6 +8,7 @@ import {
   getCurrentUser,
   changeUserPassword,
   updateFirstAndLastName,
+  reportissue,
 } from "../controllers/userController";
 import { authenticate } from "../middleware/authenticate";
 const router: Router = express.Router();
@@ -20,5 +21,6 @@ router.get("/locationByIp", authenticate(), getLocationByIp);
 router.get("/get", authenticate(), getCurrentUser);
 router.post("/changePassword", authenticate(), changeUserPassword);
 router.post("/updateName", authenticate(), updateFirstAndLastName);
+router.post("/reportIssue", authenticate(), reportissue);
 
 export default router;

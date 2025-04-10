@@ -11,10 +11,40 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import redisClient from "../utils/redis";
+import nodemailer from "nodemailer";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const JWT_REFRESH_SECRET =
   process.env.JWT_REFRESH_SECRET || "your-refresh-secret";
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+  host: process.env.STRATO_SMTP_HOST,
+  port: parseInt(process.env.STRATO_SMTP_PORT || "587"), // Default SMTP port
+  secure: process.env.STRATO_SMTP_SECURE === 'true', // Use `true` for TLS
+  auth: {
+    user: process.env.STRATO_EMAIL_USER, // Your Strato email address
+    pass: process.env.STRATO_EMAIL_PASS, // Your Strato email password
+  },
+  requireTLS: true,
+});
+
+const sendEmail = async (subject: string, text: string) => {
+  const mailOptions = {
+    from: process.env.STRATO_EMAIL_USER, // Sender address (your Strato email)
+    to: process.env.ADMIN_EMAIL, // List of receivers (admin email)
+    subject: subject, // Subject line
+    text: text, // Plain text body
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email");
+  }
+};
 
 export const FEregistrationData = async (
   req: Request,
@@ -413,6 +443,45 @@ export const updateFirstAndLastName = async (
   } catch (error) {
     console.error("Error updating name:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const reportissue = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  try {
+    const userId = (req as any).user?.id;
+    const { subject, description } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if (!subject || !description) {
+      return res
+        .status(400)
+        .json({ error: "Subject and description are required" });
+    }
+
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const emailText = `
+      Issue Reported by User: ${user.first_name} ${user.last_name} (${user.email})\n
+      Subject: ${subject}\n
+      Description: ${description}
+    `;
+
+    await sendEmail(`Issue Reported: ${subject}`, emailText);
+
+    res.status(200).json({ message: "Issue reported successfully" });
+  } catch (error: any) {
+    console.error("Error reporting issue:", error);
+    res.status(500).json({ error: error.message || "Failed to report issue" });
   }
 };
 
