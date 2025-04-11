@@ -160,7 +160,8 @@ export default function AddEvent(): JSX.Element {
                             placeholder="Area"
                             className="w-60 p-2 border-gray-100 textFieldBG rounded-md bg-white text-black"
                             value={area}
-                            readOnly
+                            // readOnly
+                            onChange={(e) => setArea(e.target.value)}
                             />
                         </div>
                     </div>
