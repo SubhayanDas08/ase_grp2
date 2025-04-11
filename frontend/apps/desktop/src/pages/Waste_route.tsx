@@ -9,7 +9,6 @@ export default function Waste_routes() {
     const state = location.state.data as {data?: any};
     
     // State to control button visibility and recommendations box
-    const [showRecommendations, setShowRecommendations] = useState(true);
     const [showRecommendationsBox, setShowRecommendationsBox] = useState(false);
     
     // Calculated estimated time per stop
@@ -41,14 +40,12 @@ export default function Waste_routes() {
                             </div>
                         </div>
                         <div className="relative mt-20 ml-50">
-                            {showRecommendations && (
-                                <button 
-                                    className="primaryColor2BG text-white font-bold py-2 px-4 rounded"
-                                    onClick={() => setShowRecommendationsBox(!showRecommendationsBox)}
-                                >
-                                    View Recommendations
-                                </button>
-                            )}
+                            <button 
+                                className="primaryColor2BG text-white font-bold py-2 px-4 rounded"
+                                onClick={() => setShowRecommendationsBox(!showRecommendationsBox)}
+                            >
+                                View Recommendations
+                            </button>
                             
                             {/* Recommendations Box */}
                             {showRecommendationsBox && (

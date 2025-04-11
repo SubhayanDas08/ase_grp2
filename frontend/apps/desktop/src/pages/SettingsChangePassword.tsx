@@ -4,15 +4,9 @@ import { Eye, EyeOff } from "lucide-react";
 import { authenticatedPost } from "../utils/auth";
 
 interface SettingsProps {
-    setUserAuthenticated: (userAuthenticated: any) => void;
-  }
-  
-  interface Device {
-    id: string;
-    name: string;
-    lastActive: string;
-    status: string;
-  }
+  setUserAuthenticated: (userAuthenticated: any) => void;
+}
+
 
   export default function SettingsProfile({ setUserAuthenticated }: SettingsProps): JSX.Element {
 

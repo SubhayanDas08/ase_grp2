@@ -115,7 +115,7 @@ export default function App() {
     {
       path: "/settings/profile",
       component: (
-        <SettingsProfile setUserAuthenticated={setUserAuthenticated} />
+        <SettingsProfile />
       ),
       permission: "",
     },
@@ -128,12 +128,12 @@ export default function App() {
     },
     {
       path: "/settings/report",
-      component: <ReportAnIssue setUserAuthenticated={setUserAuthenticated} />,
+      component: <ReportAnIssue />,
       permission: "",
     },
     {
       path: "/settings/about",
-      component: <About setUserAuthenticated={setUserAuthenticated} />,
+      component: <About />,
       permission: "",
     }
   ];

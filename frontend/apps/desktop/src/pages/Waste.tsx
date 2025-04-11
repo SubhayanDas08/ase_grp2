@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { authenticatedPost } from "../utils/auth";
@@ -7,16 +7,16 @@ export default function Waste() {
   const [routes, setRoutes] = useState<any[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>("");
   const [selectedCounty, setSelectedCounty] = useState<string>("");
-  const [searchTriggered, setSearchTriggered] = useState(false);
+  //const [searchTriggered, setSearchTriggered] = useState(false);
 
   const handleDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDay(e.target.value);
-    setSearchTriggered(false);
+    // setSearchTriggered(false);
   };
 
   const handleCountyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCounty(e.target.value);
-    setSearchTriggered(false);
+    // setSearchTriggered(false);
   };
 
   const onClickSearch = async () => {
@@ -33,7 +33,7 @@ export default function Waste() {
     console.log("data: ", data);
     setRoutes(data);
 
-    setSearchTriggered(true);
+    // setSearchTriggered(true);
   };
 
   return (
