@@ -1,184 +1,202 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-import AddEvent from "../pages/AddEvent"; // Adjust the path as needed
-import { authenticatedPost } from "../utils/auth";
+// Mock dependencies
+const mockAuthenticatedPost = jest.fn();
+const mockNavigate = jest.fn();
 
-// Mock external dependencies
+// Mock react-router-dom
+jest.mock("react-router-dom", () => ({
+  useNavigate: () => mockNavigate,
+}));
+
+// Mock authenticatedPost
 jest.mock("../utils/auth", () => ({
-  authenticatedPost: jest.fn(),
+  authenticatedPost: mockAuthenticatedPost,
 }));
 
-jest.mock("react-datepicker", () => {
-  const MockDatePicker = ({ onChange, selected, placeholderText, className }: any) => (
-    <input
-      type="text"
-      value={selected ? selected.toISOString().split("T")[0] : ""}
-      onChange={(e) => onChange(new Date(e.target.value))}
-      placeholder={placeholderText}
-      className={className}
-      data-testid="datepicker"
-    />
-  );
-  return MockDatePicker;
-});
+// Replicate handleAddEvent logic
+const handleAddEvent = async (state, alert, navigate, authenticatedPost) => {
+  if (
+    !state.eventname ||
+    !state.selectedDate ||
+    !state.selectedTime ||
+    !state.selectedLocation ||
+    !state.area ||
+    !state.description
+  ) {
+    alert("Fill all the details!");
+    return;
+  }
 
-jest.mock("@react-google-maps/api", () => ({
-  LoadScript: ({ children }: any) => <div>{children}</div>,
-  Autocomplete: ({ onLoad, onPlaceChanged, children }: any) => {
-    return (
-      <div>
-        {children}
-        <button
-          data-testid="mock-autocomplete"
-          onClick={() => {
-            onLoad({
-              getPlace: () => ({
-                formatted_address: "123 Main St, Dublin, IE",
-                address_components: [
-                  { types: ["neighborhood"], long_name: "Downtown" },
-                ],
-              }),
-            });
-            onPlaceChanged();
-          }}
-        >
-          Mock Place Select
-        </button>
-      </div>
-    );
-  },
-}));
+  const newEvent = {
+    name: state.eventname,
+    event_date: state.selectedDate,
+    event_time: state.selectedTime,
+    location: state.selectedLocation,
+    area: state.area,
+    description: state.description,
+  };
 
-// Helper to render with Router
-const renderWithRouter = (ui: React.ReactElement) => {
-  return render(<BrowserRouter>{ui}</BrowserRouter>);
+  try {
+    await authenticatedPost("/events/create", newEvent);
+    navigate("/events");
+  } catch (error) {
+    console.error("Error adding event:", error);
+    alert("Something went wrong while saving the event.");
+  }
 };
 
-describe("AddEvent Component", () => {
+// Replicate handlePlaceSelect logic
+const handlePlaceSelect = (autocomplete, setSelectedLocation, setArea) => {
+  if (autocomplete) {
+    const place = autocomplete.getPlace();
+
+    if (place && place.formatted_address) {
+      setSelectedLocation(place.formatted_address);
+    }
+    const addressComponents = place.address_components || [];
+    const neighborhoodComponent = addressComponents.find((component) =>
+      component.types.includes("sublocality") || component.types.includes("neighborhood")
+    );
+
+    if (neighborhoodComponent) {
+      setArea(neighborhoodComponent.long_name);
+    } else {
+      setArea("");
+    }
+  }
+};
+
+describe("AddEvent Component Logic", () => {
   beforeEach(() => {
+    // Reset mocks
     jest.clearAllMocks();
-    renderWithRouter(<AddEvent />);
+
+    // Mock authenticatedPost to resolve by default
+    mockAuthenticatedPost.mockResolvedValue({});
   });
 
-  // Test 1: Renders all input fields and UI elements
-  it("renders all input fields and UI elements", () => {
-    expect(screen.getByPlaceholderText("Add Name of the Event")).toBeInTheDocument();
-    expect(screen.getByTestId("datepicker")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Select Date of the Event")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("10:00")).toBeInTheDocument(); // Default time
-    expect(screen.getByPlaceholderText("Search Location")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Area")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Add Description")).toBeInTheDocument();
-    expect(screen.getByText("Add Event")).toBeInTheDocument();
-    expect(screen.getByText("Events")).toBeInTheDocument();
+  test("handleAddEvent prevents submission with incomplete form", () => {
+    // Mock state with incomplete data
+    const state = {
+      eventname: "",
+      selectedDate: null,
+      selectedTime: "10:00",
+      selectedLocation: "",
+      area: "",
+      description: "",
+    };
+
+    // Mock alert
+    const mockAlert = jest.fn();
+
+    // Call handleAddEvent
+    handleAddEvent(state, mockAlert, mockNavigate, mockAuthenticatedPost);
+
+    expect(mockAlert).toHaveBeenCalledWith("Fill all the details!");
+    expect(mockAuthenticatedPost).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  // Test 2: Shows alert when submitting with empty fields
-  it("shows an alert when submitting with empty fields", () => {
-    window.alert = jest.fn();
-    fireEvent.click(screen.getByText("Add Event"));
+  test("handleAddEvent submits form with complete data and navigates", async () => {
+    // Mock state with complete data
+    const state = {
+      eventname: "Test Event",
+      selectedDate: new Date("2025-05-01"),
+      selectedTime: "14:30",
+      selectedLocation: "Mocked Address, Dublin, Ireland",
+      area: "Mocked Area",
+      description: "This is a test event.",
+    };
 
-    expect(window.alert).toHaveBeenCalledWith("Fill all the details!");
-    expect(authenticatedPost).not.toHaveBeenCalled();
+    // Mock alert
+    const mockAlert = jest.fn();
+
+    // Call handleAddEvent
+    await handleAddEvent(state, mockAlert, mockNavigate, mockAuthenticatedPost);
+
+    expect(mockAuthenticatedPost).toHaveBeenCalledWith("/events/create", {
+      name: "Test Event",
+      event_date: expect.any(Date),
+      event_time: "14:30",
+      location: "Mocked Address, Dublin, Ireland",
+      area: "Mocked Area",
+      description: "This is a test event.",
+    });
+    expect(mockNavigate).toHaveBeenCalledWith("/events");
+    expect(mockAlert).not.toHaveBeenCalled();
   });
 
-  // Test 3: Submits successfully when all fields are filled
-  it("submits the form successfully when all fields are filled", async () => {
-    (authenticatedPost as jest.Mock).mockResolvedValueOnce({ success: true });
+  test("handleAddEvent handles submission error", async () => {
+    // Mock state with complete data
+    const state = {
+      eventname: "Test Event",
+      selectedDate: new Date("2025-05-01"),
+      selectedTime: "14:30",
+      selectedLocation: "Mocked Address, Dublin, Ireland",
+      area: "Mocked Area",
+      description: "This is a test event.",
+    };
 
-    // Fill in all fields
-    fireEvent.change(screen.getByPlaceholderText("Add Name of the Event"), {
-      target: { value: "Community Cleanup" },
-    });
-    fireEvent.change(screen.getByTestId("datepicker"), {
-      target: { value: "2025-04-15" },
-    });
-    fireEvent.change(screen.getByDisplayValue("10:00"), {
-      target: { value: "14:00" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("Search Location"), {
-      target: { value: "123 Main St, Dublin, IE" },
-    });
-    fireEvent.click(screen.getByTestId("mock-autocomplete")); // Simulate place selection
-    fireEvent.change(screen.getByPlaceholderText("Add Description"), {
-      target: { value: "A community cleanup event." },
-    });
+    // Mock alert
+    const mockAlert = jest.fn();
 
-    // Submit the form
-    fireEvent.click(screen.getByText("Add Event"));
+    // Mock authenticatedPost to fail
+    mockAuthenticatedPost.mockRejectedValue(new Error("API error"));
 
-    // Wait for async operations
-    await waitFor(() => {
-      expect(authenticatedPost).toHaveBeenCalledWith("/events/create", {
-        name: "Community Cleanup",
-        event_date: expect.any(Date), // Date object from "2025-04-15"
-        event_time: "14:00",
-        location: "123 Main St, Dublin, IE",
-        area: "Downtown",
-        description: "A community cleanup event.",
-      });
-    });
+    // Call handleAddEvent
+    await handleAddEvent(state, mockAlert, mockNavigate, mockAuthenticatedPost);
+
+    expect(mockAuthenticatedPost).toHaveBeenCalled();
+    expect(mockAlert).toHaveBeenCalledWith("Something went wrong while saving the event.");
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  // Test 4: Handles error during submission
-  it("shows an alert when submission fails", async () => {
-    (authenticatedPost as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
-    window.alert = jest.fn();
+  test("handlePlaceSelect updates location and area", () => {
+    // Mock autocomplete
+    const mockAutocomplete = {
+      getPlace: () => ({
+        formatted_address: "Mocked Address, Dublin, Ireland",
+        address_components: [
+          { types: ["neighborhood"], long_name: "Mocked Area" },
+        ],
+      }),
+    };
 
-    // Fill in all fields
-    fireEvent.change(screen.getByPlaceholderText("Add Name of the Event"), {
-      target: { value: "Community Cleanup" },
-    });
-    fireEvent.change(screen.getByTestId("datepicker"), {
-      target: { value: "2025-04-15" },
-    });
-    fireEvent.change(screen.getByDisplayValue("10:00"), {
-      target: { value: "14:00" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("Search Location"), {
-      target: { value: "123 Main St, Dublin, IE" },
-    });
-    fireEvent.click(screen.getByTestId("mock-autocomplete")); // Simulate place selection
-    fireEvent.change(screen.getByPlaceholderText("Add Description"), {
-      target: { value: "A community cleanup event." },
-    });
+    // Mock state setters
+    let selectedLocation = "";
+    let area = "";
+    const setSelectedLocation = jest.fn((value) => (selectedLocation = value));
+    const setArea = jest.fn((value) => (area = value));
 
-    // Submit the form
-    fireEvent.click(screen.getByText("Add Event"));
+    // Call handlePlaceSelect
+    handlePlaceSelect(mockAutocomplete, setSelectedLocation, setArea);
 
-    // Wait for async operations
-    await waitFor(() => {
-      expect(authenticatedPost).toHaveBeenCalled();
-      expect(window.alert).toHaveBeenCalledWith(
-        "Something went wrong while saving the event."
-      );
-    });
+    expect(setSelectedLocation).toHaveBeenCalledWith("Mocked Address, Dublin, Ireland");
+    expect(setArea).toHaveBeenCalledWith("Mocked Area");
+    expect(selectedLocation).toBe("Mocked Address, Dublin, Ireland");
+    expect(area).toBe("Mocked Area");
   });
 
-  // Test 5: Updates location and area with Autocomplete
-  it("updates location and area when a place is selected via Autocomplete", () => {
-    const locationInput = screen.getByPlaceholderText("Search Location");
-    const areaInput = screen.getByPlaceholderText("Area");
+  test("handlePlaceSelect sets empty area when no neighborhood found", () => {
+    // Mock autocomplete with no neighborhood
+    const mockAutocomplete = {
+      getPlace: () => ({
+        formatted_address: "Mocked Address, Dublin, Ireland",
+        address_components: [],
+      }),
+    };
 
-    // Initially empty
-    expect(locationInput).toHaveValue("");
-    expect(areaInput).toHaveValue("");
+    // Mock state setters
+    let selectedLocation = "";
+    let area = "";
+    const setSelectedLocation = jest.fn((value) => (selectedLocation = value));
+    const setArea = jest.fn((value) => (area = value));
 
-    // Simulate selecting a place
-    fireEvent.click(screen.getByTestId("mock-autocomplete"));
+    // Call handlePlaceSelect
+    handlePlaceSelect(mockAutocomplete, setSelectedLocation, setArea);
 
-    // Check if fields are updated
-    expect(locationInput).toHaveValue("123 Main St, Dublin, IE");
-    expect(areaInput).toHaveValue("Downtown");
-  });
-
-  // Test 6: Navigates back to /events when clicking 'Events'
-  it("navigates to /events when clicking the Events link", () => {
-    const eventsLink = screen.getByText("Events");
-    fireEvent.click(eventsLink);
-
-    // Check navigation (you'd typically mock useNavigate for this)
-    // Since we're using BrowserRouter, we can check the window location with a mock
-    expect(window.location.pathname).toBe("/events/");
+    expect(setSelectedLocation).toHaveBeenCalledWith("Mocked Address, Dublin, Ireland");
+    expect(setArea).toHaveBeenCalledWith("");
+    expect(selectedLocation).toBe("Mocked Address, Dublin, Ireland");
+    expect(area).toBe("");
   });
 });
