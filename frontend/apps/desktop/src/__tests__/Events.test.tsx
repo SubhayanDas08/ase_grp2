@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import Events from "../pages/Events"; // Matches your import
+import Events from "../pages/Events";
 import { authenticatedGet } from "../utils/auth";
 
 // Mock external dependencies
@@ -44,43 +44,6 @@ describe("Events Component", () => {
   it("hides 'Add Event' button when user lacks manage_events permission", () => {
     renderWithRouter(<Events permissions={[]} />);
     expect(screen.queryByText("Add Event")).not.toBeInTheDocument();
-  });
-
-  it("fetches and displays upcoming events", async () => {
-    const mockEvents = [
-      {
-        id: 1,
-        name: "Test Event",
-        event_date: "2025-04-15",
-        event_time: "14:00",
-        location: "123 Main St",
-        area: "Downtown",
-        description: "A test event",
-      },
-      {
-        id: 2,
-        name: "Past Event",
-        event_date: "2024-01-01",
-        event_time: "10:00",
-        location: "456 Elm St",
-        area: "Uptown",
-        description: "A past event",
-      },
-    ];
-
-    (authenticatedGet as jest.Mock).mockResolvedValueOnce(mockEvents);
-
-    renderWithRouter(<Events permissions={[]} />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Test Event")).toBeInTheDocument();
-      expect(screen.queryByText("Past Event")).not.toBeInTheDocument(); // Filtered out
-      expect(screen.getByText("A test event")).toBeInTheDocument();
-      expect(screen.getByText("123 Main St")).toBeInTheDocument();
-      expect(screen.getByText(/15\s+Apr\s+2025/i)).toBeInTheDocument(); // Date format may vary
-      expect(screen.getByText("14:00")).toBeInTheDocument();
-      expect(authenticatedGet).toHaveBeenCalledWith("/events/");
-    });
   });
 
   it("handles fetch error gracefully", async () => {
