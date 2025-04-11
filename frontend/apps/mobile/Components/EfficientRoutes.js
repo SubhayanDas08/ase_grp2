@@ -14,6 +14,7 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
+import DataConfig from "./utils/DataConfig";
 
 const { height } = Dimensions.get("window");
 
@@ -23,8 +24,8 @@ const transportOptions = [
   { value: "foot", label: "Walking" },
 ];
 
-const TFI_API_KEY = "630688984d38409689932a37a8641bb9";
-const GRAPHHOPPER_API_KEY = "afa8f81e-bb1b-4d1e-aec9-c6bd1664d322";
+const TFI_API_KEY = DataConfig.TFI_API_KEY;
+const GRAPHHOPPER_API_KEY = DataConfig.GRAPHHOPPER_API_KEY;
 
 const EfficientRoutes = ({ navigation }) => {
   const [startInput, setStartInput] = useState("");

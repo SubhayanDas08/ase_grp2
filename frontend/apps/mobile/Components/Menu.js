@@ -14,8 +14,8 @@ const Menu = ({ navigation }) => {
     { title: "Map", icon: "map-outline", screen: "MapVisual" },
     { title: "Events", icon: "list-outline", screen: "Events" },
     { title: "Traffic", icon: "bus-outline", screen: "Traffic" },
+    { title: "Weather", icon: "partly-sunny-outline", screen: "Weather" },
     { title: "Efficient Routes", icon: "navigate-outline", screen: "EfficientRoutes" }, // ✅ updated
-    { title: "Settings", icon: "settings-outline", screen: "Settings" },
   ];
 
   return (

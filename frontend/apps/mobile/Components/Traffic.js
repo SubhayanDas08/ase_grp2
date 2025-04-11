@@ -12,10 +12,11 @@ import {
 } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import { Picker } from "@react-native-picker/picker";
-import { Ionicons } from "@expo/vector-icons"; // <-- added for menu icon
+import { Ionicons } from "@expo/vector-icons";
+import DataConfig from "./utils/DataConfig";
 
-const GOOGLE_API_KEY = "AIzaSyBo-mXQolZZnHe2jxg1FDm8m-ViYP9_AaY";
-const API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion";
+const GOOGLE_API_KEY = DataConfig.GOOGLE_API_KEY;
+const API_URL = DataConfig.TRAFFIC_API_URL;
 
 const { height } = Dimensions.get("window");
 
@@ -24,7 +25,16 @@ const monthNameToNumber = {
   July: 7, August: 8, September: 9, October: 10, November: 11, December: 12,
 };
 
+const monthNumberToName = Object.entries(monthNameToNumber).reduce((acc, [name, num]) => {
+  acc[num] = name;
+  return acc;
+}, {});
+
 const Traffic = ({ navigation }) => {
+  const today = new Date();
+  const defaultDate = `${today.getDate()}`;
+  const defaultMonth = monthNumberToName[today.getMonth() + 1]; // getMonth() is 0-indexed
+
   const [query, setQuery] = useState("");
   const [predictions, setPredictions] = useState([]);
   const [selectedCoords, setSelectedCoords] = useState(null);
@@ -35,8 +45,8 @@ const Traffic = ({ navigation }) => {
     longitudeDelta: 0.05,
   });
   const [trafficPoint, setTrafficPoint] = useState(null);
-  const [selectedDate, setSelectedDate] = useState("7");
-  const [selectedMonth, setSelectedMonth] = useState("April");
+  const [selectedDate, setSelectedDate] = useState(defaultDate);
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
   const [selectedTime, setSelectedTime] = useState("00:00");
   const [loading, setLoading] = useState(false);
 
@@ -123,7 +133,6 @@ const Traffic = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Header row with menu icon */}
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
           <Ionicons name="menu" size={28} color="#009688" />
@@ -211,7 +220,7 @@ const Traffic = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 15, backgroundColor: "#fff", paddingBottom: 30, marginTop:40 },
+  container: { padding: 15, backgroundColor: "#fff", paddingBottom: 30, marginTop: 40 },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
