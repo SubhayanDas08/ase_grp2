@@ -27,17 +27,13 @@ jest.mock("react-leaflet-heatmap-layer", () => {
   };
 });
 
-const renderComponent = (ui: React.ReactElement) => {
-  return render(ui);
-};
-
 describe("HeatmapPage Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    renderComponent(<HeatmapPage />);
   });
 
   it("renders all map components", () => {
+    render(<HeatmapPage />);
     expect(screen.getByTestId("map")).toBeInTheDocument();
     expect(screen.getByTestId("tile-layer")).toBeInTheDocument();
     expect(screen.getByTestId("heatmap-layer")).toBeInTheDocument();
@@ -55,10 +51,11 @@ describe("HeatmapPage Component", () => {
 
     (authenticatedGet as jest.Mock).mockResolvedValueOnce(mockBusData);
 
-    renderComponent(<HeatmapPage />);
+    render(<HeatmapPage />);
 
-    await waitFor(() => {
-      const heatmapLayer = screen.getByTestId("heatmap-layer");
+    await waitFor(async () => {
+      const layers = screen.getAllByTestId("heatmap-layer");
+      const heatmapLayer = layers[layers.length - 1];
       const points = JSON.parse(heatmapLayer.getAttribute("data-points") || '[]');
       expect(points).toHaveLength(2);
       expect(points[0]).toEqual({ lat: 53.35, lng: -6.26 });
@@ -71,14 +68,15 @@ describe("HeatmapPage Component", () => {
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
     (authenticatedGet as jest.Mock).mockRejectedValueOnce(new Error("API Error"));
 
-    renderComponent(<HeatmapPage />);
+    render(<HeatmapPage />);
 
-    await waitFor(() => {
+    await waitFor(async () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Failed to load heatmap data",
         expect.any(Error)
       );
-      const heatmapLayer = screen.getByTestId("heatmap-layer");
+      const layers = screen.getAllByTestId("heatmap-layer");
+      const heatmapLayer = layers[layers.length - 1];
       const points = JSON.parse(heatmapLayer.getAttribute("data-points") || '[]');
       expect(points).toHaveLength(0);
     });

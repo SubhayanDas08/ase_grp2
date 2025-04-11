@@ -10,6 +10,8 @@ export default {
     "^@/(.*)$": "<rootDir>/src/$1",
     "leaflet/dist/leaflet.css": "<rootDir>/__mocks__/leafletStyleMock.js",
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+    "react-leaflet-heatmap-layer":
+      "<rootDir>/__mocks__/react-leaflet-heatmap-layer.ts",
   },
   setupFilesAfterEnv: ["<rootDir>/apps/desktop/src/setupTests.ts"],
 };
