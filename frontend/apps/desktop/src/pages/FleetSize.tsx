@@ -15,6 +15,7 @@ export default function FleetSize(): JSX.Element {
     const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
     const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
     const [dialogue, setDialogue] = useState<string>(""); 
+    const [loading, setLoading] = useState(false); // New state for loader
     const currentFleetSizes: Record<string, number> = {
         "Dublin Bus": 501,
         "Cork city": 115,
@@ -23,7 +24,6 @@ export default function FleetSize(): JSX.Element {
         "Waterford city": 10,
     };
     
-
     useEffect(() => {
         const getDaysAndYear = (monthName: string) => {
             const monthMap = {
@@ -69,6 +69,8 @@ export default function FleetSize(): JSX.Element {
 
         const selectedMonthIndex = monthMap[month as keyof typeof monthMap];
 
+        setLoading(true); // Start loader
+
         try {
             const response = await authenticatedPost<{
                 recommendations: Recommendation[];
@@ -88,6 +90,8 @@ export default function FleetSize(): JSX.Element {
         } catch (error) {
             console.error("Error fetching recommendations:", error);
             alert("Failed to fetch recommendations. Please try again.");
+        } finally {
+            setLoading(false); // Stop loader regardless of outcome
         }
     };
 
@@ -141,13 +145,36 @@ export default function FleetSize(): JSX.Element {
                     <button
                         className="flex items-center justify-center mt-5 h-10 w-60 font-extrabold rounded-2xl textLight primaryGradient cursor-pointer"
                         onClick={fetchRecommendations}
+                        disabled={loading} // Disable the button while loading
                     >
-                        View Recommendation
+                        {loading ? "Loading..." : "View Recommendation"}
                     </button>
                 </div>
 
+                {/* Loader Display */}
+                {loading && (
+                    <div className="flex items-center justify-center mt-5 text-gray-600">
+                        <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                            ></path>
+                        </svg>
+                        <span>Fetching recommendations...</span>
+                    </div>
+                )}
+
                 {/* Dialogue */}
-                {dialogue && (
+                {dialogue && !loading && (
                     <div className="mt-5 p-4 rounded-md formText italic">
                         <p className="text-lg text-gray-700">{dialogue}</p>
                     </div>
@@ -168,9 +195,9 @@ export default function FleetSize(): JSX.Element {
                                     {rec["Bus City Services"]}
                                 </div>
                                 <div className="textLight">
-                                <span className="textLight font-semibold">Current Fleet Size:</span>{" "}
-                                {currentFleetSizes[rec["Bus City Services"]] || "N/A"}
-                            </div>
+                                    <span className="textLight font-semibold">Current Fleet Size:</span>{" "}
+                                    {currentFleetSizes[rec["Bus City Services"]] || "N/A"}
+                                </div>
                                 <div className="textLight">
                                     <span className="textLight font-semibold">Recommended Fleet Size:</span>{" "}
                                     {rec["Recommended Buses"]}
