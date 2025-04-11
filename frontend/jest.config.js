@@ -7,6 +7,8 @@ export default {
   preset: "ts-jest/presets/js-with-ts-esm",
   extensionsToTreatAsEsm: [".ts", ".tsx"],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1"
-  }
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+  },
+  setupFilesAfterEnv: ["<rootDir>/apps/desktop/src/setupTests.ts"],
 };
