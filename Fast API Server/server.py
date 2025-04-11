@@ -28,8 +28,8 @@ import ast
 
 load_dotenv()
 
-# Store the OpenAI API key in a variable
-OPENROUTER_API_KEY = os.getenv("OPENAI_API_KEY")
+# Store the OpenRouter API key in a variable – use the same key name as in your .env file
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 AQI_API_KEY = os.getenv("AQI_API_KEY")
 
 class CongestionRequest(BaseModel):
@@ -122,8 +122,6 @@ class ModelHost:
         # ---------------------------
         self.trashpickuproutes = pd.read_csv("./data/trash_pickup_recommendation/routes.csv")
         self.trashpickupcoordinates = pd.read_csv("./data/trash_pickup_recommendation/place_coordinates.csv")
-        # self.AQI_API_KEY = "00e612fd4594faaa7e45419be809639c"
-        # self.OPENROUTER_API_KEY = "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"
         self.TRAFFIC_API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion"
         self.AQI_API_URL_TEMPLATE = "http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
 
@@ -713,4 +711,4 @@ async def get_AQI_TC_API(request: TrashPickupRecommendation):
 
 # For development/debugging:
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
