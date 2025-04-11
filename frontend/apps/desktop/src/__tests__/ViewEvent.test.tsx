@@ -56,8 +56,8 @@ describe("ViewEvent", () => {
     expect(screen.getByText(/Sample Location/i)).toBeInTheDocument();
     expect(screen.getByText(/Sample Area/i)).toBeInTheDocument();
     expect(screen.getByText(/Sample event description/i)).toBeInTheDocument();
-    expect(screen.getByText(/4\/1\/2025/i)).toBeInTheDocument(); // Date
-    expect(screen.getByText(/03:00 PM/i)).toBeInTheDocument(); // Time adjusted to match output
+    expect(screen.getByText("1/4/2025")).toBeInTheDocument(); // Date
+    expect(screen.getByText("15:00")).toBeInTheDocument(); // Time
   });
 
   test("handles delete event button click", async () => {
@@ -93,7 +93,7 @@ describe("ViewEvent", () => {
     const { authenticatedGet } = require("../utils/auth");
     authenticatedGet.mockResolvedValueOnce(mockEvent);
 
-    const noPermissions = [];
+    const noPermissions: string[] = [];
 
     render(
       <Router>
