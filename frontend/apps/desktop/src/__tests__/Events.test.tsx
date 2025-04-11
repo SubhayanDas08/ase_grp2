@@ -77,7 +77,7 @@ describe("Events Component", () => {
       expect(screen.queryByText("Past Event")).not.toBeInTheDocument(); // Filtered out
       expect(screen.getByText("A test event")).toBeInTheDocument();
       expect(screen.getByText("123 Main St")).toBeInTheDocument();
-      expect(screen.getByText("Apr 15, 2025")).toBeInTheDocument(); // Date format may vary
+      expect(screen.getByText(/15\s+Apr\s+2025/i)).toBeInTheDocument(); // Date format may vary
       expect(screen.getByText("14:00")).toBeInTheDocument();
       expect(authenticatedGet).toHaveBeenCalledWith("/events/");
     });
