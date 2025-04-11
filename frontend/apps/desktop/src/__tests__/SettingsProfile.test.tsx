@@ -1,15 +1,25 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import SettingsProfile from "../pages/SettingsProfile";
 import { BrowserRouter as Router } from "react-router-dom";
-import * as authUtils from "../utils/auth"; 
+import * as authUtils from "../utils/auth";
 
 jest.mock("../utils/auth", () => ({
   authenticatedGet: jest.fn(),
   authenticatedPost: jest.fn(),
 }));
 
+// Mock window.alert
+const mockAlert = jest.fn();
+global.alert = mockAlert;
+
+// Mock console.log and console.error to suppress output
+const mockConsoleLog = jest.spyOn(console, "log").mockImplementation(() => {});
+const mockConsoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+
 describe("SettingsProfile Component", () => {
   const mockSetUserAuthenticated = jest.fn();
+  const user = userEvent.setup();
 
   beforeEach(() => {
     // Mocking the response from authenticatedGet
@@ -27,8 +37,12 @@ describe("SettingsProfile Component", () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders form with user data", async () => {
-    // Check if the user data from the API is displayed in the form
+    // Wait for the initial data to load
     await waitFor(() => {
       expect(screen.getByDisplayValue("Jane")).toBeInTheDocument();
       expect(screen.getByDisplayValue("Doe")).toBeInTheDocument();
@@ -38,41 +52,65 @@ describe("SettingsProfile Component", () => {
   });
 
   it("allows changing the first and last name", async () => {
-    const firstNameInput = screen.getByLabelText(/Firstname/i);
-    const lastNameInput = screen.getByLabelText(/Last Name/i);
+    // Wait for the initial data to load
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Jane")).toBeInTheDocument();
+    });
 
-    fireEvent.change(firstNameInput, { target: { value: "John" } });
-    fireEvent.change(lastNameInput, { target: { value: "Smith" } });
+    const firstNameInput = screen.getByPlaceholderText(/Enter your First Name/i);
+    const lastNameInput = screen.getByPlaceholderText(/Enter your Last Name/i);
+
+    // Use userEvent to simulate user input
+    await user.clear(firstNameInput);
+    await user.type(firstNameInput, "John");
+    await user.clear(lastNameInput);
+    await user.type(lastNameInput, "Smith");
 
     expect(firstNameInput).toHaveValue("John");
     expect(lastNameInput).toHaveValue("Smith");
   });
 
   it("alerts if required fields (first name, last name) are missing on submit", async () => {
+    // Wait for the initial data to load
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Jane")).toBeInTheDocument();
+    });
+
     const saveButton = screen.getByText(/Save/i);
 
     // Set first name and last name to empty strings
-    fireEvent.change(screen.getByLabelText(/Firstname/i), { target: { value: "" } });
-    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: "" } });
+    const firstNameInput = screen.getByPlaceholderText(/Enter your First Name/i);
+    const lastNameInput = screen.getByPlaceholderText(/Enter your Last Name/i);
+    await user.clear(firstNameInput);
+    await user.clear(lastNameInput);
 
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Please fill in all fields");
+      expect(mockAlert).toHaveBeenCalledWith("Please fill in all fields");
     });
   });
 
   it("submits form and updates user details successfully", async () => {
+    // Wait for the initial data to load
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Jane")).toBeInTheDocument();
+    });
+
     // Mocking the response for the authenticatedPost function
     authUtils.authenticatedPost.mockResolvedValue({
       message: "User details updated successfully!",
     });
 
-    fireEvent.change(screen.getByLabelText(/Firstname/i), { target: { value: "John" } });
-    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: "Smith" } });
+    const firstNameInput = screen.getByPlaceholderText(/Enter your First Name/i);
+    const lastNameInput = screen.getByPlaceholderText(/Enter your Last Name/i);
+    await user.clear(firstNameInput);
+    await user.type(firstNameInput, "John");
+    await user.clear(lastNameInput);
+    await user.type(lastNameInput, "Smith");
 
     const saveButton = screen.getByText(/Save/i);
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(authUtils.authenticatedPost).toHaveBeenCalledWith("/user/updateName", {
@@ -80,22 +118,37 @@ describe("SettingsProfile Component", () => {
         lastName: "Smith",
       });
 
-      expect(window.alert).toHaveBeenCalledWith("User details updated successfully!");
+      expect(mockAlert).toHaveBeenCalledWith("User details updated successfully!");
     });
   });
 
   it("handles API errors gracefully", async () => {
+    // Wait for the initial data to load
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Jane")).toBeInTheDocument();
+    });
+
     // Simulating an error from the API
     authUtils.authenticatedPost.mockRejectedValue(new Error("Failed to update user details"));
 
-    fireEvent.change(screen.getByLabelText(/Firstname/i), { target: { value: "John" } });
-    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: "Smith" } });
+    const firstNameInput = screen.getByPlaceholderText(/Enter your First Name/i);
+    const lastNameInput = screen.getByPlaceholderText(/Enter your Last Name/i);
+    await user.clear(firstNameInput);
+    await user.type(firstNameInput, "John");
+    await user.clear(lastNameInput);
+    await user.type(lastNameInput, "Smith");
 
     const saveButton = screen.getByText(/Save/i);
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Failed to update user details!");
+      expect(mockAlert).toHaveBeenCalledWith("Failed to update user details!");
     });
   });
+});
+
+// Clean up mocks after all tests
+afterAll(() => {
+  mockConsoleLog.mockRestore();
+  mockConsoleError.mockRestore();
 });
