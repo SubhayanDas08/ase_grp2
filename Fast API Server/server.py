@@ -122,7 +122,7 @@ class ModelHost:
         # ---------------------------
         self.trashpickuproutes = pd.read_csv("./data/trash_pickup_recommendation/routes.csv")
         self.trashpickupcoordinates = pd.read_csv("./data/trash_pickup_recommendation/place_coordinates.csv")
-        self.TRAFFIC_API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion"
+        self.TRAFFIC_API_URL = "http://127.0.0.1/predict/trafficCongestion"
         self.AQI_API_URL_TEMPLATE = "http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
 
 
@@ -282,10 +282,8 @@ class ModelHost:
         feature_df = dataset[
             (dataset['Lat'] == lat) & (dataset['Long'] == long)
         ]
-        print("Feature DataFrame (before reset_index):", feature_df.head())
 
         feature_df = feature_df.reset_index(drop=True)
-        print("Feature DataFrame (after reset_index):", feature_df.head())
 
         # If no rows match, raise an error.
         if feature_df.empty:
@@ -302,8 +300,6 @@ class ModelHost:
 
         # Fill any missing values with 0.
         complete_df.fillna(0, inplace=True)
-
-        print("Complete DataFrame (before transformation):", complete_df.head())
         return complete_df
 
     def predict_traffic_congestion(self, input_data: dict):
@@ -321,27 +317,19 @@ class ModelHost:
 
         # Extract validated parameters.
         latitude, longitude, hour, month, day = self.get_params(input_data)
-        print(f"Extracted Parameters => Lat: {latitude}, Long: {longitude}, "
-              f"Hour: {hour}, Month: {month}, Day: {day}")
 
         # Find the nearest location from the traffic dataset's location DataFrame.
         nearest_lat, nearest_long = self.nearest_location(self.traffic_location_df, latitude, longitude)
-        print(f"Nearest Location => ({nearest_lat}, {nearest_long})")
 
         # Create a DataFrame for prediction features.
         df = self.add_features(nearest_lat, nearest_long, hour, month, day, self.traffic_dataset)
 
-        print("Final DataFrame (before transformation):")
-        print(df.dtypes)
-        print(df.head())
 
         # Transform the DataFrame using the preprocessor.
         transformed_data = self.traffic_congestion_preprocessor.transform(df)
-        print("Traffic preprocessor transformation complete.")
 
         # Predict using the LightGBM model.
         congestion_index = self.traffic_congestion_model.predict(transformed_data)
-        print("Traffic congestion prediction successful:", congestion_index)
 
         return congestion_index
 
@@ -370,9 +358,6 @@ class ModelHost:
         # Create a DataFrame for prediction features.
         df = self.add_features(nearest_lat, nearest_long, hour, month, day, self.weather_dataset)
 
-        print("Final DataFrame (before transformation):")
-        print(df.dtypes)
-        print(df.head())
 
         # Transform the DataFrame using the weather preprocessor.
         transformed_data = self.weather_prediction_preprocessor.transform(df)
@@ -405,9 +390,9 @@ class ModelHost:
             "day": now.day
         }
         try:
-            response = requests.post(self.TRAFFIC_API_URL, json=payload)
-            response.raise_for_status()
-            return response.json().get("congestion_index", [1])[0]  # Default value set to 1
+            response = self.predict_traffic_congestion(payload)
+            response = response[0]
+            return response
         except (requests.RequestException, KeyError, IndexError) as e:
             print(f"[Traffic] Error fetching congestion for ({lat}, {lon}): {e}")
             return 1  # Default value in case of error
@@ -430,7 +415,7 @@ class ModelHost:
         tc = self.get_traffic_congestion(lat, lon)
         aqi = self.get_air_pollution(lat, lon)
 
-        return (tc, aqi)
+        return (aqi, tc)
     
     def get_list_of_AQI_TC(self, route_id):
         
@@ -459,14 +444,15 @@ class ModelHost:
             
             aqi, congestion = self.get_AQI_TC(place)
 
+            # Convert NumPy types to native Python types
             results.append({
                 "place": place,
-                "aqi": aqi,
-                "tc": congestion
+                "aqi": float(aqi) if hasattr(aqi, "item") else aqi,
+                "tc": float(congestion) if hasattr(congestion, "item") else congestion
             })
 
         return results
-    
+        
     def collect_route_data(self, row):
         results = []
 
