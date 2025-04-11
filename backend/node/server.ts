@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { Pool } from 'pg';
-import locationRoutes from './routes/locationRoutes';
 import eventsRoutes from './routes/eventRoutes';
 import userRoutes from './routes/userRoutes';
-import weatherRoutes from "./routes/weatherRoutes";
 import trashPickupRoutes from "./routes/trashPickupRoutes";
 import dotenv from 'dotenv';
 import path from 'path';
@@ -62,10 +60,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use(trackApiMetrics);
-app.use('/locations', locationRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
-app.use('/weather', weatherRoutes);
 app.use('/trashPickup', trashPickupRoutes);
 
 // 5. Expose /metrics endpoint for Prometheus to scrape
