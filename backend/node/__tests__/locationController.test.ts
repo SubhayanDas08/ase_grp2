@@ -5,6 +5,11 @@ import * as databaseService from '../services/databaseService';
 import * as flaskService from '../services/flaskService';
 import { aesEncrypt, aesDecrypt } from '../interceptors/aesEncryption';
 
+beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
 jest.setTimeout(10000); // Increase test timeout in case of async delays
 
 jest.mock('../utils/redis', () => ({
@@ -167,6 +172,12 @@ describe('Location Controller', () => {
 //   });
 });
 
+// afterAll(() => {
+//   jest.resetAllMocks();
+// });
+
+
 afterAll(() => {
-  jest.resetAllMocks();
-});
+    (console.log as jest.Mock).mockRestore();
+    (console.error as jest.Mock).mockRestore();
+  });

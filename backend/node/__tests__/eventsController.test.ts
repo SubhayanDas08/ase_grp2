@@ -10,6 +10,11 @@ import {
 } from "../controllers/eventsController";
 import { AuthenticatedRequest } from "../utils/types";
 
+beforeAll(() => {
+  jest.spyOn(console, 'log').mockImplementation(() => {});
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
 jest.mock("../utils/redis", () => ({
   get: jest.fn(),
   setEx: jest.fn(),
@@ -244,4 +249,9 @@ describe("getAllEvents", () => {
 afterAll(async () => {
   await redisClient.quit?.(); // if using ioredis or redis v4+
   await pool.end?.();         // closes PostgreSQL pool if it's still open
+});
+
+afterAll(() => {
+  (console.log as jest.Mock).mockRestore();
+  (console.error as jest.Mock).mockRestore();
 });

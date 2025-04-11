@@ -6,6 +6,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { pool } from '../server';
 
+beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
 jest.mock('../services/databaseService');
 jest.mock('../utils/redis', () => ({
   setEx: jest.fn(),
