@@ -67,7 +67,7 @@ export default function Sidebar({ permissions }: SidebarProps) {
     <div className="flex flex-col h-full w-full primaryColor1BG sidebarText textLight pb-5 cursor-default overflow-y-auto">
       <div className="mainHeaderHeight sidebarHeader">
         <img src={sidebarLogo} alt="Logo" className="h-2/3" />
-        <div className="ml-2">CityManager</div>
+        <div className="ml-2 font-bold text-xl">Ecovate Ireland</div>
       </div>
       <div className="w-full h-full flex flex-col pt-5 font-normal">
         {routesList.map((route, index) => {
