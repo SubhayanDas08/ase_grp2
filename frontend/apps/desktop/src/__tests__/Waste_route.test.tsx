@@ -1,37 +1,34 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
-import Waste_routes from "../pages/Waste_routes"; // Adjust the import path
-import { FiCloudLightning } from "react-icons/fi";
-import { HiOutlineLightningBolt } from "react-icons/hi";
+import Waste_route from "../pages/Waste_route"; // Singular, matching the intended file name
 
-// Mocking react-router's useLocation to simulate the location state
+// Mock useLocation to provide the required nested state.data.data structure
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
     state: {
       data: {
-        route_name: "Route 1",
-        county: "County A",
-        place_pickup_times: [
-          { place: "Place 1", pickup_time: "08:00" },
-          { place: "Place 2", pickup_time: "09:00" },
-        ],
-        pickup_duration_min: 60,
-        place_pickup_times: [{ place: "Place 1", pickup_time: "08:00" }],
+        data: { // Nested data to match component's expectation
+          route_name: "Route 1",
+          county: "County A",
+          place_pickup_times: [
+            { place: "Place 1", pickup_time: "08:00" },
+            { place: "Place 2", pickup_time: "09:00" },
+          ],
+          pickup_duration_min: 60
+        }
       }
     }
   }),
 }));
 
-describe('Waste_routes', () => {
+describe('Waste_route', () => {
   test('renders route details correctly', () => {
     render(
       <Router>
-        <Waste_routes />
+        <Waste_route />
       </Router>
     );
-
-    // Check that route name and county are rendered
     expect(screen.getByText(/Route 1/i)).toBeInTheDocument();
     expect(screen.getByText(/County A/i)).toBeInTheDocument();
   });
@@ -39,58 +36,68 @@ describe('Waste_routes', () => {
   test('renders list of stops with correct details', () => {
     render(
       <Router>
-        <Waste_routes />
+        <Waste_route />
       </Router>
     );
-
-    // Check that the stops are rendered with correct details
     expect(screen.getByText(/Place 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Pickup time: 08:00/i)).toBeInTheDocument();
+    expect(screen.getByText(/Place 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pickup time: 09:00/i)).toBeInTheDocument();
   });
 
   test('calculates estimated time per stop correctly', () => {
     render(
       <Router>
-        <Waste_routes />
+        <Waste_route />
       </Router>
     );
-
-    // Check if estimated time per stop is rendered correctly
-    expect(screen.getByText(/est. time: ~60 mins/i)).toBeInTheDocument();
+    const timeElements = screen.getAllByText(/est. time: ~30 mins/i);
+    expect(timeElements.length).toBe(2); // One for each stop
+    expect(timeElements[0]).toBeInTheDocument(); // Verify at least one exists
   });
 
   test('toggles recommendations box when button is clicked', async () => {
     render(
       <Router>
-        <Waste_routes />
+        <Waste_route />
       </Router>
     );
-
-    // Check if "View Recommendations" button is present
-    const recommendationsButton = screen.getByText(/View Recommendations/i);
+    const recommendationsButton = screen.getByRole('button', { name: /View Recommendations/i });
     expect(recommendationsButton).toBeInTheDocument();
 
-    // Simulate button click to toggle recommendations box
-    fireEvent.click(recommendationsButton);
+    // Initially, the recommendations box should not be visible
+    expect(screen.queryByRole('heading', { name: /Recommendations/i })).not.toBeInTheDocument();
 
-    // Wait for the recommendations box to be visible
-    await waitFor(() => screen.getByText(/Recommendations/i));
-    expect(screen.getByText(/Recommendations/i)).toBeInTheDocument();
-
-    // Simulate button click again to hide recommendations box
+    // Click to show the box
     fireEvent.click(recommendationsButton);
-    await waitFor(() => expect(screen.queryByText(/Recommendations/i)).not.toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Recommendations/i })).toBeInTheDocument();
+    });
+
+    // Click again to hide the box
+    fireEvent.click(recommendationsButton);
+    await waitFor(() => {
+      expect(screen.queryByRole('heading', { name: /Recommendations/i })).not.toBeInTheDocument();
+    });
   });
 
   test('renders icons correctly', () => {
     render(
       <Router>
-        <Waste_routes />
+        <Waste_route />
       </Router>
     );
+    // Use getByDisplayValue with a regex to match SVG content since id is used in the component
+    const cloudLightningIcon = screen.getByText((_, element) => {
+      return element?.id === 'routes_waste_logo2' && element?.innerHTML.includes('<svg');
+    });
+    const lightningBoltIcons = screen.getAllByText((_, element) => {
+      return element?.id === 'routes_waste_logo' && element?.innerHTML.includes('<svg');
+    });
 
-    // Check if the icons are rendered
-    expect(screen.getByTestId('routes_waste_logo2')).toContainHTML('<svg');
-    expect(screen.getByTestId('routes_waste_logo')).toContainHTML('<svg');
+    expect(cloudLightningIcon).toBeInTheDocument();
+    expect(lightningBoltIcons.length).toBe(2); // One for each stop
+    expect(cloudLightningIcon.innerHTML).toContain('<svg');
+    expect(lightningBoltIcons[0].innerHTML).toContain('<svg');
   });
 });
