@@ -8,6 +8,7 @@ export default {
   extensionsToTreatAsEsm: [".ts", ".tsx"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "leaflet/dist/leaflet.css": "<rootDir>/__mocks__/leafletStyleMock.js",
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
   setupFilesAfterEnv: ["<rootDir>/apps/desktop/src/setupTests.ts"],
