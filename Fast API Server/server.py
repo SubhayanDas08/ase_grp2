@@ -122,7 +122,7 @@ class ModelHost:
         # ---------------------------
         self.trashpickuproutes = pd.read_csv("./data/trash_pickup_recommendation/routes.csv")
         self.trashpickupcoordinates = pd.read_csv("./data/trash_pickup_recommendation/place_coordinates.csv")
-         self.TRAFFIC_API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion"
+        self.TRAFFIC_API_URL = "https://city-management.walter-wm.de/predict/trafficCongestion"
         self.AQI_API_URL_TEMPLATE = "http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
 
 
@@ -711,4 +711,4 @@ async def get_AQI_TC_API(request: TrashPickupRecommendation):
 
 # For development/debugging:
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
