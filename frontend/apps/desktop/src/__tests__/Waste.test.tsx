@@ -11,13 +11,13 @@ jest.mock("../utils/auth", () => ({
 // Mocking react-router's Link component to simulate navigation
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
-  Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
+  Link: ({ children, to, ...props }: { children: React.ReactNode, to: string, [key: string]: any }) => <a href={to} {...props}>{children}</a>,
 }));
 
 describe("Waste Component", () => {
   beforeEach(() => {
     // Reset mock before each test
-    authenticatedPost.mockReset();
+    (authenticatedPost as jest.Mock).mockReset();
   });
 
   test("renders day and county selectors correctly", () => {
@@ -57,7 +57,7 @@ describe("Waste Component", () => {
     ];
 
     // Mock the API call to return mock data
-    authenticatedPost.mockResolvedValue(mockData);
+    (authenticatedPost as jest.Mock).mockResolvedValue(mockData);
 
     render(
       <Router>
@@ -99,7 +99,7 @@ describe("Waste Component", () => {
       },
     ];
 
-    authenticatedPost.mockResolvedValue(mockData);
+    (authenticatedPost as jest.Mock).mockResolvedValue(mockData);
 
     render(
       <Router>
