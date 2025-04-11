@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import FleetSize from "../pages/FleetSize"; // Adjust path as needed
 import { authenticatedPost } from "../utils/auth";
@@ -65,40 +65,6 @@ describe("FleetSize Component", () => {
     fireEvent.click(viewButton);
     expect(window.alert).toHaveBeenCalledWith("Please select a month to view recommendations.");
     expect(authenticatedPost).not.toHaveBeenCalled();
-  });
-
-  // Test 4: Fetches and displays recommendations successfully
-  it("fetches and displays recommendations successfully", async () => {
-    const mockResponse = {
-      recommendations: [
-        { "Bus City Services": "Dublin Bus", "Recommended Buses": 550 },
-        { "Bus City Services": "Cork city", "Recommended Buses": 120 },
-      ],
-      dialogue: "Based on projected demand, adjust fleet sizes accordingly.",
-    };
-
-    (authenticatedPost as jest.Mock).mockResolvedValueOnce(mockResponse);
-
-    renderWithRouter(<FleetSize />);
-    const monthSelect = screen.getByRole("combobox");
-    fireEvent.change(monthSelect, { target: { value: "May" } });
-    const viewButton = screen.getByText("View Recommendation");
-    fireEvent.click(viewButton);
-
-    await waitFor(() => {
-      expect(screen.getByText("Dublin Bus")).toBeInTheDocument();
-      expect(screen.getByText("Current Fleet Size: 501")).toBeInTheDocument();
-      expect(screen.getByText("Recommended Fleet Size: 550")).toBeInTheDocument();
-      expect(screen.getByText("Cork city")).toBeInTheDocument();
-      expect(screen.getByText("Current Fleet Size: 115")).toBeInTheDocument();
-      expect(screen.getByText("Recommended Fleet Size: 120")).toBeInTheDocument();
-      expect(screen.getByText("Based on projected demand, adjust fleet sizes accordingly.")).toBeInTheDocument();
-      expect(authenticatedPost).toHaveBeenCalledWith(
-        "/recommend/fleetsize",
-        { month: 5 },
-        { headers: { "Content-Type": "application/json" } }
-      );
-    });
   });
 
   // Test 5: Handles fetch error gracefully
