@@ -101,7 +101,7 @@ export default function Waste() {
         {routes.map((route, index) => (
             <Link
                 key={index}
-                state= {{ data : {county: route.county, pickup_day: route.pickup_day, data: route} }}
+                state= {{ data : {county: route.county, pickup_day: route.pickup_day, data: route, route_id: route.route_id } }}
                 to={ `/wasteroutes/${route.route_name}`}
                 className="route_waste_container flex flex-row justify-between items-center
                                             lg:w-full min-w-[100px] overflow-hidden"
