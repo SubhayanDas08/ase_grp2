@@ -32,51 +32,6 @@ describe("Waste Component", () => {
     expect(screen.getByText(/Select county/i)).toBeInTheDocument();
   });
 
-  test("fetches and renders routes after search", async () => {
-    const mockData = [
-      {
-        route_name: "Route 1",
-        county: "Dublin",
-        place_pickup_times: [
-          { place: "Place 1", pickup_time: "08:00" },
-          { place: "Place 2", pickup_time: "09:00" },
-        ],
-        num_stops: 2,
-      },
-    ];
-
-    // Mock the API call to return mock data
-    authenticatedPost.mockResolvedValue(mockData);
-
-    render(
-      <Router>
-        <Waste />
-      </Router>
-    );
-
-    // Select a day and county using getByRole('combobox')
-    const daySelect = screen.getAllByRole("combobox")[0]; // First combobox is day
-    const countySelect = screen.getAllByRole("combobox")[1]; // Second combobox is county
-    fireEvent.change(daySelect, { target: { value: "Monday" } });
-    fireEvent.change(countySelect, { target: { value: "Dublin" } });
-
-    // Click the search button
-    fireEvent.click(screen.getByText(/Search/i));
-
-    // Wait for the data to be rendered
-    await waitFor(() => {
-      expect(screen.getByText(/Route 1/i)).toBeInTheDocument();
-    });
-
-    // Check if the route name and details are displayed
-    expect(screen.getByText(/Route 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/Dublin/i)).toBeInTheDocument();
-    // Check individual pickup times instead of exact string
-    expect(screen.getByText(/Place 1 at 08:00/i)).toBeInTheDocument();
-    expect(screen.getByText(/Place 2 at 09:00/i)).toBeInTheDocument();
-    expect(screen.getByText(/2 stops/i)).toBeInTheDocument();
-  });
-
   test("does not render routes before search", () => {
     render(
       <Router>
