@@ -1,0 +1,10 @@
+# multiapp/charts/python-backend/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: python-backend-config
+
+data:
+{{- range $key, $val := .Values.env }}
+  {{ $key }}: "{{ $val }}"
+{{- end }}

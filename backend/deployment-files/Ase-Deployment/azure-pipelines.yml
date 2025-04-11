@@ -1,0 +1,79 @@
+# trigger:
+#   branches:
+#     include:
+#       - main
+
+pr: none  # Disable PR triggers
+
+parameters:
+  - name: nodeImageVersion
+    displayName: "Node Backend Image Version"
+    type: string
+    default: "latest"
+  - name: pythonImageVersion
+    displayName: "Python Backend Image Version"
+    type: string
+    default: "latest"
+
+pool:
+  name: default
+
+variables:
+  releaseName: 'ase-backend'
+
+steps:
+  - script: echo Hello, world!
+    displayName: 'Run a one-line script'
+
+  - script: |
+      echo "Killing any processes using ports 3000 and 8000"
+      lsof -ti:3000 | xargs kill -9 || true
+      lsof -ti:8000 | xargs kill -9 || true
+    displayName: 'Kill processes on ports'
+
+  - task: Bash@3
+    displayName: 'Uninstall ase-backend if exists'
+    inputs:
+      targetType: 'inline'
+      script: |
+        if helm list -q | grep -q "^$(releaseName)$"; then
+          echo "Uninstalling $(releaseName)..."
+          helm uninstall $(releaseName)
+        else
+          echo "No deployments"
+        fi
+
+  - script: |
+      echo "Deploying nodejs and fast api services"
+      helm upgrade --install $(releaseName) multiapp/ \
+        --set node-backend.image.tag=$(nodeImageVersion) \
+        --set python-backend.image.tag=$(pythonImageVersion)
+    displayName: 'Deploy ase-backend'
+
+  - script: |
+      echo "Waiting for deployments to complete"
+      kubectl rollout status deployment/node-backend || kubectl describe pod -l app=node-backend
+      kubectl rollout status deployment/python-backend || kubectl describe pod -l app=python-backend
+      kubectl get pods
+    displayName: 'Wait for Rollouts'
+
+
+  
+  # - script: |
+  #     echo "Creating port-forward script on server"
+  #     cat > port-forward.sh << 'EOF'
+  #     #!/bin/bash
+  #     pkill -f 'kubectl port-forward' || true
+  #     nohup kubectl port-forward --address 0.0.0.0 service/node-backend 3000:3000 > /dev/null 2>&1 &
+  #     nohup kubectl port-forward --address 0.0.0.0 service/python-backend 8000:8000 > /dev/null 2>&1 &
+  #     EOF
+  #     chmod +x port-forward.sh
+  #     ./port-forward.sh
+  #     ps aux | grep port-forward
+  #   displayName: 'Create Port Forward Script'
+
+  - script: |
+      echo "Verifying deployment persistence"
+      helm list
+      kubectl get pods
+    displayName: 'Verify Deployment'

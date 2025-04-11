@@ -1,0 +1,14 @@
+# multiapp/charts/python-backend/values.yaml
+replicaCount: 2
+image:
+  repository: sbnm007/ase
+  tag: py6.0
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 8000
+env:
+  OPENROUTER_API_KEY: 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
+  AQI_API_KEY: 00e612fd4594faaa7e45419be809639c
+  CAT : 1
+

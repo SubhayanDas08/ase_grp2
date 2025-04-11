@@ -1,0 +1,21 @@
+replicaCount: 3
+image:
+  repository: siwalt1/node-backend-app
+  tag: "7.0"
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 3000
+env:
+  NODE_ENV: development
+  REDIS_HOST: 10.154.0.5
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: 6DrFXs4rCCr27GdtKh
+  PG_HOST: 10.154.0.5
+  PG_PORT: "5432"
+  PG_DATABASE: postgres
+  PG_USER: postgres
+  PG_PASSWORD: bJkDV5Hvz0rxXdb90
+
+prometheus:
+  enabled: false

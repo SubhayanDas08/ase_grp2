@@ -1,0 +1,10 @@
+apiVersion: v2
+name: multiapp
+version: 0.1.0
+dependencies:
+  - name: node-backend
+    version: 0.1.0
+    repository: "charts/node-backend"
+  - name: python-backend
+    version: 0.1.0
+    repository: "charts/python-backend"

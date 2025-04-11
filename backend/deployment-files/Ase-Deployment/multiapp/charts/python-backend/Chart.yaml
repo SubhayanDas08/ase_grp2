@@ -1,0 +1,4 @@
+# multiapp/charts/python-backend/Chart.yaml
+apiVersion: v2
+name: python-backend
+version: 0.1.0
