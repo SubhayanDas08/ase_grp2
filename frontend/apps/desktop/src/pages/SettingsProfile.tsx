@@ -9,13 +9,7 @@ interface UserData {
 import { useNavigate } from "react-router-dom";
 import { authenticatedGet, authenticatedPost } from "../utils/auth";
 
-interface SettingsProps {
-  setUserAuthenticated: (userAuthenticated: any) => void;
-}
-
-export default function SettingsProfile({
-  setUserAuthenticated,
-}: SettingsProps): JSX.Element {
+export default function SettingsProfile(): JSX.Element {
   const [firstName, setFirstName] = useState<string>("John");
   const [lastName, setLastName] = useState<string>("Doe");
   const [email, setEmail] = useState<string>("user.email@gmail.com");

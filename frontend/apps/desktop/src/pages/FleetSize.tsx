@@ -1,5 +1,4 @@
 import { FaBolt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { authenticatedPost } from "../utils/auth";
 import { useEffect, useState } from "react";
 
@@ -9,10 +8,8 @@ interface Recommendation {
 }
 
 export default function FleetSize(): JSX.Element {
-    const navigate = useNavigate();
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
-    const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
     const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
     const [dialogue, setDialogue] = useState<string>(""); 
     const [loading, setLoading] = useState(false); // New state for loader
@@ -42,12 +39,7 @@ export default function FleetSize(): JSX.Element {
                     ? currentYear + 1
                     : currentYear;
                 setYear(selectedYear.toString());
-
-                const days = new Date(selectedYear, selectedMonthIndex + 1, 0).getDate();
-                const dayList = Array.from({ length: days }, (_, i) => i + 1);
-                setDaysInMonth(dayList);
             } else {
-                setDaysInMonth([]);
                 setYear("");
             }
         };

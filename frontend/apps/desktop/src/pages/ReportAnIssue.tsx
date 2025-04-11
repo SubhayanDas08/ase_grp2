@@ -2,20 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authenticatedPost } from "../utils/auth"; // Import authenticatedPost
 
-interface SettingsProps {
-  setUserAuthenticated: (userAuthenticated: any) => void;
-}
-
-interface Device {
-  id: string;
-  name: string;
-  lastActive: string;
-  status: string;
-}
-
-export default function SettingsProfile({
-  setUserAuthenticated,
-}: SettingsProps): JSX.Element {
+export default function SettingsProfile(): JSX.Element {
   const [subject, setSubject] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");

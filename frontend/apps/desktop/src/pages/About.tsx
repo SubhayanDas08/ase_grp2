@@ -1,15 +1,6 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface SettingsProps {
-    setUserAuthenticated: (userAuthenticated: any) => void;
-  }
-
-  export default function About({ setUserAuthenticated }: SettingsProps): JSX.Element {
-    const [subject, setSubject] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [errorMessage, setErrorMessage] = useState<string>("");
-
+  export default function About(): JSX.Element {
     const navigate=useNavigate();
 
     return (

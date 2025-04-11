@@ -1,5 +1,4 @@
 import Logo from "../assets/Logo.svg";
-import GoogleLogo from "../assets/GoogleLogo.svg";
 import FullLogo from "../assets/FullLogo.svg";
 import { useState, ChangeEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -65,13 +64,6 @@ export default function CreateAccount({ setUserAuthenticated }: RegisterProps) {
     } catch (error) {
       console.error("Unexpected Error:", error);
       alert("Something went wrong! Please try again.");
-    }
-  };
-
-  const checkRequiredFormFields = () => {
-    for (const [key, value] of Object.entries(formData)) {
-      if (value === "") console.log(key + " is empty");
-      else console.log(`${key}: ${value}`);
     }
   };
 
