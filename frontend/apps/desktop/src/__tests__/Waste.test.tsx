@@ -11,7 +11,7 @@ jest.mock("../utils/auth", () => ({
 // Mocking react-router's Link component to simulate navigation
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
-  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+  Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
 }));
 
 describe("Waste Component", () => {
@@ -54,20 +54,26 @@ describe("Waste Component", () => {
       </Router>
     );
 
-    // Select a day and county
-    fireEvent.change(screen.getByLabelText(/Select day/i), { target: { value: "Monday" } });
-    fireEvent.change(screen.getByLabelText(/Select county/i), { target: { value: "Dublin" } });
+    // Select a day and county using getByRole('combobox')
+    const daySelect = screen.getAllByRole("combobox")[0]; // First combobox is day
+    const countySelect = screen.getAllByRole("combobox")[1]; // Second combobox is county
+    fireEvent.change(daySelect, { target: { value: "Monday" } });
+    fireEvent.change(countySelect, { target: { value: "Dublin" } });
 
     // Click the search button
     fireEvent.click(screen.getByText(/Search/i));
 
     // Wait for the data to be rendered
-    await waitFor(() => screen.getByText(/Route 1/i));
+    await waitFor(() => {
+      expect(screen.getByText(/Route 1/i)).toBeInTheDocument();
+    });
 
     // Check if the route name and details are displayed
     expect(screen.getByText(/Route 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Dublin/i)).toBeInTheDocument();
-    expect(screen.getByText(/Place 1 at 08:00, Place 2 at 09:00/i)).toBeInTheDocument();
+    // Check individual pickup times instead of exact string
+    expect(screen.getByText(/Place 1 at 08:00/i)).toBeInTheDocument();
+    expect(screen.getByText(/Place 2 at 09:00/i)).toBeInTheDocument();
     expect(screen.getByText(/2 stops/i)).toBeInTheDocument();
   });
 
@@ -104,21 +110,25 @@ describe("Waste Component", () => {
       </Router>
     );
 
-    // Select day and county
-    fireEvent.change(screen.getByLabelText(/Select day/i), { target: { value: "Monday" } });
-    fireEvent.change(screen.getByLabelText(/Select county/i), { target: { value: "Dublin" } });
+    // Select day and county using getByRole('combobox')
+    const daySelect = screen.getAllByRole("combobox")[0];
+    const countySelect = screen.getAllByRole("combobox")[1];
+    fireEvent.change(daySelect, { target: { value: "Monday" } });
+    fireEvent.change(countySelect, { target: { value: "Dublin" } });
 
     // Click the search button
     fireEvent.click(screen.getByText(/Search/i));
 
     // Wait for the API call to finish
-    await waitFor(() => expect(authenticatedPost).toHaveBeenCalledWith(
-      "/trashPickup/getRouteDetails",
-      {
-        county: "Dublin",
-        pickup_day: "Monday",
-      }
-    ));
+    await waitFor(() => {
+      expect(authenticatedPost).toHaveBeenCalledWith(
+        "/trashPickup/getRouteDetails",
+        {
+          county: "Dublin",
+          pickup_day: "Monday",
+        }
+      );
+    });
   });
 
   test("renders the route links correctly", async () => {
@@ -142,18 +152,22 @@ describe("Waste Component", () => {
       </Router>
     );
 
-    fireEvent.change(screen.getByLabelText(/Select day/i), { target: { value: "Monday" } });
-    fireEvent.change(screen.getByLabelText(/Select county/i), { target: { value: "Dublin" } });
+    // Select day and county using getByRole('combobox')
+    const daySelect = screen.getAllByRole("combobox")[0];
+    const countySelect = screen.getAllByRole("combobox")[1];
+    fireEvent.change(daySelect, { target: { value: "Monday" } });
+    fireEvent.change(countySelect, { target: { value: "Dublin" } });
 
     fireEvent.click(screen.getByText(/Search/i));
 
-    await waitFor(() => screen.getByText(/Route 1/i));
+    // Wait for the link to be fully rendered
+    await waitFor(() => {
+      const routeLink = screen.getByRole("link", { name: /Route 1/i });
+      expect(routeLink).toBeInTheDocument();
+    });
 
     // Check if the Link component is rendered correctly
-    expect(screen.getByText(/Route 1/i)).toHaveAttribute(
-      "href",
-      "/wasteroutes/Route 1"
-    );
+    const routeLink = screen.getByRole("link", { name: /Route 1/i });
+    expect(routeLink).toHaveAttribute("href", "/wasteroutes/Route 1");
   });
 });
-

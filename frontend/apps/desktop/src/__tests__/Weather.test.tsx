@@ -2,6 +2,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Weather from "../pages/Weather";
 
+// Ensure mocks are set up before any imports that might trigger module resolution
+beforeAll(() => {
+  // Mock CSS import to prevent Jest from failing on leaflet.css
+  jest.mock("leaflet/dist/leaflet.css", () => ({}));
+});
+
 // Mock react-leaflet components to avoid ESM parsing issues
 jest.mock("react-leaflet", () => ({
   MapContainer: ({ children }) => <div data-testid="map">{children}</div>,
@@ -62,6 +68,7 @@ describe("Weather Component", () => {
       feelslike_c: 20,
       wind_kph: 15,
       humidity: 60,
+      dewpoint_c: 10, // Added to match humidity case in markerDataDisplay
       precip_mm: 1.5,
       uv: 5,
     });
@@ -74,14 +81,16 @@ describe("Weather Component", () => {
     await waitFor(() => {
       expect(screen.getByTestId("dropdown")).toBeInTheDocument();
       expect(screen.getByTestId("map")).toBeInTheDocument();
-      expect(screen.getByTestId("marker-icon")).toBeInTheDocument();
-      expect(screen.getByTestId("popup")).toBeInTheDocument();
+      expect(screen.getAllByTestId("marker-icon")).toHaveLength(2); // Two stations
+      expect(screen.getAllByTestId("popup")).toHaveLength(2); // Two popups
     });
 
-    // Check that the weather data is displayed in the marker popup
+    // Check that the weather data is displayed in the marker popups
     await waitFor(() => {
       expect(screen.getByText("Weather Station ID: 1")).toBeInTheDocument();
-      expect(screen.getByText("AQI: 50")).toBeInTheDocument();
+      expect(screen.getByText("Weather Station ID: 2")).toBeInTheDocument();
+      const aqiElements = screen.getAllByText("AQI: 50");
+      expect(aqiElements).toHaveLength(2); // One per station
     });
   });
 
@@ -93,14 +102,21 @@ describe("Weather Component", () => {
       expect(screen.getByTestId("dropdown")).toBeInTheDocument();
     });
 
+    // Initially, AQI should be displayed
+    await waitFor(() => {
+      expect(screen.getAllByText("AQI: 50")).toHaveLength(2);
+    });
+
     // Simulate clicking the "Temperature" menu item
     const temperatureButton = screen.getByTestId("menu-item-Temperature");
     await userEvent.click(temperatureButton);
 
-    // Check if the temperature data is displayed
+    // Check if the temperature data is displayed for both stations
     await waitFor(() => {
-      expect(screen.getByText("Temperature: 22°C")).toBeInTheDocument();
-      expect(screen.getByText("Feels Like: 20°C")).toBeInTheDocument();
+      const tempElements = screen.getAllByText("Temperature: 22°C");
+      expect(tempElements).toHaveLength(2); // One per station
+      const feelsLikeElements = screen.getAllByText("Feels Like: 20°C");
+      expect(feelsLikeElements).toHaveLength(2); // One per station
     });
   });
 });
