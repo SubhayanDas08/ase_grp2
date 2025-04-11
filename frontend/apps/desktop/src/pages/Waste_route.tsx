@@ -1,7 +1,8 @@
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { FiCloudLightning } from "react-icons/fi";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { authenticatedPost } from "../utils/auth";
 
 export default function Waste_routes() {
     const navigate = useNavigate();
@@ -11,9 +12,45 @@ export default function Waste_routes() {
     // State to control button visibility and recommendations box
     const [showRecommendations, setShowRecommendations] = useState(true);
     const [showRecommendationsBox, setShowRecommendationsBox] = useState(false);
+    const [aqiData, setAqiData] = useState<any[]>([]);
+    const [recommendation, setRecommendation] = useState("");
     
     // Calculated estimated time per stop
     const estimatedTimePerStop = Math.round(state.data.pickup_duration_min / state.data.place_pickup_times.length);
+    useEffect(() => {
+        const fetchAQIData = async () => {
+            try {
+            const response = await authenticatedPost<any[]>(
+                "/predict/AQI_TC",
+                { route_id: state.data.route_id }
+            );
+            console.log("AQI data: ", response);
+            setAqiData(response);
+            } catch (error) {
+            console.error("Failed to fetch AQI data", error);
+            }
+        };
+        
+        fetchAQIData();
+    }, [state.data.route_id]);
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            try {
+              const response = await authenticatedPost<{ recommendations: string }>(
+                "/recommend/trashpickup",
+                { route_id: state.data.route_id }
+              );
+              console.log("Recommendation: ", response);
+              setRecommendation(response.recommendations);
+            } catch (err) {
+              console.error("Failed to fetch recommendation", err);
+              setRecommendation("Unable to fetch recommendation");
+            }
+        }; 
+       
+        fetchRecommendations();
+    }, [state.data.route_id]);
 
     return (
         <div className="overflow-y-auto">
@@ -52,10 +89,10 @@ export default function Waste_routes() {
                             
                             {/* Recommendations Box */}
                             {showRecommendationsBox && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                <div className="absolute right-0 mt-2 w-96 bg-white rounded-md shadow-lg z-10 border border-gray-200">
                                     <div className="p-4">
                                         <h3 className="font-bold text-gray-800"> Recommendations</h3>
-                                        text
+                                        <p className="text-sm text-gray-600 mt-2">{recommendation || "Loading..."}</p>
                                     </div>
                                 </div>
                             )}
@@ -83,7 +120,7 @@ export default function Waste_routes() {
                                 AQI
                             </div>
                             <div className="ml-7.5 font-bold text-lg">
-                                1
+                                {aqiData.find((a) => a.place === stop.place)?.aqi || "-"}
                             </div>
                         </div>
                         <div className="index_waste text-white">
@@ -91,7 +128,7 @@ export default function Waste_routes() {
                                 Traffic Index
                             </div>
                             <div className="ml-7.5 font-bold text-lg">
-                                1
+                                {aqiData.find((a) => a.place === stop.place)?.tc || "-"}
                             </div>
                         </div>
                         <div className="text-right mr-5 text-white opacity-75 text-xs">
