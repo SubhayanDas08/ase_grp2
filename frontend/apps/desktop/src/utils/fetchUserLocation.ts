@@ -1,4 +1,4 @@
-const IPAddress: string | undefined = import.meta.env.VITE_IP_ADDRESS;
+//const IPAddress: string | undefined = import.meta.env.VITE_IP_ADDRESS;
 
 // Get user location
 export default async function FetchUserLocation(ip?: string): Promise<any> {
