@@ -28,7 +28,7 @@ export default function AddEvent(): JSX.Element {
 
         const newEvent={
             name:eventname,
-            event_date:selectedDate,
+            event_date:`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
             event_time:selectedTime,
             location:selectedLocation,
             area,

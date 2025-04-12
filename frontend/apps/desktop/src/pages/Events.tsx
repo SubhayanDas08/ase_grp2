@@ -66,7 +66,7 @@ export default function Events2({ permissions }: EventProps): JSX.Element {
           )}
         </div>
       </div>
-      <div className="h-full w-full flex flex-col space-y-3">
+      <div className="h-full w-full flex flex-col space-y-3 overflow-y-auto">
         {events.map((event) => (
           // Event Card
           <div
