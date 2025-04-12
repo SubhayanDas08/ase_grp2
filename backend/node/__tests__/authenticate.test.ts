@@ -1,81 +1,132 @@
-import {authenticate} from "../middleware/authenticate"; // default import now
-import jwt from "jsonwebtoken";
+import { authenticate } from '../middleware/authenticate';
+import redisClient from '../utils/redis';
+import { getUserById } from '../services/databaseService';
+import { Request, Response, NextFunction } from 'express';
 
-// Mock jwt.verify so we can simulate token verification behavior.
-jest.mock("jsonwebtoken");
+// Mocking redisClient and databaseService
+jest.mock('../utils/redis');
+jest.mock('../services/databaseService');
 
-describe("Authenticate Middleware", () => {
-  let req: any;
-  let res: any;
-  let next: jest.Mock;
+describe('authenticate middleware', () => {
+  let req: Partial<Request> & { user?: any; headers: { [key: string]: string } }; // Added user and headers properties
+  let res: Partial<Response>;
+  let next: NextFunction;
 
   beforeEach(() => {
-    // Set up a fresh request, response, and next function before each test.
-    req = { headers: {} };
+    req = {
+      headers: {}, // Explicitly initializing headers to avoid undefined error
+    };
     res = {
-      status: jest.fn(() => res),
-      json: jest.fn(() => res)
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn().mockReturnThis(),
     };
     next = jest.fn();
-    (jwt.verify as jest.Mock).mockClear();
   });
 
-  it("should return 401 if no authorization header is provided", () => {
-    // Call the factory function with a dummy role to obtain the middleware.
-    const middleware = authenticate("test_role");
-    middleware(req, res, next);
+  it('should return 401 if no token is provided', async () => {
+    req.headers = {}; // Simulating no token
+
+    const authMiddleware = authenticate();
+    await authMiddleware(req as Request, res as Response, next);
+
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "No token provided" });
+    expect(res.json).toHaveBeenCalledWith({ error: 'No token provided' });
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("should return 401 if authorization header is malformed (not enough parts)", () => {
-    // Case: header exists but does not contain two parts.
-    req.headers.authorization = "Bearer"; // Only one part
-    const middleware = authenticate("test_role");
-    middleware(req, res, next);
+  it('should return 401 if session is expired or invalid', async () => {
+    // Simulating an invalid token session
+    (redisClient.get as jest.Mock).mockResolvedValue(null);
+
+    const authMiddleware = authenticate();
+    await authMiddleware(req as Request, res as Response, next);
+
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Token error" });
+    expect(res.json).toHaveBeenCalledWith({ error: 'Session expired or invalid' });
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("should return 401 if authorization header is malformed (wrong format)", () => {
-    // Case: header has two parts but the scheme is not 'Bearer'
-    req.headers.authorization = "Token sometoken";
-    const middleware = authenticate("test_role");
-    middleware(req, res, next);
+  it('should return 401 if user is not found in the database', async () => {
+    // Simulating an expired session token but Redis returns userId
+    (redisClient.get as jest.Mock).mockResolvedValue('user123');
+    (getUserById as jest.Mock).mockResolvedValue(null); // No user found
+
+    const authMiddleware = authenticate();
+    await authMiddleware(req as Request, res as Response, next);
+
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Token malformatted" });
+    expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("should return 401 if token verification fails", () => {
-    req.headers.authorization = "Bearer invalid-token";
-    // Simulate jwt.verify callback returning an error.
-    (jwt.verify as jest.Mock).mockImplementation((token, secret, callback) => {
-      callback(new Error("invalid token"), null);
+  it('should return 403 if user does not have required permissions', async () => {
+    const mockUser = { id: 'user123', permissions: ['read'] };
+    (redisClient.get as jest.Mock).mockResolvedValue('user123');
+    (redisClient.sMembers as jest.Mock).mockResolvedValue(['read']); // Permissions from Redis
+    (getUserById as jest.Mock).mockResolvedValue(mockUser);
+
+    req.headers = { authorization: 'Bearer mockToken' }; // Simulating valid token
+
+    const authMiddleware = authenticate('write'); // Checking for 'write' permission
+    await authMiddleware(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ error: 'No permission to perform this action: write' });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should attach user and permissions to the request', async () => {
+    const mockUser = { id: 'user123', permissions: ['read', 'write'] };
+    const mockPermissions = ['read', 'write'];
+
+    (redisClient.get as jest.Mock).mockResolvedValue('user123');
+    (redisClient.sMembers as jest.Mock).mockResolvedValue(mockPermissions);
+    (getUserById as jest.Mock).mockResolvedValue(mockUser);
+
+    req.headers = { authorization: 'Bearer mockToken' }; // Simulating valid token
+
+    const authMiddleware = authenticate();
+    await authMiddleware(req as Request, res as Response, next);
+
+    // Explicitly check user and permissions attached to the request
+    expect(req.user).toEqual({
+      ...mockUser,
+      permissions: mockPermissions,
     });
-    const middleware = authenticate("test_role");
-    middleware(req, res, next);
-    expect(jwt.verify).toHaveBeenCalledWith("invalid-token", expect.any(String), expect.any(Function));
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Failed to authenticate token" });
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  it("should call next and attach decoded user if token is valid", () => {
-    req.headers.authorization = "Bearer valid-token";
-    const fakeDecoded = { id: 42, name: "Test User" };
-    (jwt.verify as jest.Mock).mockImplementation((token, secret, callback) => {
-      callback(null, fakeDecoded);
-    });
-    const middleware = authenticate("test_role");
-    middleware(req, res, next);
-    expect(jwt.verify).toHaveBeenCalled();
-    expect(req.user).toEqual(fakeDecoded);
     expect(next).toHaveBeenCalled();
-    // Ensure no error response was sent.
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
+  });
+
+  it('should call next() if user is authenticated and has required permission', async () => {
+    const mockUser = { id: 'user123', permissions: ['read', 'write'] };
+    const mockPermissions = ['read', 'write'];
+
+    (redisClient.get as jest.Mock).mockResolvedValue('user123');
+    (redisClient.sMembers as jest.Mock).mockResolvedValue(mockPermissions);
+    (getUserById as jest.Mock).mockResolvedValue(mockUser);
+
+    req.headers = { authorization: 'Bearer mockToken' }; // Simulating valid token
+
+    const authMiddleware = authenticate('write'); // Checking for 'write' permission
+    await authMiddleware(req as Request, res as Response, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should extend session TTL after successful authentication', async () => {
+    const mockUser = { id: 'user123', permissions: ['read', 'write'] };
+    const mockPermissions = ['read', 'write'];
+
+    (redisClient.get as jest.Mock).mockResolvedValue('user123');
+    (redisClient.sMembers as jest.Mock).mockResolvedValue(mockPermissions);
+    (getUserById as jest.Mock).mockResolvedValue(mockUser);
+
+    req.headers = { authorization: 'Bearer mockToken' }; // Simulating valid token
+
+    const authMiddleware = authenticate();
+    await authMiddleware(req as Request, res as Response, next);
+
+    // Verify redisClient.expire is called with correct parameters
+    expect(redisClient.expire).toHaveBeenCalledWith('session:mockToken', 3600);
+    expect(next).toHaveBeenCalled();
   });
 });
