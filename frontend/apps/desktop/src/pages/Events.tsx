@@ -35,7 +35,7 @@ export default function Events2({ permissions }: EventProps): JSX.Element {
 
           const combinedDateTime = `${normalizedDate}T${event.event_time}`;
           const eventDateTime = new Date(combinedDateTime);
-          return eventDateTime >= now;
+          return eventDateTime;
         });
 
         const sortedEvents = upcomingEvents.sort((a, b) => {
