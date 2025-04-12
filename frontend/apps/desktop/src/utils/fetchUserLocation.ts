@@ -1,7 +1,8 @@
 //const IPAddress: string | undefined = import.meta.env.VITE_IP_ADDRESS;
 
 // Get user location
-export default async function FetchUserLocation(ip?: string): Promise<any> {
+//Originally, the parameter was: ip?: string
+export default async function FetchUserLocation(): Promise<any> {
     const location = [53.3438, -6.2546]; // Default location Trinity College Dublin
 
     return {
