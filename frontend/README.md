@@ -137,9 +137,9 @@ Below is a high-level overview of the repository structure:
 git clone https://github.com/SubhayanDas08/ase_grp2.git
 cd ase_grp2/frontend
 ```
-### Install Dependencies (Root Level)
+### Install Dependencies
 
-While each app has its own dependencies, you may want to install at the root level:
+While each app has its own dependencies, you may want to install at the frontend folder level:
 
 ``` bash
 npm install
