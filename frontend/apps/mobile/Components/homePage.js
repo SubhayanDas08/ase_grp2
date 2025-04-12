@@ -8,19 +8,45 @@ import {
   Image,
   Modal,
   Pressable,
+  ActivityIndicator,
   Dimensions,
 } from "react-native";
 import { Ionicons, FontAwesome, Feather } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from 'expo-location';
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
+import DataConfig from "./utils/DataConfig";
 
 const HomePage = ({ navigation }) => {
   const [editMode, setEditMode] = useState(false);
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [widgets, setWidgets] = useState([]);
   const [availableWidgets, setAvailableWidgets] = useState([]);
+  const [location, setLocation] = useState(null);
+  const [locationName, setLocationName] = useState("Loading location...");
+  const [weather, setWeather] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [loadingWeather, setLoadingWeather] = useState(true);
 
-  // Load saved widgets on component mount
+  const OPENWEATHER_API_KEY = DataConfig.WEATHER_API_KEY;
+
+  const reverseGeocode = async (latitude, longitude) => {
+    try {
+      const response = await Location.reverseGeocodeAsync({ latitude, longitude });
+      if (response.length > 0) {
+        const { city, district, subregion } = response[0];
+        return district || city || subregion || "Current Location";
+      }
+      return "Current Location";
+    } catch (error) {
+      console.error("Error in reverse geocoding:", error);
+      return "Current Location";
+    }
+  };
+
   useEffect(() => {
     const loadWidgets = async () => {
       try {
@@ -30,11 +56,9 @@ const HomePage = ({ navigation }) => {
         if (savedWidgets !== null) {
           setWidgets(JSON.parse(savedWidgets));
         } else {
-          // Initial setup
           const initialWidgets = [
             { id: "1", type: "weather" },
             { id: "2", type: "events" },
-            { id: "3", type: "map" },
           ];
           setWidgets(initialWidgets);
           await AsyncStorage.setItem('@widgets', JSON.stringify(initialWidgets));
@@ -43,18 +67,65 @@ const HomePage = ({ navigation }) => {
         if (savedAvailable !== null) {
           setAvailableWidgets(JSON.parse(savedAvailable));
         } else {
-          // Initial setup
           const initialAvailable = ["efficientRoutes"];
           setAvailableWidgets(initialAvailable);
           await AsyncStorage.setItem('@availableWidgets', JSON.stringify(initialAvailable));
         }
+
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.log("Permission to access location was denied");
+          setLocationName("Location permission denied");
+          return;
+        }
+
+        const { coords } = await Location.getCurrentPositionAsync({});
+        setLocation(coords);
+        const name = await reverseGeocode(coords.latitude, coords.longitude);
+        setLocationName(name);
+        fetchWeather(coords.latitude, coords.longitude);
+
       } catch (e) {
-        console.error('Failed to load widgets', e);
+        console.error('Failed to load widgets or get location/weather', e);
+        setLocationName("Error getting location");
       }
     };
 
     loadWidgets();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchEvents();
+    }, [])
+  );
+
+  const fetchEvents = async () => {
+    try {
+      setLoadingEvents(true);
+      const response = await axios.get("https://city-management.walter-wm.de/events/");
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoadingEvents(false);
+    }
+  };
+
+  const fetchWeather = async (latitude, longitude) => {
+    try {
+      setLoadingWeather(true);
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${OPENWEATHER_API_KEY}`
+      );
+      const data = await response.json();
+      setWeather(data);
+    } catch (error) {
+      console.error("Error fetching weather data:", error);
+    } finally {
+      setLoadingWeather(false);
+    }
+  };
 
   const handleMenuPress = () => {
     navigation.navigate("Menu");
@@ -62,7 +133,6 @@ const HomePage = ({ navigation }) => {
 
   const toggleEditMode = async () => {
     if (editMode) {
-      // When exiting edit mode, save the current state
       try {
         await AsyncStorage.setItem('@widgets', JSON.stringify(widgets));
         await AsyncStorage.setItem('@availableWidgets', JSON.stringify(availableWidgets));
@@ -72,6 +142,18 @@ const HomePage = ({ navigation }) => {
       setShowAddWidget(false);
     }
     setEditMode(!editMode);
+  };
+
+  const refreshLocation = async () => {
+    try {
+      const { coords } = await Location.getCurrentPositionAsync({});
+      setLocation(coords);
+      const name = await reverseGeocode(coords.latitude, coords.longitude);
+      setLocationName(name);
+      fetchWeather(coords.latitude, coords.longitude);
+    } catch (error) {
+      console.error("Error refreshing location:", error);
+    }
   };
 
   const handleAddWidget = async (type) => {
@@ -105,24 +187,51 @@ const HomePage = ({ navigation }) => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const formatTime = (timeString) => {
+    return timeString.split(":").slice(0, 2).join(":");
+  };
+
   const renderWidget = (widget, isPreview = false) => {
     const widgetContent = (type) => {
       switch (type) {
         case "weather":
+          if (loadingWeather || !weather) {
+            return (
+              <View style={styles.weatherLoading}>
+                <ActivityIndicator size="small" color="#009688" />
+                <Text style={styles.loadingText}>Loading weather data...</Text>
+              </View>
+            );
+          }
+          const temperature = weather.main.temp;
+          const weatherDescription = weather.weather[0].description;
+          const humidity = weather.main.humidity;
+          const highTemp = weather.main.temp_max;
+          const lowTemp = weather.main.temp_min;
+  
           return (
             <>
               <View style={styles.widgetHeader}>
-                <Ionicons name="location-sharp" size={16} color="#009688" />
-                <Text style={styles.widgetTitle}>Dublin 1</Text>
-                <Text style={styles.widgetTime}>2 min ago</Text>
+                <Ionicons style={styles.locicon} name="location-sharp" size={16} color="#009688" />
+                <Text style={styles.widgetTitle}>{locationName}</Text>
+                <Text style={styles.widgetTime}>Updated just now</Text>
               </View>
               <View style={styles.weatherGrid}>
                 <View style={styles.weatherBox}>
                   <Feather name="cloud" size={24} color="#009688" />
                   <Text style={styles.weatherTitle}>Temperature</Text>
-                  <Text style={styles.weatherValue}>6°C</Text>
-                  <Text style={styles.weatherSub}>Mostly Cloudy</Text>
-                  <Text style={styles.weatherSub}>H:9° L:5°</Text>
+                  <Text style={styles.weatherValue}>{temperature}°C</Text>
+                  <Text style={styles.weatherSub}>{weatherDescription}</Text>
+                  <Text style={styles.weatherSub}>H:{highTemp}° L:{lowTemp}°</Text>
                 </View>
                 <View style={styles.weatherBox}>
                   <FontAwesome name="tint" size={24} color="#009688" />
@@ -139,75 +248,69 @@ const HomePage = ({ navigation }) => {
                 <View style={styles.weatherBox}>
                   <Ionicons name="rainy" size={24} color="#009688" />
                   <Text style={styles.weatherTitle}>Humidity</Text>
-                  <Text style={styles.weatherValue}>88%</Text>
+                  <Text style={styles.weatherValue}>{humidity}%</Text>
                   <Text style={styles.weatherSub}>Dew point: 4°C</Text>
                 </View>
               </View>
             </>
           );
         case "events":
+          if (loadingEvents) {
+            return (
+              <View style={styles.eventsLoading}>
+                <ActivityIndicator size="small" color="#009688" />
+                <Text style={styles.loadingText}>Loading events...</Text>
+              </View>
+            );
+          }
           return (
             <>
-              <Text style={[styles.widgetTitle, { marginBottom: 15 }]}>Events</Text>
-              <View style={styles.eventItem}>
-                <Ionicons name="flash" size={20} color="#009688" />
-                <View style={styles.eventTextContainer}>
-                  <Text style={styles.eventTitle}>Lightning strikes in Hamilton Gardens</Text>
-                  <Text style={styles.eventSubtitle}>Burning house, people crying</Text>
+              <Text style={[styles.widgetTitle, { marginBottom: 15, marginLeft: 20 }]}>Recent Events</Text>
+              {events.slice(0, 2).map((event) => (
+                <View key={event.id} style={styles.eventItem}>
+                  <Ionicons 
+                    name={event.description.toLowerCase().includes("accident") ? "warning" : "calendar"} 
+                    size={20} 
+                    color={event.description.toLowerCase().includes("accident") ? "#ff3b30" : "#009688"} 
+                  />
+                  <View style={styles.eventTextContainer}>
+                    <Text style={styles.eventTitle}>{event.name}</Text>
+                    <Text style={styles.eventSubtitle}>{event.description}</Text>
+                  </View>
+                  <Text style={styles.eventTime}>{formatTime(event.event_time)}</Text>
                 </View>
-                <Text style={styles.eventTime}>20 mins ago</Text>
-              </View>
-              <View style={styles.eventItem}>
-                <Ionicons name="sunny" size={20} color="#009688" />
-                <View style={styles.eventTextContainer}>
-                  <Text style={styles.eventTitle}>Chain Reaction Collision</Text>
-                  <Text style={styles.eventSubtitle}>Approx. 100 cars and 3 buses involved</Text>
-                </View>
-                <Text style={styles.eventTime}>15:45</Text>
-              </View>
+              ))}
+              {events.length > 2 && (
+                <TouchableOpacity 
+                  style={styles.viewAllButton}
+                  onPress={() => navigation.navigate("Events")}
+                >
+                  <Text style={styles.viewAllText}>View All Events</Text>
+                </TouchableOpacity>
+              )}
             </>
-          );
-        case "map":
-          return (
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: 53.3498,
-                longitude: -6.2603,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
-              }}
-            >
-              <Marker
-                coordinate={{ latitude: 53.3498, longitude: -6.2603 }}
-                title="Dublin City Center"
-              />
-            </MapView>
           );
         case "efficientRoutes":
           return (
             <>
-              <Text style={[styles.widgetTitle, { marginBottom: 15 }]}>Efficient Routes</Text>
-              
+              <Text style={[styles.widgetTitle, { marginBottom: 15, marginLeft:18 }]}>Efficient Routes</Text>
               <View style={styles.routeSection}>
                 <Text style={styles.routeHeader}>Start Location</Text>
                 <Text style={styles.routeSubheader}>End Location</Text>
               </View>
-              
               <View style={styles.divider} />
-              
               <View style={styles.transportOptions}>
                 <Text style={styles.transportOption}>Car</Text>
                 <Text style={styles.transportOption}>Bike</Text>
                 <Text style={styles.transportOption}>Walking</Text>
               </View>
-              
               <View style={styles.divider} />
-              
-              <TouchableOpacity style={styles.routeButton}>
+              <TouchableOpacity 
+                style={styles.routeButton}
+                onPress={() => navigation.navigate("EfficientRoutes")}
+              >
                 <Text style={styles.routeButtonText}>Get Route</Text>
               </TouchableOpacity>
-              
               <View style={styles.locationsContainer}>
                 <Text style={styles.locationTag}>DIGUNCOROSA</Text>
                 <Text style={styles.locationTag}>NORTHSIDE</Text>
@@ -216,18 +319,13 @@ const HomePage = ({ navigation }) => {
                 <Text style={styles.locationTag}>SOUTH GERGIAN CORE</Text>
                 <Text style={styles.locationTag}>BALLSBRIDGE</Text>
               </View>
-              
-              <View style={styles.mapLinkContainer}>
-                <Text style={styles.mapLink}>Maps</Text>
-                <Text style={styles.mapLink}>Maputo's</Text>
-              </View>
             </>
           );
         default:
           return null;
       }
     };
-
+  
     if (isPreview) {
       return (
         <View style={styles.widgetContainer}>
@@ -235,10 +333,18 @@ const HomePage = ({ navigation }) => {
         </View>
       );
     }
-
+  
     return (
-      <TouchableOpacity 
-        onPress={() => navigation.navigate(widget.type === "map" ? "MapVisual" : widget.type === "efficientRoutes" ? "EfficientRoutes" : widget.type)}
+      <TouchableOpacity
+        onPress={() => {
+          if (widget.type === "weather") {
+            navigation.navigate("Weather", { weatherData: weather });
+          } else if (widget.type === "efficientRoutes") {
+            navigation.navigate("EfficientRoutes");
+          } else if (widget.type === "events") {
+            navigation.navigate("Events");
+          }
+        }}
         activeOpacity={0.8}
       >
         <View style={styles.widgetContainer}>
@@ -273,6 +379,9 @@ const HomePage = ({ navigation }) => {
               {editMode ? "Done" : "Edit"}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={refreshLocation} style={styles.refreshButton}>
+            <Ionicons name="refresh" size={20} color="#009688" />
+          </TouchableOpacity>
           <Image
             source={require("../assets/icon.png")}
             style={styles.profileIcon}
@@ -287,7 +396,7 @@ const HomePage = ({ navigation }) => {
           <Text style={styles.welcome}>Welcome!</Text>
           <View style={styles.locationRow}>
             <Ionicons name="location-sharp" size={16} color="#009688" />
-            <Text style={styles.location}>Dublin 1</Text>
+            <Text style={styles.location}>{locationName}</Text>
           </View>
         </View>
 
@@ -357,6 +466,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 40,
   },
+  locicon:{
+    marginLeft:14,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -378,6 +490,9 @@ const styles = StyleSheet.create({
   editButton: {
     color: "#009688",
     fontWeight: "600",
+    marginRight: 15,
+  },
+  refreshButton: {
     marginRight: 15,
   },
   profileIcon: {
@@ -420,7 +535,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   removeButton: {
-    position: 'absolute',
+    position: 'relative',
     top: 10,
     right: 10,
     backgroundColor: "#009688",
@@ -477,6 +592,20 @@ const styles = StyleSheet.create({
     color: "#777",
     textAlign: "center",
   },
+  weatherLoading: {
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  eventsLoading: {
+    height: 150,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    color: "#009688",
+  },
   map: {
     width: "100%",
     height: 200,
@@ -506,6 +635,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#999",
     marginLeft: 10,
+  },
+  viewAllButton: {
+    marginTop: 10,
+    alignSelf: "flex-end",
+  },
+  viewAllText: {
+    color: "#009688",
+    fontWeight: "bold",
+    fontSize: 12,
   },
   routeSection: {
     marginBottom: 10,
@@ -552,16 +690,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#555',
     marginBottom: 5,
-  },
-  mapLinkContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  mapLink: {
-    fontSize: 12,
-    color: '#009688',
-    textDecorationLine: 'underline',
   },
   addButton: {
     flexDirection: "row",
@@ -612,89 +740,6 @@ const styles = StyleSheet.create({
   widgetPreview: {
     flex: 1,
   },
-  previewHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  previewTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginLeft: 5,
-    flex: 1,
-  },
-  previewTime: {
-    fontSize: 10,
-    color: "#777",
-  },
-  previewWeather: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    padding: 10,
-  },
-  previewWeatherGrid: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  previewWeatherBox: {
-    width: "48%",
-    alignItems: "center",
-    padding: 5,
-  },
-  previewWeatherValue: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-  previewEvents: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    padding: 10,
-  },
-  previewEventItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 8,
-  },
-  previewEventText: {
-    fontSize: 12,
-    marginLeft: 5,
-  },
-  previewMap: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    height: 100,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  previewMapPlaceholder: {
-    alignItems: "center",
-  },
-  previewRoutes: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    padding: 10,
-  },
-  previewRouteContent: {
-    marginTop: 8,
-  },
-  previewRouteLine: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  previewRouteText: {
-    fontSize: 12,
-    color: "#555",
-  },
-  previewTransportOptions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  previewTransportText: {
-    fontSize: 12,
-    color: "#555",
-  },
   addWidgetButton: {
     width: 32,
     height: 32,
@@ -705,6 +750,5 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
-   
 
 export default HomePage;

@@ -2,267 +2,253 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  Modal,
-  ScrollView,
-  Platform,
+  SafeAreaView,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Events = ({ navigation }) => {
   const [events, setEvents] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [eventName, setEventName] = useState("");
-  const [eventDate, setEventDate] = useState(new Date());
-  const [eventTime, setEventTime] = useState("12:00");
-  const [location, setLocation] = useState("");
-  const [area, setArea] = useState("");
-  const [description, setDescription] = useState("");
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-
-  useEffect(() => {
-    const mockEvents = [
-      {
-        id: 1,
-        name: "Marathon 2025",
-        event_date: "2025-04-20",
-        event_time: "08:00",
-        location: "Dublin City Center",
-        area: "Dublin 2",
-        description: "Annual city marathon",
-      },
-      {
-        id: 2,
-        name: "Community Cleanup",
-        event_date: "2025-04-25",
-        event_time: "10:00",
-        location: "Phoenix Park",
-        area: "Dublin 8",
-        description: "Join us to clean up the park!",
-      },
-    ];
-    setEvents(mockEvents);
-  }, []);
-
-  const handleAddEvent = () => {
-    if (!eventName || !eventDate || !eventTime || !location || !area || !description) {
-      alert("Please fill all details.");
-      return;
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("https://city-management.walter-wm.de/events/");
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      Alert.alert("Error", "Failed to fetch events");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-
-    const newEvent = {
-      id: Date.now(),
-      name: eventName,
-      event_date: eventDate.toISOString().split("T")[0],
-      event_time: eventTime,
-      location,
-      area,
-      description,
-    };
-
-    setEvents((prev) => [newEvent, ...prev]);
-    setModalVisible(false);
-    setEventName("");
-    setLocation("");
-    setArea("");
-    setDescription("");
   };
 
-  const formatDate = (isoDate) => {
-    const d = new Date(isoDate);
-    return d.toLocaleDateString("en-GB", {
+  // Refresh when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchEvents();
+    }, [])
+  );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchEvents();
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
       year: "numeric",
     });
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
-          <Ionicons name="menu" size={28} color="#009688" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Events</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
-          <Ionicons name="add-circle-outline" size={24} color="#fff" />
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
+  const formatTime = (timeString) => {
+    return timeString.split(":").slice(0, 2).join(":");
+  };
+
+  const renderEventItem = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.card} 
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate("EventDetails", { event: item })}
+    >
+      <View style={styles.cardLeft}>
+        <Ionicons 
+          name={item.description.toLowerCase().includes("accident") ? "warning" : "calendar"} 
+          size={24} 
+          color={item.description.toLowerCase().includes("accident") ? "#ff3b30" : "#009688"} 
+        />
       </View>
+      <View style={styles.cardBody}>
+        <Text style={styles.cardTitle}>{item.name}</Text>
+        <Text style={styles.cardDesc}>{item.description}</Text>
+        <View style={styles.cardMeta}>
+          <Ionicons name="location" size={14} color="#555" />
+          <Text style={styles.cardMetaText}>
+            {item.area} • {item.location.split(",")[0]}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.cardRight}>
+        <Text style={styles.cardDate}>{formatDate(item.event_date)}</Text>
+        <Text style={styles.cardTime}>{formatTime(item.event_time)}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-      {/* Event List */}
-      <FlatList
-        data={events}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 80 }}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.cardLeft}>
-              <Ionicons name="flash" size={24} color="#007b8f" />
-            </View>
-            <View style={styles.cardBody}>
-              <Text style={styles.cardTitle}>{item.name}</Text>
-              <Text style={styles.cardDesc}>{item.description}</Text>
-              <View style={styles.cardMeta}>
-                <Ionicons name="location" size={14} />
-                <Text style={styles.cardMetaText}>{item.location}</Text>
-              </View>
-            </View>
-            <View style={styles.cardRight}>
-              <Text style={styles.cardDate}>{formatDate(item.event_date)}</Text>
-              <Text style={styles.cardTime}>{item.event_time}</Text>
-            </View>
-          </View>
-        )}
-      />
+  if (loading && events.length === 0) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#009688" />
+      </SafeAreaView>
+    );
+  }
 
-      {/* Modal for Add Event */}
-      <Modal visible={modalVisible} animationType="slide">
-        <ScrollView style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Add Event</Text>
-
-          <TextInput
-            placeholder="Event Name"
-            value={eventName}
-            onChangeText={setEventName}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Location"
-            value={location}
-            onChangeText={setLocation}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Area"
-            value={area}
-            onChangeText={setArea}
-            style={styles.input}
-          />
-          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
-            <Text>Select Date: {eventDate.toDateString()}</Text>
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={28} color="#009688" />
           </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={eventDate}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={(e, date) => {
-                setShowDatePicker(false);
-                if (date) setEventDate(date);
-              }}
+          <Text style={styles.headerTitle}>Events</Text>
+          <View style={{ width: 28 }} />
+        </View>
+
+        {/* Event List */}
+        <FlatList
+          data={events}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderEventItem}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#009688"]}
+              tintColor="#009688"
             />
-          )}
-          <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.input}>
-            <Text>Select Time: {eventTime}</Text>
-          </TouchableOpacity>
-          {showTimePicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="time"
-              is24Hour={true}
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={(e, date) => {
-                setShowTimePicker(false);
-                if (date) {
-                  const timeString = `${date.getHours().toString().padStart(2, "0")}:${date
-                    .getMinutes()
-                    .toString()
-                    .padStart(2, "0")}`;
-                  setEventTime(timeString);
-                }
-              }}
-            />
-          )}
-          <TextInput
-            placeholder="Description"
-            value={description}
-            onChangeText={setDescription}
-            style={[styles.input, { height: 100 }]}
-            multiline
-          />
-          <TouchableOpacity style={styles.submitBtn} onPress={handleAddEvent}>
-            <Text style={styles.submitBtnText}>Submit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelBtn} onPress={() => setModalVisible(false)}>
-            <Text style={styles.cancelBtnText}>Cancel</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </Modal>
-    </View>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="calendar" size={48} color="#009688" />
+              <Text style={styles.emptyText}>No events available</Text>
+              <TouchableOpacity 
+                style={styles.refreshButton} 
+                onPress={fetchEvents}
+              >
+                <Text style={styles.refreshButtonText}>Refresh</Text>
+              </TouchableOpacity>
+            </View>
+          }
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#fff", marginTop: 40 },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: "#fff",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
-  headerTitle: { fontSize: 24, fontWeight: "bold", color: "#007b8f" },
-  addButton: {
-    backgroundColor: "#009688",
-    flexDirection: "row",
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#009688",
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
+    padding: 20,
   },
-  addButtonText: { color: "white", marginLeft: 6, fontWeight: "bold" },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#555",
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  refreshButton: {
+    backgroundColor: "#009688",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  refreshButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
   card: {
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#e0f2f1",
-    borderRadius: 15,
-    padding: 15,
-    marginBottom: 12,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   cardLeft: {
-    marginRight: 10,
+    marginRight: 12,
+    justifyContent: "center",
   },
-  cardBody: { flex: 1 },
-  cardTitle: { fontSize: 16, fontWeight: "bold" },
-  cardDesc: { fontSize: 14, color: "#555" },
-  cardMeta: { flexDirection: "row", alignItems: "center", marginTop: 5 },
-  cardMetaText: { marginLeft: 4, fontSize: 13 },
-  cardRight: { alignItems: "flex-end" },
-  cardDate: { fontSize: 13, fontStyle: "italic" },
-  cardTime: { fontSize: 14, fontWeight: "bold" },
-
-  modalContent: { padding: 20, marginTop: 50 },
-  modalTitle: { fontSize: 22, fontWeight: "bold", marginBottom: 20, color: "#009688" },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 15,
+  cardBody: {
+    flex: 1,
   },
-  submitBtn: {
-    backgroundColor: "#009688",
-    padding: 12,
-    borderRadius: 10,
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  cardDesc: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+  },
+  cardMeta: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginTop: 8,
   },
-  submitBtnText: { color: "#fff", fontWeight: "bold" },
-  cancelBtn: {
-    backgroundColor: "#e0e0e0",
-    padding: 12,
-    borderRadius: 10,
-    alignItems: "center",
+  cardMetaText: {
+    marginLeft: 4,
+    fontSize: 13,
+    color: "#555",
   },
-  cancelBtnText: { fontWeight: "bold" },
+  cardRight: {
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  cardDate: {
+    fontSize: 13,
+    color: "#009688",
+    fontStyle: "italic",
+  },
+  cardTime: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#009688",
+    marginTop: 4,
+  },
 });
 
 export default Events;
