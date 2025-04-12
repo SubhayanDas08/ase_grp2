@@ -1,11 +1,26 @@
 import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Polyline, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import axios from "axios";
+import Select, { SingleValue } from "react-select";
+
+// Import Leaflet and its icon images for correct paths in production
+import L from "leaflet";
+import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import iconUrl from "leaflet/dist/images/marker-icon.png";
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+
+// Override default Leaflet marker icon
+L.Marker.prototype.options.icon = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
 import FetchUserLocation from "../utils/fetchUserLocation.ts";
 import UpdateMapView from "../utils/updateMapView.ts";
-import Select, { SingleValue } from "react-select";
-import axios from "axios";
-
 import LocationSearch from "../components/locationSearch.tsx";
 import processTFIJourneys from "../components/processTFIJourneys.tsx";
 
