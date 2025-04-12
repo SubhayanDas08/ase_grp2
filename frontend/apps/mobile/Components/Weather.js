@@ -8,14 +8,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   Dimensions,
-  ScrollView,
 } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
-import { Ionicons } from "@expo/vector-icons"; // <-- added for menu icon
+import { Ionicons } from "@expo/vector-icons";
 import DataConfig from "./utils/DataConfig";
 
 const GOOGLE_API_KEY = DataConfig.GOOGLE_API_KEY;
-const WEATHER_API_KEY = DataConfig.WEATHER_API_KEY; // Add your OpenWeatherMap API key here
+const WEATHER_API_KEY = DataConfig.WEATHER_API_KEY;
 
 const { height } = Dimensions.get("window");
 
@@ -101,7 +100,7 @@ const Weather = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       {/* Header row with menu icon */}
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
@@ -117,15 +116,20 @@ const Weather = ({ navigation }) => {
         style={styles.input}
       />
 
-      <FlatList
-        data={predictions}
-        keyExtractor={(item) => item.place_id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => selectLocation(item.place_id)}>
-            <Text style={styles.suggestion}>{item.description}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {predictions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+          <FlatList
+            data={predictions}
+            keyExtractor={(item) => item.place_id}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => selectLocation(item.place_id)}>
+                <Text style={styles.suggestion}>{item.description}</Text>
+              </TouchableOpacity>
+            )}
+            style={styles.suggestionsList}
+          />
+        </View>
+      )}
 
       <TouchableOpacity style={styles.button} onPress={fetchWeatherData}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Get Weather</Text>}
@@ -168,12 +172,17 @@ const Weather = ({ navigation }) => {
           />
         )}
       </MapView>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 15, backgroundColor: "#fff", paddingBottom: 30, marginTop: 40 },
+  container: { 
+    flex: 1,
+    padding: 15, 
+    backgroundColor: "#fff",
+    paddingTop: 40,
+  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -192,6 +201,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 44,
     backgroundColor: "#f8f8f8",
+    marginBottom: 10,
+  },
+  suggestionsContainer: {
+    maxHeight: 200,
+    marginBottom: 10,
+  },
+  suggestionsList: {
+    flexGrow: 0,
   },
   suggestion: {
     padding: 10,

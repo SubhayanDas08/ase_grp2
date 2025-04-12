@@ -8,7 +8,6 @@ import {
   StyleSheet,
   ActivityIndicator,
   Dimensions,
-  ScrollView,
 } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import { Picker } from "@react-native-picker/picker";
@@ -132,7 +131,7 @@ const Traffic = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
           <Ionicons name="menu" size={28} color="#009688" />
@@ -147,15 +146,20 @@ const Traffic = ({ navigation }) => {
         style={styles.input}
       />
 
-      <FlatList
-        data={predictions}
-        keyExtractor={(item) => item.place_id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => selectLocation(item.place_id)}>
-            <Text style={styles.suggestion}>{item.description}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {predictions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+          <FlatList
+            data={predictions}
+            keyExtractor={(item) => item.place_id}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => selectLocation(item.place_id)}>
+                <Text style={styles.suggestion}>{item.description}</Text>
+              </TouchableOpacity>
+            )}
+            style={styles.suggestionsList}
+          />
+        </View>
+      )}
 
       <View style={styles.dropdownRow}>
         <View style={styles.pickerWrapper}>
@@ -215,12 +219,17 @@ const Traffic = ({ navigation }) => {
           </>
         )}
       </MapView>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 15, backgroundColor: "#fff", paddingBottom: 30, marginTop: 40 },
+  container: { 
+    flex: 1,
+    padding: 15, 
+    backgroundColor: "#fff",
+    paddingTop: 40,
+  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -239,6 +248,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 44,
     backgroundColor: "#f8f8f8",
+    marginBottom: 10,
+  },
+  suggestionsContainer: {
+    maxHeight: 200,
+    marginBottom: 10,
+  },
+  suggestionsList: {
+    flexGrow: 0,
   },
   suggestion: {
     padding: 10,

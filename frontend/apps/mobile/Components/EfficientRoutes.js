@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Dimensions,
   ActivityIndicator,
   FlatList,
@@ -77,8 +76,8 @@ const EfficientRoutes = ({ navigation }) => {
       const paths = response.data.paths;
 
       const formattedRoutes = paths.map((path) =>
-        path.points.coordinates.map(([lng, lat]) => [lat, lng])
-      );
+        path.points.coordinates.map(([lng, lat]) => [lat, lng]
+      ))
       setRoutes(formattedRoutes);
       setSelectedRouteIndex(0);
     } catch (error) {
@@ -89,7 +88,7 @@ const EfficientRoutes = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+    <View style={styles.container}>
       {/* Header with hamburger */}
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
@@ -100,76 +99,84 @@ const EfficientRoutes = ({ navigation }) => {
       </View>
 
       {/* Inputs */}
-      <TextInput
-        value={startInput}
-        onChangeText={(text) => {
-          setStartInput(text);
-          fetchSuggestions(text, true);
-        }}
-        placeholder="Start Location"
-        style={styles.input}
-      />
-      {startSuggestions.length > 0 && (
-        <FlatList
-          data={startSuggestions}
-          keyExtractor={(item, index) => `${item.name}-${index}`}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.suggestion}
-              onPress={() => handleSelectSuggestion(item, true)}
-            >
-              <Text>{item.name}</Text>
-            </TouchableOpacity>
-          )}
+      <View style={styles.inputContainer}>
+        <TextInput
+          value={startInput}
+          onChangeText={(text) => {
+            setStartInput(text);
+            fetchSuggestions(text, true);
+          }}
+          placeholder="Start Location"
+          style={styles.input}
         />
-      )}
-
-      <TextInput
-        value={endInput}
-        onChangeText={(text) => {
-          setEndInput(text);
-          fetchSuggestions(text, false);
-        }}
-        placeholder="End Location"
-        style={styles.input}
-      />
-      {endSuggestions.length > 0 && (
-        <FlatList
-          data={endSuggestions}
-          keyExtractor={(item, index) => `${item.name}-${index}`}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.suggestion}
-              onPress={() => handleSelectSuggestion(item, false)}
-            >
-              <Text>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-
-      <View style={styles.pickerWrapper}>
-        <Picker
-          selectedValue={selectedMode}
-          onValueChange={(itemValue) => setSelectedMode(itemValue)}
-        >
-          {transportOptions.map((option) => (
-            <Picker.Item
-              key={option.value}
-              label={option.label}
-              value={option.value}
+        {startSuggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+            <FlatList
+              data={startSuggestions}
+              keyExtractor={(item, index) => `${item.name}-${index}`}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.suggestion}
+                  onPress={() => handleSelectSuggestion(item, true)}
+                >
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+              style={styles.suggestionsList}
             />
-          ))}
-        </Picker>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={fetchRoutes}>
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Get Route</Text>
+          </View>
         )}
-      </TouchableOpacity>
+
+        <TextInput
+          value={endInput}
+          onChangeText={(text) => {
+            setEndInput(text);
+            fetchSuggestions(text, false);
+          }}
+          placeholder="End Location"
+          style={styles.input}
+        />
+        {endSuggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+            <FlatList
+              data={endSuggestions}
+              keyExtractor={(item, index) => `${item.name}-${index}`}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.suggestion}
+                  onPress={() => handleSelectSuggestion(item, false)}
+                >
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+              style={styles.suggestionsList}
+            />
+          </View>
+        )}
+
+        <View style={styles.pickerWrapper}>
+          <Picker
+            selectedValue={selectedMode}
+            onValueChange={(itemValue) => setSelectedMode(itemValue)}
+          >
+            {transportOptions.map((option) => (
+              <Picker.Item
+                key={option.value}
+                label={option.label}
+                value={option.value}
+              />
+            ))}
+          </Picker>
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={fetchRoutes}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Get Route</Text>
+          )}
+        </TouchableOpacity>
+      </View>
 
       {/* Map Section */}
       <View style={styles.mapWrapper}>
@@ -217,36 +224,45 @@ const EfficientRoutes = ({ navigation }) => {
         {/* Route Overlay on top of Map */}
         {routes.length > 0 && (
           <View style={styles.routeOverlay}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {routes.map((_, idx) => (
+            <FlatList
+              horizontal
+              data={routes}
+              keyExtractor={(_, idx) => `route-${idx}`}
+              renderItem={({ _, index }) => (
                 <TouchableOpacity
-                  key={idx}
-                  onPress={() => setSelectedRouteIndex(idx)}
+                  onPress={() => setSelectedRouteIndex(index)}
                   style={[
                     styles.routeBtn,
-                    selectedRouteIndex === idx && styles.activeRouteBtn,
+                    selectedRouteIndex === index && styles.activeRouteBtn,
                   ]}
                 >
                   <Text
                     style={[
                       styles.routeBtnText,
-                      selectedRouteIndex === idx && styles.activeRouteBtnText,
+                      selectedRouteIndex === index && styles.activeRouteBtnText,
                     ]}
                   >
-                    Route {idx + 1}
+                    Route {index + 1}
                   </Text>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+              )}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.routeListContent}
+            />
           </View>
         )}
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff", marginTop: 40 },
+  container: { 
+    flex: 1, 
+    padding: 20, 
+    backgroundColor: "#fff", 
+    paddingTop: 40 
+  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -258,6 +274,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#009688",
   },
+  inputContainer: {
+    flex: 1,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -266,6 +285,13 @@ const styles = StyleSheet.create({
     height: 44,
     backgroundColor: "#f8f8f8",
     marginBottom: 6,
+  },
+  suggestionsContainer: {
+    maxHeight: 150,
+    marginBottom: 10,
+  },
+  suggestionsList: {
+    flexGrow: 0,
   },
   suggestion: {
     padding: 10,
@@ -289,11 +315,11 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   mapWrapper: {
-    position: "relative",
     width: "100%",
     height: height * 0.45,
     borderRadius: 15,
     overflow: "hidden",
+    marginTop: 10,
   },
   map: {
     width: "100%",
@@ -303,11 +329,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     left: 10,
-    flexDirection: "row",
     backgroundColor: "rgba(255,255,255,0.9)",
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 10,
+  },
+  routeListContent: {
+    paddingRight: 10,
   },
   routeBtn: {
     paddingVertical: 6,
