@@ -10,6 +10,8 @@ import {
   Pressable,
   ActivityIndicator,
   Dimensions,
+  Alert,
+  Platform,
 } from "react-native";
 import { Ionicons, FontAwesome, Feather } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
@@ -30,6 +32,7 @@ const HomePage = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingWeather, setLoadingWeather] = useState(true);
+  const [locationPermissionGranted, setLocationPermissionGranted] = useState(false);
 
   const OPENWEATHER_API_KEY = DataConfig.WEATHER_API_KEY;
 
@@ -44,6 +47,28 @@ const HomePage = ({ navigation }) => {
     } catch (error) {
       console.error("Error in reverse geocoding:", error);
       return "Current Location";
+    }
+  };
+
+  const requestLocationPermission = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        setLocationPermissionGranted(true);
+        return true;
+      } else {
+        setLocationPermissionGranted(false);
+        setLocationName("Location permission denied");
+        Alert.alert(
+          "Location Permission",
+          "This app needs location access to show weather and other location-based features.",
+          [{ text: "OK" }]
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error("Error requesting location permission:", error);
+      return false;
     }
   };
 
@@ -72,19 +97,23 @@ const HomePage = ({ navigation }) => {
           await AsyncStorage.setItem('@availableWidgets', JSON.stringify(initialAvailable));
         }
 
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission to access location was denied");
-          setLocationName("Location permission denied");
-          return;
+        const permissionGranted = await requestLocationPermission();
+        if (permissionGranted) {
+          try {
+            const { coords } = await Location.getCurrentPositionAsync({
+              accuracy: Location.Accuracy.Balanced,
+              timeInterval: 5000,
+              distanceInterval: 10,
+            });
+            setLocation(coords);
+            const name = await reverseGeocode(coords.latitude, coords.longitude);
+            setLocationName(name);
+            fetchWeather(coords.latitude, coords.longitude);
+          } catch (locError) {
+            console.error('Error getting location:', locError);
+            setLocationName("Error fetching location");
+          }
         }
-
-        const { coords } = await Location.getCurrentPositionAsync({});
-        setLocation(coords);
-        const name = await reverseGeocode(coords.latitude, coords.longitude);
-        setLocationName(name);
-        fetchWeather(coords.latitude, coords.longitude);
-
       } catch (e) {
         console.error('Failed to load widgets or get location/weather', e);
         setLocationName("Error getting location");
@@ -103,25 +132,61 @@ const HomePage = ({ navigation }) => {
   const fetchEvents = async () => {
     try {
       setLoadingEvents(true);
-      const response = await axios.get("https://city-management.walter-wm.de/events/");
-      setEvents(response.data);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      const response = await axios.get("https://city-management.walter-wm.de/events/", {
+        signal: controller.signal,
+        timeout: 15000
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.status === 200 && response.data) {
+        setEvents(response.data);
+      } else {
+        console.error("Invalid response from events API:", response.status);
+        setEvents([]);
+      }
     } catch (error) {
       console.error("Error fetching events:", error);
+      setEvents([]);
+      // Prevent app crashes by setting empty array
     } finally {
       setLoadingEvents(false);
     }
   };
 
   const fetchWeather = async (latitude, longitude) => {
+    if (!latitude || !longitude) {
+      console.error("Missing coordinates for weather fetch");
+      setLoadingWeather(false);
+      return;
+    }
+    
     try {
       setLoadingWeather(true);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${OPENWEATHER_API_KEY}`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${OPENWEATHER_API_KEY}`,
+        { signal: controller.signal }
       );
-      const data = await response.json();
-      setWeather(data);
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setWeather(data);
+      } else {
+        console.error("Weather API error:", response.status);
+        setWeather(null);
+      }
     } catch (error) {
       console.error("Error fetching weather data:", error);
+      setWeather(null);
+      // Prevent app crashes by not setting invalid data
     } finally {
       setLoadingWeather(false);
     }

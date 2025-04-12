@@ -13,22 +13,35 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.abhigyan99.sustainablecitymanagement"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.abhigyan99.sustainablecitymanagement"
+      "package": "com.abhigyan99.sustainablecitymanagement",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      "expo-location"
+    ],
     "extra": {
       "eas": {
-        "projectId": "c809bd0e-74d8-4516-98f8-e14891a1640c"
+        "projectId": "f6f4001c-ca32-4ba0-8a9b-93d87e58260d"
       }
-    }
+    },
+    "owner": "ukeleleiot"
   }
 }
