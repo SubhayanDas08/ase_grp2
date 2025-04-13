@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Dimensions,
+  Alert,
 } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
@@ -64,28 +65,47 @@ const Weather = ({ navigation }) => {
   };
 
   const fetchWeatherData = async () => {
-    if (!selectedCoords) return;
-
-    const [lat, lng] = selectedCoords;
+    if (!selectedCoords) {
+      Alert.alert("Please select a location first.");
+      return;
+    }
+    setLoading(true);
     try {
-      setLoading(true);
-
-      // Fetch weather data
-      const weatherRes = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${WEATHER_API_KEY}&units=metric`
+      // Fetch current weather
+      const weatherResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${selectedCoords[0]}&lon=${selectedCoords[1]}&units=metric&appid=${WEATHER_API_KEY}`
       );
-      const weatherJson = await weatherRes.json();
+      const weatherResult = await weatherResponse.json();
+      setWeatherData(weatherResult);
 
       // Fetch air pollution data
-      const airPollutionRes = await fetch(
-        `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lng}&appid=${WEATHER_API_KEY}`
+      const pollutionResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${selectedCoords[0]}&lon=${selectedCoords[1]}&appid=${WEATHER_API_KEY}`
       );
-      const airPollutionJson = await airPollutionRes.json();
+      const pollutionResult = await pollutionResponse.json();
+      // Correctly extract AQI and PM2.5
+      if (pollutionResult.list && pollutionResult.list.length > 0) {
+        const airData = {
+          pm2_5: pollutionResult.list[0].components.pm2_5,
+          aqi: pollutionResult.list[0].main.aqi // Extract AQI here
+        };
+        setAirPollutionData(airData);
+      } else {
+        setAirPollutionData(null); // Handle case where data might be missing
+      }
 
-      setWeatherData(weatherJson);
-      setAirPollutionData(airPollutionJson.list[0].components);
-    } catch (err) {
-      console.error("API Error:", err);
+      setMapRegion({
+        latitude: selectedCoords[0],
+        longitude: selectedCoords[1],
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      });
+      setSelectedCoords([selectedCoords[0], selectedCoords[1]]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Alert.alert("Error", "Could not fetch weather or pollution data.");
+      setWeatherData(null);
+      setAirPollutionData(null);
     } finally {
       setLoading(false);
     }
@@ -101,12 +121,15 @@ const Weather = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header row with menu icon */}
+      {/* Header row with both back arrow and menu icons */}
       <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="#009688" />
+        </TouchableOpacity>
+        <Text style={styles.header}>Weather</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
           <Ionicons name="menu" size={28} color="#009688" />
         </TouchableOpacity>
-        <Text style={styles.header}>Weather</Text>
       </View>
 
       <TextInput
@@ -147,10 +170,10 @@ const Weather = ({ navigation }) => {
             Air Pollution (PM2.5): {airPollutionData["pm2_5"]} µg/m³
           </Text>
           <Text style={styles.weatherText}>
-            Air Quality:{" "}
+            Air Quality: AQI: {airPollutionData.aqi} (
             <Text style={{ color: getColorForAirPollution(airPollutionData["pm2_5"]) }}>
-              {airPollutionData["pm2_5"] < 50 ? "Good" : airPollutionData["pm2_5"] < 100 ? "Fair" : "Poor"}
-            </Text>
+              {airPollutionData.aqi <= 1 ? "Good" : airPollutionData.aqi <= 2 ? "Fair" : "Poor"}
+            </Text>)
           </Text>
         </View>
       )}
@@ -186,7 +209,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "space-between",
     marginBottom: 15,
   },
   header: {

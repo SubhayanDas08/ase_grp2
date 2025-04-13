@@ -1,0 +1,13 @@
+# Exclude backend directories - use absolute paths
+/home/sibin/ase_grp2/backend/**/*
+/home/sibin/ase_grp2/backend/postgres_data/**/*
+
+# Exclude node_modules (they will be reinstalled during build)
+node_modules/
+
+# Exclude build artifacts
+android/app/build/
+ios/build/
+
+# Exclude git metadata
+.git/

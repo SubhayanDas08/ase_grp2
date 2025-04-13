@@ -8,6 +8,7 @@ import MapVisual from './Components/MapVisual';
 import Traffic from './Components/Traffic';
 import EfficientRoutes from './Components/EfficientRoutes';
 import Events from './Components/Events';
+import EventDetails from './Components/EventDetails';
 import Weather from './Components/Weather';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -33,7 +34,7 @@ export default function App() {
               <Stack.Screen name="Traffic" component={Traffic} />
               <Stack.Screen name="EfficientRoutes" component={EfficientRoutes} />
               <Stack.Screen name="Events" component={Events} />
-            
+              <Stack.Screen name="EventDetails" component={EventDetails} />
               <Stack.Screen name="Weather" component={Weather} />
             </Stack.Navigator>
           </NavigationContainer>

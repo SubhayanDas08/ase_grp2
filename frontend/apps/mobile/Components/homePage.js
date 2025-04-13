@@ -474,13 +474,15 @@ const HomePage = ({ navigation }) => {
 
         {/* Add Widget Button */}
         {editMode && (
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => setShowAddWidget(true)}
-          >
-            <Ionicons name="add" size={24} color="white" />
-            <Text style={styles.addButtonText}>Add Widget</Text>
-          </TouchableOpacity>
+          <View style={styles.addButtonContainer}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => setShowAddWidget(true)}
+            >
+              <Ionicons name="add" size={24} color="white" />
+              <Text style={styles.addButtonText}>Add Widget</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
 
@@ -756,6 +758,12 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 5,
   },
+  addButtonContainer: {
+    paddingVertical: 20,
+    marginBottom: 40,
+    width: "100%",
+    alignItems: "center",
+  },
   addButton: {
     flexDirection: "row",
     backgroundColor: "#009688",
@@ -764,7 +772,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    width: "80%",
   },
   addButtonText: {
     color: "white",
