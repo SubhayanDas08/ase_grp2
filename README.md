@@ -2,33 +2,15 @@
 
 ## Description
 
-- 
-
-## Technology
-
-- 
-
-## Setup Guide
-
-These instructions will help you set up the project on your local machine for running your own instance.
-
-To create Tables, first run setup postgres
-then run the following command
-docker exec -i postgres_db psql -U postgres -d userdb < backend/node/databaseSetup.sql
-
-
-### Installation
-
-- 
-
-## Screenshots
-
-- 
-
-## Future Work
-
-- 
+This application has been developed by Group 2 as part of the M.Sc in Computer Science - Advanced Software Engineering module in Trinity College Dublin. It focuses on building smart, sustainable and data-driven solutions to support sustainable urban living in Dublin.
 
 ## Authors
-
-- 
+<li>Abhigyan Khaund</li>
+<li>Adrieja Bhowmick</li>
+<li>Agathe Mignot</li>
+<li>Akshit Saini</li>
+<li>Boris Stavisky</li>
+<li>Kartik Tola</li>
+<li>Sibin George</li>
+<li>Simon Walter</li>
+<li>Subhayan Das</li>
