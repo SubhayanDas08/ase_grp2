@@ -1,108 +1,113 @@
-Backend README
 
-Overview
+# Overview
 
-This document provides detailed information about the backend codebase for the Advanced Software Engineering project. The backend utilizes Node.js, TypeScript, and Express.js to deliver secure and scalable APIs.
+This is the backend portion of the project. It provides secure and scalable APIs to support the frontend applications. It uses modern web technologies such as Node.js, Express, and PostgreSQL, and includes tools for authentication, caching, testing, and monitoring.
 
-Technologies
-	•	Node.js & Express.js: API creation and request handling
-	•	TypeScript: Type-safe JavaScript development
-	•	PostgreSQL: Database management
-	•	Redis: Caching
-	•	JWT: Authentication and security
-	•	Docker & Docker Compose: Containerization and deployment
-	•	Jest: Testing
-	•	Prometheus & Grafana: Monitoring and metrics visualization
+# Project Structure
 
-Project Structure
+Below is a high-level overview of the repository structure:
 
+```bash
 backend/
-├── .env                  # Environment variables
-├── docker-compose.yml    # Development Docker setup
-├── docker-compose-prod.yml # Production Docker setup
-├── docker-compose-monitoring.yml # Monitoring tools setup
+├── .env                              # Environment variables
+├── docker-compose.yml                # Development Docker setup
+├── docker-compose-prod.yml           # Production Docker setup
+├── docker-compose-monitoring.yml     # Monitoring tools setup
 ├── node/
-│   ├── controllers/      # API logic handlers
-│   ├── middleware/       # Middleware components (e.g., auth, metrics)
-│   ├── routes/           # API endpoint routes
-│   ├── services/         # Database and external API integrations
-│   ├── utils/            # Helper functions and configurations
-│   ├── interceptors/     # Data encryption handlers
-│   ├── interfaces/       # Type definitions
-│   ├── Tests/            # Additional unit tests
-│   ├── __tests__/        # Jest-based unit tests
-│   ├── sql/              # Database initialization and reset scripts
-│   ├── Dockerfile        # Dockerfile for Node.js app
-│   ├── babel.config.js   # Babel transpilation configuration
-│   ├── package.json      # Project dependencies and scripts
-│   └── nginx.conf        # Reverse proxy configuration
-└── grafana/
-    └── provisioning/     # Grafana monitoring setup
+│   ├── controllers/                  # API logic handlers
+│   ├── middleware/                   # Middleware (e.g. auth, metrics)
+│   ├── routes/                       # API endpoint definitions
+│   ├── services/                     # Business logic and services
+│   ├── utils/                        # Utility functions
+│   ├── models/                       # Database models
+│   ├── config/                       # App configuration
+│   ├── index.ts                      # Entry point
+├── tests/                            # Unit and integration tests
+```
 
-Setup Instructions
+# Technologies
 
-Initial Setup
-	1.	Install Dependencies
+- **Node.js & Express.js** – Server-side runtime and API framework  
+- **TypeScript** – Strongly typed JavaScript for safer development  
+- **PostgreSQL** – Relational database for persistent data storage  
+- **Redis** – Caching layer for performance optimization  
+- **JWT** – Secure authentication  
+- **Docker & Docker Compose** – Containerized development and deployment  
+- **Jest** – Test suite for backend logic  
+- **Prometheus & Grafana** – Monitoring and metrics visualization
 
+# Setup Instructions
+
+## Initial Setup
+1. **Install Dependencies**
+
+```bash
 cd backend/node
 npm install
+```
 
-	2.	Environment Variables
+2. **Environment Variables**
 
-	•	Create .env files at the root (backend/) and in the node directory (backend/node/) based on your configuration requirements.
+- Create `.env` files at the root (`backend/`) and in the `node` directory (`backend/node/`) based on your configuration requirements.
 
-	3.	Database Initialization
+3. **Database Initialization**
 
-	•	Execute the SQL scripts provided:
-
+- Execute the SQL scripts provided:
+```bash
 psql -U youruser -d yourdb -f sql/databaseSetup.sql
-
-To create Tables, first run setup postgres
-then run the following command
+```
+- To create tables, first run setup postgres then run the following command:
+```bash
 docker exec -i postgres_db psql -U postgres -d userdb < backend/node/databaseSetup.sql
+```
 
+## Running the Application
+### Development Mode
 
-Running the Application
-	•	Development:
-
+```bash
 npm run dev
+```
 
-	•	Production:
+### Production Mode
 
+```bash
 npm run build
-npm start
+npm run start
+```
 
-Docker Setup
-	•	Local Development:
+## Docker Setup
+### Local Development
 
+```bash
 docker-compose up --build
+```
 
-	•	Production Deployment:
+### Production Deployment
 
+```bash
 docker-compose -f docker-compose-prod.yml up --build
+```
 
-	•	Monitoring Setup:
+### Monitoring Setup
 
+```bash
 docker-compose -f docker-compose-monitoring.yml up
+```
 
-Testing
-	•	Run tests using Jest:
+## Testing
 
+- Run tests using Jest:
+
+```bash
 npm test
+```
 
-	•	Generate test coverage:
+- Generate test coverage:
 
+```bash
 npm run coverage
+```
 
-Monitoring
-	•	Metrics are available via Prometheus and visualized using Grafana. Ensure monitoring containers are up as described in Docker Setup.
+## Monitoring
 
-Contribution
-	•	Follow coding standards and maintain coverage with Jest tests.
-	•	Submit changes via Pull Requests for review.
-
-License
-	•	ISC License. See LICENSE file for details.
-
-Contact
-	•	For questions or support, reach out to the repository maintainer or use the provided project documentation channels.
+- Metrics are available via `Prometheus` and visualized using `Grafana`. Ensure monitoring containers are up as described in Docker Setup.
