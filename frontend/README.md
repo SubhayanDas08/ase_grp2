@@ -209,30 +209,38 @@ npm install
 ### Start Metro Bundler
 
 ``` bash
+
+
+---
+
+##  Getting Started
+
+### 1. Start the Development Server
+
+```bash
 npm start
-
-or
-
-npx react-native start
 ```
 
-This starts the development server for the mobile application.
+This will launch the Expo development server and display a QR code in the terminal or browser. You can:
 
-### Run on iOS
+-  **Scan the QR code** using the **Expo Go** app on your physical Android or iOS device.
+- **Run the app on an Android emulator** by pressing `a` in the terminal (ensure you have an emulator configured via Android Studio).
 
-``` bash
-npx react-native run-ios
+### 2. Build and Deploy for Android (Preview)
+
+To generate a preview build of the app for Android:
+
+```bash
+eas build -p android --profile preview
 ```
 
-Builds and runs your app in the iOS Simulator (macOS only).
+This command uses Expo Application Services (EAS) to create a preview build, which can be installed on physical devices or tested via emulator.
 
-### Run on Android
+> 🔧 Make sure you're logged into your Expo account and have EAS CLI installed (`npm install -g eas-cli`).
 
-``` bash
-npx react-native run-android
-```
+---
 
-Builds and deploys the app to a connected Android device or emulator.
+Would you like me to write the full README with sections like "Installation", "Project Structure", and "Dependencies" too?
 
 ### Testing
 
