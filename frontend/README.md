@@ -279,14 +279,3 @@ npm test
 cd apps/mobile
 npm test
 ```
-
-# Authors
-<li>Abhigyan Khaund</li>
-<li>Adrieja Bhowmick</li>
-<li>Agathe Mignot</li>
-<li>Akshit Saini</li>
-<li>Boris Stavisky</li>
-<li>Kartik Tola</li>
-<li>Sibin George</li>
-<li>Simon Walter</li>
-<li>Subhayan Das</li>
