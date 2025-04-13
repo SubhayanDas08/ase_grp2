@@ -1,6 +1,6 @@
 # Overview
 
-This application has been developed by Team 2 as part of the M.Sc in Computer Science - Advanced Software Engineering module in Trinity College Dublin. It focuses on building smart, sustainable and data-driven solutions to support sustainable urban living in Dublin.
+This is the frontend portion of the project. In here, both the desktop and mobile UI is located, along with any frontend logic.
 
 # Project Structure
 
@@ -63,7 +63,7 @@ Below is a high-level overview of the repository structure:
 
 - `pages/` – Page-level components (screens, main views).
 
-- `styles/` – Tailwind configs, global CSS files, or specialized CSS modules for the desktop app.
+- `styles/` – Styling related to the desktop application.
 
 - `utils/` – Utility functions specific to the desktop environment.
 
@@ -79,7 +79,7 @@ Below is a high-level overview of the repository structure:
 
 - `__tests__/` – Testing setup for the mobile app.
 
-- `App.test.tsx` – Sample test file for your main mobile application component.
+- `App.test.tsx` – Sample test file for the main mobile application component.
 
 - `android/, ios/` – Platform-specific native files, gradle settings, Xcode project, etc.
 
@@ -89,9 +89,9 @@ Below is a high-level overview of the repository structure:
 
 ### `shared/`
 
-- `components/` – Reusable React components that can be used by both desktop and mobile (if they are platform-agnostic).
+- `components/` – Reusable React components that can be used by both desktop and mobile.
 
-- `styles/` – Global or shared styling (e.g., Tailwind configs, variables).
+- `styles/` – Global or shared styling.
 
 - `utils/` – Utility functions that are platform-independent.
 
@@ -103,7 +103,7 @@ Below is a high-level overview of the repository structure:
 
 - `desktop/`: The Tauri/React/Tailwind desktop application.
 
-- `mobile/`: The mobile application (React Native or similar).
+- `mobile/`: The mobile application (React Native).
 
 - `shared/`: Contains shared logic, components, styles, and utilities for reuse in both desktop and mobile apps.
 
@@ -137,6 +137,7 @@ Below is a high-level overview of the repository structure:
 git clone https://github.com/SubhayanDas08/ase_grp2.git
 cd ase_grp2/frontend
 ```
+
 ### Install Dependencies
 
 While each app has its own dependencies, you may want to install at the frontend folder level:
@@ -151,15 +152,31 @@ npm install
 
 - Ensure that the environment variables are correct for both desktop and mobile needs.
 
+- Here is the structure:
+
+``` bash
+# Weather APIs
+VITE_WAQI_ACCESS_TOKEN=<>
+VITE_WEATHER_API_ACCESS_TOKEN=<>
+VITE_GOOGLE_MAPS_API_KEY=<>
+# Custom IP address can be used for local development, otherwise it will use user ip address or ip address provided straight to the function
+VITE_IP_ADDRESS=""
+# Backend
+VITE_API_BASE_URL=<>
+# Routes search APIs
+VITE_PUBLIC_TRANSPORT_API_KEY=<>
+VITE_GRAPHHOPPER_API_KEY=<>
+VITE_ROUTES_SEARCH_KEY=<>
+```
+
 # Desktop Commands
 
 Within the apps/desktop directory, you can run various commands to develop, test, and build the Tauri-based desktop application.
 
-### Install dependencies
+### Go to Desktop folder
 
 ``` bash
 cd apps/desktop
-npm install
 ```
 
 ### Development server (React + Tailwind in the browser)
@@ -209,24 +226,15 @@ npm install
 ### Start Metro Bundler
 
 ``` bash
-
-
----
-
-##  Getting Started
-
-### 1. Start the Development Server
-
-```bash
 npm start
 ```
 
 This will launch the Expo development server and display a QR code in the terminal or browser. You can:
 
--  **Scan the QR code** using the **Expo Go** app on your physical Android or iOS device.
+- **Scan the QR code** using the **Expo Go** app on your physical Android or iOS device.
 - **Run the app on an Android emulator** by pressing `a` in the terminal (ensure you have an emulator configured via Android Studio).
 
-### 2. Build and Deploy for Android (Preview)
+### Build and Deploy for Android (Preview)
 
 To generate a preview build of the app for Android:
 
@@ -269,7 +277,7 @@ npm test
 
 ``` bash
 cd apps/mobile
-npm run test
+npm test
 ```
 
 # Authors
