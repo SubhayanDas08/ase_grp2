@@ -22,5 +22,7 @@ router.get("/get", authenticate(), getCurrentUser);
 router.post("/changePassword", authenticate(), changeUserPassword);
 router.post("/updateName", authenticate(), updateFirstAndLastName);
 router.post("/reportIssue", authenticate(), reportissue);
+router.post('/getRegistrationData', /* controller */);
+router.post('/login',)
 
 export default router;

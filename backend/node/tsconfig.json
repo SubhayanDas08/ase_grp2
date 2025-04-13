@@ -9,6 +9,6 @@
     "rootDir": "./",
     "resolveJsonModule": true
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "utils/mockRes.js"],
   "exclude": ["node_modules", "build"]
 }
